@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Box,
   Drawer,
@@ -16,7 +16,8 @@ import {
   Menu,
   MenuItem,
   Tooltip,
-} from '@mui/material';
+} from "@mui/material";
+import RecentActorsIcon from "@mui/icons-material/RecentActors";
 import {
   Menu as MenuIcon,
   Dashboard as DashboardIcon,
@@ -31,8 +32,8 @@ import {
   ExitToApp,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 260;
 const drawerWidthCollapsed = 65;
@@ -41,6 +42,7 @@ interface MenuItem {
   text: string;
   icon: JSX.Element;
   path: string;
+  children?: MenuItem[];
 }
 
 interface MenuConfig {
@@ -51,28 +53,70 @@ interface MenuConfig {
 // Menu configuration untuk setiap role
 const menuConfig: MenuConfig = {
   guru: [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-    { text: 'Kelas Saya', icon: <ClassIcon />, path: '/dashboard/kelas' },
-    { text: 'Siswa', icon: <SchoolIcon />, path: '/dashboard/siswa' },
-    { text: 'Materi', icon: <BookIcon />, path: '/dashboard/materi' },
-    { text: 'Tugas', icon: <AssignmentIcon />, path: '/dashboard/tugas' },
-    { text: 'Laporan', icon: <BarChartIcon />, path: '/dashboard/laporan' },
+    {
+      text: "Peserta yang siap asesmen",
+      icon: <RecentActorsIcon />,
+      path: "/dashboard/kelas",
+    },
+    {
+      text: "Sedang melaksanakan",
+      icon: <RecentActorsIcon />,
+      path: "/dashboard/siswa",
+    },
+    {
+      text: "Belum asesmen",
+      icon: <RecentActorsIcon />,
+      path: "/dashboard/materi",
+    },
+    {
+      text: "Hasil Asesmen",
+      icon: <AssignmentIcon />,
+      path: "/dashboard/tugas",
+    },
+    {
+      text: "Data Pengguna",
+      icon: <SettingsIcon />,
+      path: "/dashboard/settings",
+    },
   ],
   admin: [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-    { text: 'Pengguna', icon: <PeopleIcon />, path: '/dashboard/users' },
-    { text: 'Guru', icon: <SchoolIcon />, path: '/dashboard/guru' },
-    { text: 'Siswa', icon: <PeopleIcon />, path: '/dashboard/siswa' },
-    { text: 'Kelas', icon: <ClassIcon />, path: '/dashboard/kelas' },
-    { text: 'Materi', icon: <BookIcon />, path: '/dashboard/materi' },
-    { text: 'Laporan', icon: <BarChartIcon />, path: '/dashboard/laporan' },
-    { text: 'Pengaturan', icon: <SettingsIcon />, path: '/dashboard/settings' },
+    { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
+    { text: "Data Peserta", icon: <PeopleIcon />, path: "/dashboard/users" },
+    { text: "Rekap Asesor", icon: <PeopleIcon />, path: "/dashboard/guru" },
+    {
+      text: "Asesmen",
+      icon: <BookIcon />,
+      path: "",
+      children: [
+        {
+          text: "Peserta Siap Asesmen",
+          icon: <PeopleIcon />,
+          path: "/dashboard/siap-asesmen",
+        },
+        {
+          text: "Belum Asesmen",
+          icon: <PeopleIcon />,
+          path: "/dashboard/belum-asesmen",
+        },
+        {
+          text: "Hasil Asesmen",
+          icon: <PeopleIcon />,
+          path: "/dashboard/hasil-asesmen",
+        },
+      ],
+    },
+
+    {
+      text: "Data Pengguna",
+      icon: <SettingsIcon />,
+      path: "/dashboard/settings",
+    },
   ],
 };
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  userRole: 'guru' | 'admin'; // Hardcoded role type
+  userRole: "guru" | "admin"; // Hardcoded role type
   userName?: string;
   userEmail?: string;
 }
@@ -80,12 +124,14 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({
   children,
   userRole,
-  userName = 'User',
-  userEmail = 'user@example.com',
+  userName = "User",
+  userEmail = "user@example.com",
 }: DashboardLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
+
   const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
@@ -107,7 +153,7 @@ export default function DashboardLayout({
   const handleLogout = () => {
     // TODO: Implement logout logic
     handleMenuClose();
-    navigate('/');
+    navigate("/");
   };
 
   const handleNavigate = (path: string) => {
@@ -117,16 +163,23 @@ export default function DashboardLayout({
     }
   };
 
+  const toggleSubmenu = (name: string) => {
+    setOpenMenus((prev) => ({
+      ...prev,
+      [name]: !prev[name],
+    }));
+  };
+
   // Ambil menu items berdasarkan role
   const menuItems = menuConfig[userRole];
 
   const drawer = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <Toolbar
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: drawerOpen ? 'space-between' : 'center',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: drawerOpen ? "space-between" : "center",
           px: drawerOpen ? 2 : 1,
           py: 2,
         }}
@@ -139,8 +192,8 @@ export default function DashboardLayout({
         <IconButton
           onClick={handleDrawerCollapse}
           sx={{
-            display: { xs: 'none', sm: 'flex' },
-            color: 'primary.main',
+            display: { xs: "none", sm: "flex" },
+            color: "primary.main",
           }}
         >
           {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -148,11 +201,15 @@ export default function DashboardLayout({
       </Toolbar>
       <Divider />
       {drawerOpen && (
-        <Box sx={{ px: 2, py: 1, bgcolor: 'primary.main', color: 'white' }}>
+        <Box sx={{ px: 2, py: 1, bgcolor: "primary.main", color: "white" }}>
           <Typography variant="caption" sx={{ opacity: 0.8 }}>
             Role
           </Typography>
-          <Typography variant="body2" fontWeight="bold" textTransform="capitalize">
+          <Typography
+            variant="body2"
+            fontWeight="bold"
+            textTransform="capitalize"
+          >
             {userRole}
           </Typography>
         </Box>
@@ -160,45 +217,83 @@ export default function DashboardLayout({
       <Divider />
       <List sx={{ flex: 1 }}>
         {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
-            <Tooltip title={!drawerOpen ? item.text : ''} placement="right">
+          <Box key={item.text}>
+            {/* Parent item */}
+            <ListItem disablePadding>
               <ListItemButton
-                onClick={() => handleNavigate(item.path)}
+                onClick={() =>
+                  item.children
+                    ? toggleSubmenu(item.text)
+                    : handleNavigate(item.path)
+                }
                 sx={{
                   minHeight: 48,
-                  justifyContent: drawerOpen ? 'initial' : 'center',
+                  justifyContent: drawerOpen ? "initial" : "center",
                   px: 2.5,
                 }}
               >
                 <ListItemIcon
                   sx={{
-                    color: 'primary.main',
+                    color: "primary.main",
                     minWidth: 0,
-                    mr: drawerOpen ? 3 : 'auto',
-                    justifyContent: 'center',
+                    mr: drawerOpen ? 3 : "auto",
+                    justifyContent: "center",
                   }}
                 >
                   {item.icon}
                 </ListItemIcon>
+
                 {drawerOpen && <ListItemText primary={item.text} />}
+
+                {/* Chevron untuk dropdown */}
+                {drawerOpen &&
+                  item.children &&
+                  (openMenus[item.text] ? (
+                    <ChevronLeftIcon />
+                  ) : (
+                    <ChevronRightIcon />
+                  ))}
               </ListItemButton>
-            </Tooltip>
-          </ListItem>
+            </ListItem>
+
+            {/* Child items / Submenu */}
+            {item.children && openMenus[item.text] && drawerOpen && (
+              <List component="div" disablePadding sx={{ pl: 4 }}>
+                {item.children.map((child) => (
+                  <ListItem key={child.text} disablePadding>
+                    <ListItemButton
+                      onClick={() => handleNavigate(child.path)}
+                      sx={{ minHeight: 42, pl: 3 }}
+                    >
+                      <ListItemIcon
+                        sx={{ color: "primary.main", minWidth: 36 }}
+                      >
+                        {child.icon}
+                      </ListItemIcon>
+                      <ListItemText primary={child.text} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </Box>
         ))}
       </List>
     </Box>
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <AppBar
         position="fixed"
         sx={{
           width: {
-            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed}px)`,
+            sm: `calc(100% - ${
+              drawerOpen ? drawerWidth : drawerWidthCollapsed
+            }px)`,
           },
           ml: { sm: `${drawerOpen ? drawerWidth : drawerWidthCollapsed}px` },
-          transition: 'all 0.3s',
+          transition: "all 0.3s",
         }}
       >
         <Toolbar>
@@ -207,12 +302,12 @@ export default function DashboardLayout({
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Dashboard {userRole === 'guru' ? 'Guru' : 'Admin'}
+            Dashboard {userRole === "guru" ? "Guru" : "Admin"}
           </Typography>
           <IconButton
             size="large"
@@ -222,7 +317,7 @@ export default function DashboardLayout({
             onClick={handleMenuOpen}
             color="inherit"
           >
-            <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
+            <Avatar sx={{ width: 32, height: 32, bgcolor: "secondary.main" }}>
               {userName.charAt(0).toUpperCase()}
             </Avatar>
           </IconButton>
@@ -230,13 +325,13 @@ export default function DashboardLayout({
             id="menu-appbar"
             anchorEl={anchorEl}
             anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
+              vertical: "bottom",
+              horizontal: "right",
             }}
             keepMounted
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
@@ -279,9 +374,9 @@ export default function DashboardLayout({
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
               width: drawerWidth,
             },
           }}
@@ -292,12 +387,12 @@ export default function DashboardLayout({
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
               width: drawerOpen ? drawerWidth : drawerWidthCollapsed,
-              transition: 'width 0.3s',
-              overflowX: 'hidden',
+              transition: "width 0.3s",
+              overflowX: "hidden",
             },
           }}
           open
@@ -311,11 +406,13 @@ export default function DashboardLayout({
           flexGrow: 1,
           p: 3,
           width: {
-            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed}px)`,
+            sm: `calc(100% - ${
+              drawerOpen ? drawerWidth : drawerWidthCollapsed
+            }px)`,
           },
-          minHeight: '100vh',
-          bgcolor: 'grey.50',
-          transition: 'all 0.3s',
+          minHeight: "100vh",
+          bgcolor: "grey.50",
+          transition: "all 0.3s",
         }}
       >
         <Toolbar />
