@@ -15,7 +15,6 @@ import {
   Avatar,
   Menu,
   MenuItem,
-  Tooltip,
 } from "@mui/material";
 import RecentActorsIcon from "@mui/icons-material/RecentActors";
 import {
@@ -25,9 +24,6 @@ import {
   Book as BookIcon,
   Assignment as AssignmentIcon,
   Settings as SettingsIcon,
-  BarChart as BarChartIcon,
-  School as SchoolIcon,
-  Class as ClassIcon,
   AccountCircle,
   ExitToApp,
   ChevronLeft as ChevronLeftIcon,
@@ -288,9 +284,8 @@ export default function DashboardLayout({
         position="fixed"
         sx={{
           width: {
-            sm: `calc(100% - ${
-              drawerOpen ? drawerWidth : drawerWidthCollapsed
-            }px)`,
+            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
+              }px)`,
           },
           ml: { sm: `${drawerOpen ? drawerWidth : drawerWidthCollapsed}px` },
           transition: "all 0.3s",
@@ -406,9 +401,8 @@ export default function DashboardLayout({
           flexGrow: 1,
           p: 3,
           width: {
-            sm: `calc(100% - ${
-              drawerOpen ? drawerWidth : drawerWidthCollapsed
-            }px)`,
+            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
+              }px)`,
           },
           minHeight: "100vh",
           bgcolor: "grey.50",
