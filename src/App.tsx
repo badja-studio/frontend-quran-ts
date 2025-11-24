@@ -6,6 +6,8 @@ import Login from './pages/Login';
 import GuruDashboard from './pages/Dashboard/GuruDashboard';
 import AdminDashboard from './pages/Dashboard/AdminDashboard';
 import GuruSiswa from './pages/Dashboard/GuruSiswa';
+import PesertaPage from "./pages/Peserta/PesertaPage";
+import PenilaianPage from "./pages/Asesor/PenilaianPage";
 
 function App() {
   return (
@@ -13,10 +15,12 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/dashboard/guru" element={<GuruDashboard />} />
-          <Route path="/dashboard/admin" element={<AdminDashboard />} />
           <Route path="/dashboard/siswa" element={<GuruSiswa />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/penilaian" element={<PenilaianPage />} />
+          <Route path="/peserta" element={<PesertaPage />} />
+          <Route path="/guru" element={<GuruDashboard />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </Router>
     </ThemeProvider>
@@ -24,4 +28,3 @@ function App() {
 }
 
 export default App;
-
