@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -11,58 +10,13 @@ import {
   InputAdornment,
   IconButton,
   Link,
-  Snackbar,
-  Alert,
-  CircularProgress,
 } from '@mui/material';
 import {
-  Visibility,
-  VisibilityOff,
   MenuBook as MenuBookIcon,
 } from '@mui/icons-material';
-import authService from '../services/authService';
 
 function Login() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    emailOrUsername: '',
-    password: '',
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      await authService.login(formData);
-      setSuccess('Login successful! Redirecting...');
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCloseSnackbar = () => {
-    setError('');
-    setSuccess('');
-  };
 
   return (
     <Box
@@ -89,13 +43,11 @@ function Login() {
 
         <Card sx={{ boxShadow: 3 }}>
           <CardContent sx={{ p: 4 }}>
-            <form onSubmit={handleSubmit}>
+            <form >
               <TextField
                 fullWidth
                 label="Email or Username"
                 name="emailOrUsername"
-                value={formData.emailOrUsername}
-                onChange={handleChange}
                 required
                 margin="normal"
                 variant="outlined"
@@ -107,9 +59,6 @@ function Login() {
                 fullWidth
                 label="Password"
                 name="password"
-                type={showPassword ? 'text' : 'password'}
-                value={formData.password}
-                onChange={handleChange}
                 required
                 margin="normal"
                 variant="outlined"
@@ -118,11 +67,9 @@ function Login() {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
                         edge="end"
                         aria-label="toggle password visibility"
                       >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -135,10 +82,9 @@ function Login() {
                 variant="contained"
                 color="primary"
                 size="large"
-                disabled={loading}
                 sx={{ mt: 3, mb: 2, py: 1.5 }}
               >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
+                Sing In
               </Button>
 
               <Box sx={{ textAlign: 'center', mt: 2 }}>
@@ -166,22 +112,6 @@ function Login() {
           </CardContent>
         </Card>
       </Container>
-
-      <Snackbar
-        open={!!error || !!success}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={error ? 'error' : 'success'}
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
-          {error || success}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

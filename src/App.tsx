@@ -3,7 +3,6 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme';
 import Login from './pages/Login';
-import Register from './pages/Register';
 import GuruDashboard from './pages/Dashboard/GuruDashboard';
 import AdminDashboard from './pages/Dashboard/AdminDashboard';
 
@@ -14,7 +13,6 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route path="/dashboard/guru" element={<GuruDashboard />} />
           <Route path="/dashboard/admin" element={<AdminDashboard />} />
         </Routes>
