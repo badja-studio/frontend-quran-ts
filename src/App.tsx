@@ -2,9 +2,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme';
-import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import GuruDashboard from './pages/Dashboard/GuruDashboard';
+import AdminDashboard from './pages/Dashboard/AdminDashboard';
 
 function App() {
   return (
@@ -12,9 +13,10 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/dashboard/guru" element={<GuruDashboard />} />
+          <Route path="/dashboard/admin" element={<AdminDashboard />} />
         </Routes>
       </Router>
     </ThemeProvider>
