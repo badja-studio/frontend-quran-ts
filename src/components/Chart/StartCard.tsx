@@ -24,8 +24,8 @@ export default function StatCard({
         background: `linear-gradient(135deg, ${color}, ${color}dd)`,
         color: "white",
 
-        width: 140,
-        height: 120,
+        width: "100%",
+        height: "100%",
 
         display: "flex",
         flexDirection: "column",

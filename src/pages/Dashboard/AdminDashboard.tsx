@@ -1,10 +1,5 @@
 import { Grid, Paper, Typography, Box, Card, CardContent } from "@mui/material";
-import {
-  People as PeopleIcon,
-  School as SchoolIcon,
-  Class as ClassIcon,
-  TrendingUp as TrendingUpIcon,
-} from "@mui/icons-material";
+import { People as PeopleIcon } from "@mui/icons-material";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import ParticipationGroup from "../../components/Chart/ParticipationGroup";
@@ -12,6 +7,8 @@ import ProvinceBarChart from "../../components/Chart/ProvinceBarChart";
 import PieChartWithInfo from "../../components/Chart/PieChartWithInfo";
 import StatCardGroup from "../../components/Chart/StatCardGroup";
 import DynamicBarChart from "../../components/Chart/DynamicBarChart";
+import ReusableKesalahanBarChart from "../../components/Chart/TinyBarChart";
+import MetrixGridTable from "../../components/Chart/MetrixGridTable";
 
 const participationData = [
   { title: "Partisipan", total: 252750, done: 107244, color: "#1E3A24" }, // Deep Forest Green
@@ -161,11 +158,72 @@ const kelancaranData = [
 ];
 
 const dataProvinsi = [
-  { name: "Jawa Barat", terendah: 72.4, rata: 87.16, tertinggi: 98.2 },
-  { name: "Jawa Tengah", terendah: 70.1, rata: 85.33, tertinggi: 96.5 },
-  { name: "Jawa Timur", terendah: 69.5, rata: 84.88, tertinggi: 97.8 },
+  { name: "Jabar", terendah: 72.4, rata: 87.16, tertinggi: 98.2 },
+  { name: "Jateng", terendah: 70.1, rata: 85.33, tertinggi: 96.5 },
+  { name: "Jatim", terendah: 69.5, rata: 84.88, tertinggi: 97.8 },
 ];
 
+const makharijKesalahanData = [
+  { name: "ع", total: 18500 },
+  { name: "غ", total: 20500 },
+  { name: "خ", total: 25500 },
+  { name: "د", total: 30000 },
+  { name: "ط", total: 30500 },
+  { name: "ق", total: 39500 },
+  { name: "ك", total: 47000 },
+  { name: "ف", total: 36500 },
+  { name: "م", total: 20000 },
+  { name: "ل", total: 26000 },
+];
+
+const sifatulHurufKesalahanData = [
+  { name: "ع", total: 35000 },
+  { name: "غ", total: 41000 },
+  { name: "خ", total: 18000 },
+  { name: "د", total: 29500 },
+  { name: "ط", total: 20000 },
+  { name: "ق", total: 45000 }, // Nilai tertinggi
+  { name: "ك", total: 33000 },
+  { name: "ف", total: 15500 }, // Nilai terendah
+  { name: "م", total: 27500 },
+  { name: "ل", total: 39000 },
+];
+
+const ahkamAlHurufKesalahanData = [
+  { name: "Ghünnah Musyaddadah", total: 52000 },
+  { name: "Idzghâm Bilaghünnah", total: 58000 },
+  { name: "Idzghâm Mutamassilain", total: 8000 },
+  { name: "Idzghâm Mutaqâribain", total: 10500 },
+  { name: "Ikhfâ", total: 68000 }, // Nilai Tertinggi
+  { name: "Iqlâb", total: 6500 },
+  { name: "Idzhâr Syafawi", total: 27000 },
+  { name: "Idzghâm Mimi", total: 12000 },
+  { name: "Ikhfâ Syafawi", total: 17000 },
+  { name: "Tanâfus", total: 32000 },
+];
+const madWaQashrKesalahanData = [
+  { name: "Mad Aridlissukun", total: 10000 },
+  { name: "Mad Iwadh", total: 21000 },
+  { name: "Mad Jaiz Muntashil", total: 28000 },
+  { name: "Mad Lazim Harfi Musaqqal", total: 65000 }, // Nilai Tertinggi
+  { name: "Mad Lazim Kilmi Mukhaffaf", total: 19000 },
+  { name: "Mad Shilah Qashira", total: 10000 },
+  { name: "Mad Thabi'i", total: 60000 },
+  { name: "Mad Wajib Muttashil", total: 35000 },
+  { name: "Qashr", total: 40000 },
+  { name: "Ziyadatul Mad", total: 55000 },
+];
+
+const penguranganNilaiData = [
+  {
+    name: "Kelebihan Waktu",
+    total: 0.28,
+  },
+  {
+    name: "Tidak Bisa Membaca",
+    total: 0.12, // Representasi 0.12%
+  },
+];
 export default function AdminDashboard() {
   return (
     <DashboardLayout
@@ -180,12 +238,19 @@ export default function AdminDashboard() {
         <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
           Kelola semua aspek sistem pembelajaran Quran.
         </Typography>
-
         {/* Statistics Cards */}
-        <Grid container spacing={3} sx={{ mb: 4, px: 2 }}>
+        <Grid
+          container
+          spacing={3}
+          sx={{ mb: 4, px: 2, justifyContent: "center", alignItems: "center" }}
+        >
           <ParticipationGroup items={participationData} />
         </Grid>
-        <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid
+          container
+          spacing={3}
+          sx={{ mb: 4, justifyContent: "center", alignContent: "center" }}
+        >
           <Grid item xs={12}>
             <Typography
               variant="h6"
@@ -205,7 +270,7 @@ export default function AdminDashboard() {
             barColor2="#800020"
           />
         </Grid>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} sx={{ mt: 4 }}>
           <Grid item xs={12} sm={6}>
             <PieChartWithInfo data={jenisKelaminData} size={260} />
           </Grid>
@@ -219,151 +284,104 @@ export default function AdminDashboard() {
             <PieChartWithInfo data={statusKampusData} size={260} />
           </Grid>
         </Grid>
-        <Grid container spacing={1} sx={{ my: 4 }}>
+        <Grid
+          container
+          spacing={1}
+          sx={{
+            p: 4,
+            px: 2,
+            pl: 5,
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
           <StatCardGroup items={dataDashboard} />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <DynamicBarChart
-            title="Capaian Nilai Ujian Peserta per Provinsi"
-            data={dataProvinsi}
-            keys={["terendah", "tertinggi", "rata"]}
-          />
-        </Grid>
-
-        <Grid item xs={12} md={6} sx={{ mt: 4 }}>
-          <DynamicBarChart
-            title="Persentase Kelancaran Membaca Al-Quran Peserta per Provinsi"
-            data={kelancaranData}
-            keys={["kurang_lancar", "lancar", "mahir"]}
-          />
-        </Grid>
-
-        {/* Main Content */}
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom fontWeight="bold">
-                Aktivitas Sistem
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                {[
-                  {
-                    action: "Guru baru terdaftar",
-                    detail: "Ustadzah Aisyah bergabung sebagai guru",
-                    time: "15 menit yang lalu",
-                  },
-                  {
-                    action: "Kelas baru dibuat",
-                    detail: "Kelas Tahfidz Tingkat Lanjut oleh Ustadz Ahmad",
-                    time: "1 jam yang lalu",
-                  },
-                  {
-                    action: "Update sistem",
-                    detail: "Fitur laporan bulanan telah diperbarui",
-                    time: "2 jam yang lalu",
-                  },
-                  {
-                    action: "Registrasi siswa",
-                    detail: "5 siswa baru mendaftar hari ini",
-                    time: "3 jam yang lalu",
-                  },
-                ].map((activity, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      py: 2,
-                      borderBottom: index < 3 ? "1px solid" : "none",
-                      borderColor: "divider",
-                    }}
-                  >
-                    <Typography variant="body2" fontWeight="medium">
-                      {activity.action}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {activity.detail}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {activity.time}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Paper>
+        <Grid container spacing={4} sx={{ mt: 4 }}>
+          {/* ===== ROW 1 ===== */}
+          <Grid item xs={12} md={6}>
+            <DynamicBarChart
+              title="Capaian Nilai Ujian Peserta per Provinsi"
+              data={dataProvinsi}
+              keys={["terendah", "tertinggi", "rata"]}
+            />
           </Grid>
-          <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 3, mb: 3 }}>
-              <Typography variant="h6" gutterBottom fontWeight="bold">
-                Quick Actions
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                {[
-                  "Tambah Guru Baru",
-                  "Buat Kelas Baru",
-                  "Lihat Laporan",
-                  "Pengaturan Sistem",
-                ].map((action, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      py: 1.5,
-                      px: 2,
-                      mb: 1,
-                      bgcolor: "primary.main",
-                      color: "white",
-                      borderRadius: 1,
-                      cursor: "pointer",
-                      "&:hover": {
-                        bgcolor: "primary.dark",
-                      },
-                    }}
-                  >
-                    <Typography variant="body2">{action}</Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Paper>
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom fontWeight="bold">
-                Status Sistem
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                {[
-                  { label: "Server", status: "Online", color: "success.main" },
-                  {
-                    label: "Database",
-                    status: "Online",
-                    color: "success.main",
-                  },
-                  { label: "Storage", status: "78%", color: "warning.main" },
-                ].map((item, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      py: 1.5,
-                      borderBottom: index < 2 ? "1px solid" : "none",
-                      borderColor: "divider",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography variant="body2">{item.label}</Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        bgcolor: item.color,
-                        color: "white",
-                        px: 1.5,
-                        py: 0.5,
-                        borderRadius: 1,
-                      }}
-                    >
-                      {item.status}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Paper>
+
+          <Grid item xs={12} md={6}>
+            <DynamicBarChart
+              title="Persentase Tingkat Kelancaran Al-Quran per Provinsi"
+              data={kelancaranData}
+              keys={["kurang_lancar", "lancar", "mahir"]}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Makharij Al-Huruf"
+              data={makharijKesalahanData}
+              headerColor="#00838F"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <ReusableKesalahanBarChart
+              data={makharijKesalahanData}
+              colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
+              height={350}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Shifat Al-Huruf"
+              data={sifatulHurufKesalahanData}
+              headerColor="#00838F"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <ReusableKesalahanBarChart
+              data={sifatulHurufKesalahanData}
+              colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
+              height={350}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Ahkam Al-Huruf"
+              data={ahkamAlHurufKesalahanData}
+              headerColor="#00838F"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <ReusableKesalahanBarChart
+              data={ahkamAlHurufKesalahanData}
+              colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
+              height={350}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Ahkam Al-Mad wa Qashr"
+              data={madWaQashrKesalahanData}
+              headerColor="#00838F"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <ReusableKesalahanBarChart
+              data={madWaQashrKesalahanData}
+              colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
+              height={350}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Pengurangan Nilai Peserta"
+              data={penguranganNilaiData}
+              headerColor="#00838F"
+            />
           </Grid>
         </Grid>
       </Box>

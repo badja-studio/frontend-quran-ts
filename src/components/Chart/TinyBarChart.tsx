@@ -1,3 +1,4 @@
+import React from "react";
 import {
   BarChart,
   Bar,
@@ -27,8 +28,18 @@ const ReusableKesalahanBarChart: React.FC<KesalahanBarProps> = ({
   return (
     <div style={{ width: "100%", height }}>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data}>
-          <XAxis dataKey="name" />
+        <BarChart
+          data={data}
+          margin={{ top: 10, right: 10, left: 0, bottom: 80 }}
+        >
+          <XAxis
+            dataKey="name"
+            angle={-45}
+            textAnchor="end"
+            interval={0}
+            height={80}
+            tick={{ fontSize: 12 }}
+          />
           <YAxis />
           <Tooltip />
 

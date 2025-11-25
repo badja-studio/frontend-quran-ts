@@ -22,10 +22,22 @@ function App() {
           <Route path="/" element={<Login />} />
 
           {/* ADMIN */}
-          <Route path="/dashboard/data-peserta" element={<ListPagesDataPeserta />} />
-          <Route path="/dashboard/siap-asesmen" element={<ListPagesDataPesertaSiapAssement />} />
-          <Route path="/dashboard/belum-asesmen" element={<ListPagesDataPesertaBelomAsesmen />} />
-          <Route path="/dashboard/hasil-asesmen" element={<ListPagesDataPesertaHasilAsesmen />} />
+          <Route
+            path="/dashboard/data-peserta"
+            element={<ListPagesDataPeserta />}
+          />
+          <Route
+            path="/dashboard/siap-asesmen"
+            element={<ListPagesDataPesertaSiapAssement />}
+          />
+          <Route
+            path="/dashboard/belum-asesmen"
+            element={<ListPagesDataPesertaBelomAsesmen />}
+          />
+          <Route
+            path="/dashboard/hasil-asesmen"
+            element={<ListPagesDataPesertaHasilAsesmen />}
+          />
           <Route path="/dashboard/admin" element={<AdminDashboard />} />
 
           {/* ASESOR atau GURU */}

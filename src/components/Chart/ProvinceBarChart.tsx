@@ -33,9 +33,10 @@ export default function ProvinceBarChart({
       responsive
       style={{
         width: "100%",
-        maxWidth: maxWidth,
-        maxHeight: "70vh",
+        height: "100%",
         aspectRatio: 1.618,
+        justifyContent: "center",
+        alignItems: "center",
       }}
       margin={{ top: 25, right: 10, left: 10, bottom: 50 }}
     >
