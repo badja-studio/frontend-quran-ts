@@ -5,12 +5,13 @@ import {
   Class as ClassIcon,
   TrendingUp as TrendingUpIcon,
 } from "@mui/icons-material";
+
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import ParticipationGroup from "../../components/Chart/ParticipationGroup";
 import ProvinceBarChart from "../../components/Chart/ProvinceBarChart";
-import ReusableKesalahanBarChart from "../../components/Chart/TinyBarChart";
-import ReusablePieChart from "../../components/Chart/PieChart";
 import PieChartWithInfo from "../../components/Chart/PieChartWithInfo";
+import StatCardGroup from "../../components/Chart/StatCardGroup";
+import DynamicBarChart from "../../components/Chart/DynamicBarChart";
 
 const participationData = [
   { title: "Partisipan", total: 252750, done: 107244, color: "#1E3A24" }, // Deep Forest Green
@@ -92,36 +93,77 @@ const statusKampusData = [
   { name: "Swasta", value: 7400 },
 ];
 
-// Hardcoded data untuk demo
-const stats = [
+const dataDashboard = [
   {
-    title: "Total Pengguna",
-    value: "256",
-    icon: <PeopleIcon sx={{ fontSize: 40 }} />,
-    color: "#1976d2",
-    change: "+12%",
+    value: "87,87",
+    label: "Rata² Nilai Peserta",
+    color: "#1B5E20",
+    icon: <PeopleIcon />,
   },
   {
-    title: "Total Guru",
-    value: "24",
-    icon: <SchoolIcon sx={{ fontSize: 40 }} />,
-    color: "#2e7d32",
-    change: "+3",
+    value: "87,16",
+    label: "Rata² PAUD/TK",
+    color: "#FFC107",
+    icon: <PeopleIcon />,
   },
   {
-    title: "Total Kelas",
-    value: "18",
-    icon: <ClassIcon sx={{ fontSize: 40 }} />,
-    color: "#ed6c02",
-    change: "+2",
+    value: "87,52",
+    label: "Rata² SD",
+    color: "#D32F2F",
+    icon: <PeopleIcon />,
   },
   {
-    title: "Siswa Aktif",
-    value: "208",
-    icon: <TrendingUpIcon sx={{ fontSize: 40 }} />,
-    color: "#9c27b0",
-    change: "+15%",
+    value: "88,61",
+    label: "Rata² SMP",
+    color: "#1565C0",
+    icon: <PeopleIcon />,
   },
+  {
+    value: "88,64",
+    label: "Rata² SMA/Umum",
+    color: "#546E7A",
+    icon: <PeopleIcon />,
+  },
+  {
+    value: "88,11",
+    label: "Rata² Pengawas",
+    color: "#E64A19",
+    icon: <PeopleIcon />,
+  },
+];
+
+const kelancaranData = [
+  // Total setiap provinsi = 100%
+  // --- Pulau Jawa ---
+  { name: "Jabar", lancar: 60, mahir: 30, kurang_lancar: 10 },
+  { name: "Jateng", lancar: 55, mahir: 35, kurang_lancar: 10 },
+  { name: "Jatim", lancar: 65, mahir: 25, kurang_lancar: 10 },
+  { name: "DKI", lancar: 70, mahir: 20, kurang_lancar: 10 },
+  { name: "Banten", lancar: 50, mahir: 35, kurang_lancar: 15 },
+
+  // --- Sumatera & Kalimantan ---
+  { name: "Sumut", lancar: 45, mahir: 40, kurang_lancar: 15 },
+  { name: "Sumsel", lancar: 40, mahir: 45, kurang_lancar: 15 },
+  { name: "Riau", lancar: 58, mahir: 32, kurang_lancar: 10 },
+  { name: "Lampung", lancar: 35, mahir: 40, kurang_lancar: 25 },
+  { name: "Kaltim", lancar: 68, mahir: 20, kurang_lancar: 12 },
+
+  // --- Sulawesi, Bali, & NTT ---
+  { name: "Sulsel", lancar: 52, mahir: 38, kurang_lancar: 10 },
+  { name: "Sulut", lancar: 63, mahir: 27, kurang_lancar: 10 },
+  { name: "Bali", lancar: 75, mahir: 15, kurang_lancar: 10 },
+  { name: "NTB", lancar: 48, mahir: 42, kurang_lancar: 10 },
+  { name: "NTT", lancar: 30, mahir: 45, kurang_lancar: 25 },
+
+  // --- Provinsi Lain ---
+  { name: "Papua", lancar: 25, mahir: 50, kurang_lancar: 25 },
+  { name: "DIY", lancar: 72, mahir: 23, kurang_lancar: 5 },
+];
+
+const dataProvinsi = [
+  { name: "Jawa Barat", terendah: 72.4, rata: 87.16, tertinggi: 98.2 },
+  { name: "Jawa Tengah", terendah: 70.1, rata: 85.33, tertinggi: 96.5 },
+  { name: "Jawa Timur", terendah: 69.5, rata: 84.88, tertinggi: 97.8 },
 ];
 
 export default function AdminDashboard() {
@@ -176,6 +218,24 @@ export default function AdminDashboard() {
           <Grid item xs={12} sm={6}>
             <PieChartWithInfo data={statusKampusData} size={260} />
           </Grid>
+        </Grid>
+        <Grid container spacing={1} sx={{ my: 4 }}>
+          <StatCardGroup items={dataDashboard} />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <DynamicBarChart
+            title="Capaian Nilai Ujian Peserta per Provinsi"
+            data={dataProvinsi}
+            keys={["terendah", "tertinggi", "rata"]}
+          />
+        </Grid>
+
+        <Grid item xs={12} md={6} sx={{ mt: 4 }}>
+          <DynamicBarChart
+            title="Persentase Kelancaran Membaca Al-Quran Peserta per Provinsi"
+            data={kelancaranData}
+            keys={["kurang_lancar", "lancar", "mahir"]}
+          />
         </Grid>
 
         {/* Main Content */}
