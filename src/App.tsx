@@ -15,11 +15,10 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/dashboard/siswa" element={<GuruSiswa />} />
           <Route path="/" element={<Login />} />
           <Route path="dashboard/guru" element={<GuruDashboard />} />
           <Route path="dashboard/admin" element={<AdminDashboard />} />
-
+          <Route path="/dashboard/siswa" element={<GuruSiswa />} />
           <Route path="/penilaian" element={<PenilaianPage />} />
           <Route path="/peserta" element={<PesertaPage />} />
         </Routes>

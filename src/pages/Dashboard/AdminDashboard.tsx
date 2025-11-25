@@ -161,9 +161,9 @@ const kelancaranData = [
 ];
 
 const dataProvinsi = [
-  { name: "Jawa Barat", terendah: 72.4, rata: 87.16, tertinggi: 98.2 },
-  { name: "Jawa Tengah", terendah: 70.1, rata: 85.33, tertinggi: 96.5 },
-  { name: "Jawa Timur", terendah: 69.5, rata: 84.88, tertinggi: 97.8 },
+  { name: "Jabar", terendah: 72.4, rata: 87.16, tertinggi: 98.2 },
+  { name: "Jateng", terendah: 70.1, rata: 85.33, tertinggi: 96.5 },
+  { name: "Jatim", terendah: 69.5, rata: 84.88, tertinggi: 97.8 },
 ];
 
 export default function AdminDashboard() {
@@ -182,10 +182,18 @@ export default function AdminDashboard() {
         </Typography>
 
         {/* Statistics Cards */}
-        <Grid container spacing={3} sx={{ mb: 4, px: 2 }}>
+        <Grid
+          container
+          spacing={3}
+          sx={{ mb: 4, px: 2, justifyContent: "center", alignItems: "center" }}
+        >
           <ParticipationGroup items={participationData} />
         </Grid>
-        <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid
+          container
+          spacing={3}
+          sx={{ mb: 4, justifyContent: "center", alignContent: "center" }}
+        >
           <Grid item xs={12}>
             <Typography
               variant="h6"
@@ -205,7 +213,7 @@ export default function AdminDashboard() {
             barColor2="#800020"
           />
         </Grid>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} sx={{ mt: 4 }}>
           <Grid item xs={12} sm={6}>
             <PieChartWithInfo data={jenisKelaminData} size={260} />
           </Grid>
@@ -219,151 +227,37 @@ export default function AdminDashboard() {
             <PieChartWithInfo data={statusKampusData} size={260} />
           </Grid>
         </Grid>
-        <Grid container spacing={1} sx={{ my: 4 }}>
+        <Grid
+          container
+          spacing={1}
+          sx={{
+            p: 4,
+            px: 2,
+            pl: 5,
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
           <StatCardGroup items={dataDashboard} />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <DynamicBarChart
-            title="Capaian Nilai Ujian Peserta per Provinsi"
-            data={dataProvinsi}
-            keys={["terendah", "tertinggi", "rata"]}
-          />
-        </Grid>
-
-        <Grid item xs={12} md={6} sx={{ mt: 4 }}>
-          <DynamicBarChart
-            title="Persentase Kelancaran Membaca Al-Quran Peserta per Provinsi"
-            data={kelancaranData}
-            keys={["kurang_lancar", "lancar", "mahir"]}
-          />
-        </Grid>
-
-        {/* Main Content */}
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom fontWeight="bold">
-                Aktivitas Sistem
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                {[
-                  {
-                    action: "Guru baru terdaftar",
-                    detail: "Ustadzah Aisyah bergabung sebagai guru",
-                    time: "15 menit yang lalu",
-                  },
-                  {
-                    action: "Kelas baru dibuat",
-                    detail: "Kelas Tahfidz Tingkat Lanjut oleh Ustadz Ahmad",
-                    time: "1 jam yang lalu",
-                  },
-                  {
-                    action: "Update sistem",
-                    detail: "Fitur laporan bulanan telah diperbarui",
-                    time: "2 jam yang lalu",
-                  },
-                  {
-                    action: "Registrasi siswa",
-                    detail: "5 siswa baru mendaftar hari ini",
-                    time: "3 jam yang lalu",
-                  },
-                ].map((activity, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      py: 2,
-                      borderBottom: index < 3 ? "1px solid" : "none",
-                      borderColor: "divider",
-                    }}
-                  >
-                    <Typography variant="body2" fontWeight="medium">
-                      {activity.action}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {activity.detail}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {activity.time}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Paper>
+        <Grid container spacing={4}>
+          {/* Kiri */}
+          <Grid item xs={12} md={6}>
+            <DynamicBarChart
+              title="Capaian Nilai Ujian Peserta per Provinsi"
+              data={dataProvinsi}
+              keys={["terendah", "tertinggi", "rata"]}
+            />
           </Grid>
-          <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 3, mb: 3 }}>
-              <Typography variant="h6" gutterBottom fontWeight="bold">
-                Quick Actions
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                {[
-                  "Tambah Guru Baru",
-                  "Buat Kelas Baru",
-                  "Lihat Laporan",
-                  "Pengaturan Sistem",
-                ].map((action, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      py: 1.5,
-                      px: 2,
-                      mb: 1,
-                      bgcolor: "primary.main",
-                      color: "white",
-                      borderRadius: 1,
-                      cursor: "pointer",
-                      "&:hover": {
-                        bgcolor: "primary.dark",
-                      },
-                    }}
-                  >
-                    <Typography variant="body2">{action}</Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Paper>
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom fontWeight="bold">
-                Status Sistem
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                {[
-                  { label: "Server", status: "Online", color: "success.main" },
-                  {
-                    label: "Database",
-                    status: "Online",
-                    color: "success.main",
-                  },
-                  { label: "Storage", status: "78%", color: "warning.main" },
-                ].map((item, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      py: 1.5,
-                      borderBottom: index < 2 ? "1px solid" : "none",
-                      borderColor: "divider",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography variant="body2">{item.label}</Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        bgcolor: item.color,
-                        color: "white",
-                        px: 1.5,
-                        py: 0.5,
-                        borderRadius: 1,
-                      }}
-                    >
-                      {item.status}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Paper>
+
+          {/* Kanan */}
+          <Grid item xs={12} md={6}>
+            <DynamicBarChart
+              title="Persentase Tingkat Kelancaran Al-Quran per Provinsi"
+              data={kelancaranData}
+              keys={["kurang_lancar", "lancar", "mahir"]}
+            />
           </Grid>
         </Grid>
       </Box>
