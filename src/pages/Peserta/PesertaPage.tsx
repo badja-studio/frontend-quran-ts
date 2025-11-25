@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Card,
@@ -7,30 +7,54 @@ import {
   Grid,
   Avatar,
   Button,
-  Divider,
 } from "@mui/material";
 import { Person, Edit, Visibility, AccessTime } from "@mui/icons-material";
+import AsesmenResultModal from "../../components/Peserta/AsesmenResultModal";
+
+interface AsesmenItem {
+  asesor: string;
+  waktu: string;
+  status: string;
+}
+
+const peserta = {
+  akun: "320230003003",
+  nama: "Neneng Halimah",
+  level: "Guru",
+  jenjang: "SMP",
+  status: "NON PNS",
+  sekolah: "SMP ISLAM TERPADU YASPIDA 2",
+  kabupaten: "KABUPATEN SUKABUMI",
+  provinsi: "JAWA BARAT",
+  pendidikan: "S1 Pendidikan Agama Islam",
+};
+
+const asesmen: AsesmenItem[] = [
+  {
+    asesor: "Liana Masruroh",
+    waktu: "27/08/2025 19:26–19:28",
+    status: "selesai asesmen",
+  },
+];
 
 const PesertaPage: React.FC = () => {
-  const peserta = {
-    akun: "320230003003",
-    nama: "Neneng Halimah",
-    level: "Guru",
-    jenjang: "SMP",
-    status: "NON PNS",
-    sekolah: "SMP ISLAM TERPADU YASPIDA 2",
-    kabupaten: "KABUPATEN SUKABUMI",
-    provinsi: "JAWA BARAT",
-    pendidikan: "S1 Pendidikan Agama Islam",
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedAsesmen, setSelectedAsesmen] = useState<AsesmenItem | null>(
+    null
+  );
+
+  const handleOpen = (asesmen: AsesmenItem) => {
+    setSelectedAsesmen(asesmen);
+    setModalVisible(true);
   };
 
-  const asesmen = [
-    {
-      asesor: "Liana Masruroh",
-      waktu: "27/08/2025 19:26–19:28",
-      status: "Lihat Hasil",
-    },
-  ];
+  const handleClose = () => {
+    setModalVisible(false);
+    setSelectedAsesmen(null);
+  };
+
+  const isAssessmentCompleted = (status: string) =>
+    status.toLowerCase().includes("selesai");
 
   return (
     <Box
@@ -52,11 +76,7 @@ const PesertaPage: React.FC = () => {
           boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
         }}
       >
-        <Person
-          sx={{
-            fontSize: { xs: 20, sm: 26, md: 32 },
-          }}
-        />
+        <Person sx={{ fontSize: { xs: 20, sm: 26, md: 32 } }} />
 
         <Typography
           variant="h4"
@@ -87,7 +107,6 @@ const PesertaPage: React.FC = () => {
               },
             }}
           >
-            {/* HEADER CARD */}
             <Box
               sx={{
                 bgcolor: "primary.main",
@@ -98,18 +117,8 @@ const PesertaPage: React.FC = () => {
                 gap: 1,
               }}
             >
-              <Person
-                sx={{
-                  fontSize: { xs: 20, sm: 26, md: 32 },
-                }}
-              />
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{
-                  fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
-                }}
-              >
+              <Person sx={{ fontSize: { xs: 20, sm: 26, md: 32 } }} />
+              <Typography variant="h6" fontWeight="bold">
                 Data Peserta
               </Typography>
             </Box>
@@ -146,9 +155,6 @@ const PesertaPage: React.FC = () => {
                         variant="body2"
                         color="text.secondary"
                         fontWeight={600}
-                        sx={{
-                          fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
-                        }}
                       >
                         {label}
                       </Typography>
@@ -162,8 +168,6 @@ const PesertaPage: React.FC = () => {
                           borderRadius: 2,
                           background: "#f8f9fa",
                           border: "1px solid #e0e0e0",
-
-                          fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
                         }}
                       >
                         {value}
@@ -171,15 +175,12 @@ const PesertaPage: React.FC = () => {
                     </Box>
                   ))}
 
-                  {/* Pendidikan + Edit */}
+                  {/* Pendidikan */}
                   <Box sx={{ mt: 3 }}>
                     <Typography
                       variant="body2"
                       color="text.secondary"
                       fontWeight={600}
-                      sx={{
-                        fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
-                      }}
                     >
                       Pendidikan Terakhir
                     </Typography>
@@ -201,7 +202,6 @@ const PesertaPage: React.FC = () => {
                           borderRadius: 2,
                           background: "#f8f9fa",
                           border: "1px solid #e0e0e0",
-                          fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
                         }}
                       >
                         {peserta.pendidikan}
@@ -211,12 +211,7 @@ const PesertaPage: React.FC = () => {
                         variant="contained"
                         color="secondary"
                         startIcon={<Edit />}
-                        sx={{
-                          textTransform: "none",
-                          fontWeight: "bold",
-                          borderRadius: 2,
-                          px: 3,
-                        }}
+                        sx={{ textTransform: "none", fontWeight: "bold" }}
                       >
                         Edit
                       </Button>
@@ -252,18 +247,8 @@ const PesertaPage: React.FC = () => {
                 gap: 1,
               }}
             >
-              <AccessTime
-                sx={{
-                  fontSize: { xs: 20, sm: 26, md: 32 },
-                }}
-              />
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{
-                  fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
-                }}
-              >
+              <AccessTime sx={{ fontSize: { xs: 20, sm: 26, md: 32 } }} />
+              <Typography variant="h6" fontWeight="bold">
                 Asesmen
               </Typography>
             </Box>
@@ -279,73 +264,55 @@ const PesertaPage: React.FC = () => {
                     border: "1px solid #ddd",
                     background: "white",
                     transition: "0.3s",
-                    "&:hover": {
-                      borderColor: "primary.main",
-                      boxShadow: "0 8px 18px rgba(0,150,0,0.1)",
-                      transform: "translateY(-4px)",
-                    },
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
-                    }}
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     Asesor
                   </Typography>
-                  <Typography
-                    variant="h6"
-                    fontWeight="bold"
-                    sx={{
-                      mb: 1.5,
-                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
-                    }}
-                  >
+                  <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
                     {row.asesor}
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
-                    }}
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     Waktu
                   </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      mb: 2,
-                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
-                    }}
-                  >
+                  <Typography variant="body1" sx={{ mb: 2 }}>
                     {row.waktu}
                   </Typography>
 
-                  <Button
-                    variant="contained"
-                    startIcon={<Visibility />}
-                    fullWidth
-                    sx={{
-                      textTransform: "none",
-                      fontWeight: "bold",
-                      borderRadius: 2,
-                      py: 1.2,
-
-                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
-                    }}
-                  >
-                    {row.status}
-                  </Button>
+                  {isAssessmentCompleted(row.status) ? (
+                    <Button
+                      variant="contained"
+                      startIcon={<Visibility />}
+                      fullWidth
+                      sx={{ textTransform: "none", fontWeight: "bold" }}
+                      onClick={() => handleOpen(row)}
+                    >
+                      Lihat Hasil
+                    </Button>
+                  ) : (
+                    <Button variant="outlined" color="error" fullWidth disabled>
+                      Belum Asesmen
+                    </Button>
+                  )}
                 </Box>
               ))}
             </CardContent>
           </Card>
         </Grid>
       </Grid>
+
+      {/* MODAL HASIL ASESMEN */}
+      {selectedAsesmen && (
+        <AsesmenResultModal
+          open={modalVisible}
+          onClose={handleClose}
+          pesertaName={peserta.nama}
+          asesorName={selectedAsesmen.asesor}
+          waktuPelaksanaan={selectedAsesmen.waktu}
+          nilaiAkhir={87.5} // dummy
+        />
+      )}
     </Box>
   );
 };

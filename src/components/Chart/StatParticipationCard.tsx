@@ -25,17 +25,25 @@ export default function StatParticipationCard({
         boxShadow: 3,
         width: "100%",
         height: "100%",
+        display: "flex",
         flexDirection: "column",
         justifyContent: "center",
+        padding: "clamp(0.5rem, 1vw, 1rem)",
       }}
     >
-      <CardContent sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+      <CardContent
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "clamp(0.2rem, 0.5vw, 0.5rem)",
+        }}
+      >
         {/* Angka utama */}
         <Typography
           variant="h5"
           fontWeight="bold"
           sx={{
-            fontSize: { xs: "1.2rem", sm: "1.5rem", md: "1.7rem" }, // responsif
+            fontSize: { xs: "1.2rem", sm: "1.5rem", md: "1.7rem" },
           }}
         >
           {done.toLocaleString()}
@@ -49,7 +57,12 @@ export default function StatParticipationCard({
           {title}
         </Typography>
 
-        <Divider sx={{ borderColor: "rgba(255,255,255,0.4)", my: 1 }} />
+        <Divider
+          sx={{
+            borderColor: "rgba(255,255,255,0.4)",
+            my: "clamp(0.5rem, 1vw, 1rem)",
+          }}
+        />
 
         {/* Detail: DARI, BELUM, PERSEN */}
         <Box display="flex" justifyContent="space-between">

@@ -53,7 +53,7 @@ const ReusablePieChart: React.FC<ReusablePieChartProps> = ({
 
   return (
     <PieChart
-      style={{ width: "100%", maxWidth: size, aspectRatio: 1 }}
+      style={{ width: "100%", height: "100%", aspectRatio: 1 }}
       responsive
     >
       <Tooltip

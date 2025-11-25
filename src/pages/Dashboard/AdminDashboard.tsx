@@ -1,10 +1,5 @@
 import { Grid, Paper, Typography, Box, Card, CardContent } from "@mui/material";
-import {
-  People as PeopleIcon,
-  School as SchoolIcon,
-  Class as ClassIcon,
-  TrendingUp as TrendingUpIcon,
-} from "@mui/icons-material";
+import { People as PeopleIcon } from "@mui/icons-material";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import ParticipationGroup from "../../components/Chart/ParticipationGroup";
@@ -12,6 +7,8 @@ import ProvinceBarChart from "../../components/Chart/ProvinceBarChart";
 import PieChartWithInfo from "../../components/Chart/PieChartWithInfo";
 import StatCardGroup from "../../components/Chart/StatCardGroup";
 import DynamicBarChart from "../../components/Chart/DynamicBarChart";
+import ReusableKesalahanBarChart from "../../components/Chart/TinyBarChart";
+import MetrixGridTable from "../../components/Chart/MetrixGridTable";
 
 const participationData = [
   { title: "Partisipan", total: 252750, done: 107244, color: "#1E3A24" }, // Deep Forest Green
@@ -166,6 +163,67 @@ const dataProvinsi = [
   { name: "Jatim", terendah: 69.5, rata: 84.88, tertinggi: 97.8 },
 ];
 
+const makharijKesalahanData = [
+  { name: "ع", total: 18500 },
+  { name: "غ", total: 20500 },
+  { name: "خ", total: 25500 },
+  { name: "د", total: 30000 },
+  { name: "ط", total: 30500 },
+  { name: "ق", total: 39500 },
+  { name: "ك", total: 47000 },
+  { name: "ف", total: 36500 },
+  { name: "م", total: 20000 },
+  { name: "ل", total: 26000 },
+];
+
+const sifatulHurufKesalahanData = [
+  { name: "ع", total: 35000 },
+  { name: "غ", total: 41000 },
+  { name: "خ", total: 18000 },
+  { name: "د", total: 29500 },
+  { name: "ط", total: 20000 },
+  { name: "ق", total: 45000 }, // Nilai tertinggi
+  { name: "ك", total: 33000 },
+  { name: "ف", total: 15500 }, // Nilai terendah
+  { name: "م", total: 27500 },
+  { name: "ل", total: 39000 },
+];
+
+const ahkamAlHurufKesalahanData = [
+  { name: "Ghünnah Musyaddadah", total: 52000 },
+  { name: "Idzghâm Bilaghünnah", total: 58000 },
+  { name: "Idzghâm Mutamassilain", total: 8000 },
+  { name: "Idzghâm Mutaqâribain", total: 10500 },
+  { name: "Ikhfâ", total: 68000 }, // Nilai Tertinggi
+  { name: "Iqlâb", total: 6500 },
+  { name: "Idzhâr Syafawi", total: 27000 },
+  { name: "Idzghâm Mimi", total: 12000 },
+  { name: "Ikhfâ Syafawi", total: 17000 },
+  { name: "Tanâfus", total: 32000 },
+];
+const madWaQashrKesalahanData = [
+  { name: "Mad Aridlissukun", total: 10000 },
+  { name: "Mad Iwadh", total: 21000 },
+  { name: "Mad Jaiz Muntashil", total: 28000 },
+  { name: "Mad Lazim Harfi Musaqqal", total: 65000 }, // Nilai Tertinggi
+  { name: "Mad Lazim Kilmi Mukhaffaf", total: 19000 },
+  { name: "Mad Shilah Qashira", total: 10000 },
+  { name: "Mad Thabi'i", total: 60000 },
+  { name: "Mad Wajib Muttashil", total: 35000 },
+  { name: "Qashr", total: 40000 },
+  { name: "Ziyadatul Mad", total: 55000 },
+];
+
+const penguranganNilaiData = [
+  {
+    name: "Kelebihan Waktu",
+    total: 0.28,
+  },
+  {
+    name: "Tidak Bisa Membaca",
+    total: 0.12, // Representasi 0.12%
+  },
+];
 export default function AdminDashboard() {
   return (
     <DashboardLayout
@@ -180,7 +238,6 @@ export default function AdminDashboard() {
         <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
           Kelola semua aspek sistem pembelajaran Quran.
         </Typography>
-
         {/* Statistics Cards */}
         <Grid
           container
@@ -241,8 +298,8 @@ export default function AdminDashboard() {
         >
           <StatCardGroup items={dataDashboard} />
         </Grid>
-        <Grid container spacing={4}>
-          {/* Kiri */}
+        <Grid container spacing={4} sx={{ mt: 4 }}>
+          {/* ===== ROW 1 ===== */}
           <Grid item xs={12} md={6}>
             <DynamicBarChart
               title="Capaian Nilai Ujian Peserta per Provinsi"
@@ -251,12 +308,79 @@ export default function AdminDashboard() {
             />
           </Grid>
 
-          {/* Kanan */}
           <Grid item xs={12} md={6}>
             <DynamicBarChart
               title="Persentase Tingkat Kelancaran Al-Quran per Provinsi"
               data={kelancaranData}
               keys={["kurang_lancar", "lancar", "mahir"]}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Makharij Al-Huruf"
+              data={makharijKesalahanData}
+              headerColor="#00838F"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <ReusableKesalahanBarChart
+              data={makharijKesalahanData}
+              colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
+              height={350}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Shifat Al-Huruf"
+              data={sifatulHurufKesalahanData}
+              headerColor="#00838F"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <ReusableKesalahanBarChart
+              data={sifatulHurufKesalahanData}
+              colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
+              height={350}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Ahkam Al-Huruf"
+              data={ahkamAlHurufKesalahanData}
+              headerColor="#00838F"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <ReusableKesalahanBarChart
+              data={ahkamAlHurufKesalahanData}
+              colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
+              height={350}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Ahkam Al-Mad wa Qashr"
+              data={madWaQashrKesalahanData}
+              headerColor="#00838F"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <ReusableKesalahanBarChart
+              data={madWaQashrKesalahanData}
+              colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
+              height={350}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Pengurangan Nilai Peserta"
+              data={penguranganNilaiData}
+              headerColor="#00838F"
             />
           </Grid>
         </Grid>

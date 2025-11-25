@@ -77,8 +77,8 @@ const menuConfig: MenuConfig = {
   ],
   admin: [
     { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
-    { text: "Data Peserta", icon: <PeopleIcon />, path: "/dashboard/users" },
-    { text: "Rekap Asesor", icon: <PeopleIcon />, path: "/dashboard/guru" },
+    { text: "Data Peserta", icon: <PeopleIcon />, path: "/dashboard/data-peserta" },
+    { text: "Rekap Asesor", icon: <PeopleIcon />, path: "/dashboard/rekap-asesor" },
     {
       text: "Asesmen",
       icon: <BookIcon />,

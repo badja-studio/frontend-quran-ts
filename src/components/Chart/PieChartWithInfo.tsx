@@ -21,7 +21,7 @@ const PieChartWithInfo: React.FC<PieChartWithInfoProps> = ({
       sx={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "center", // ⬅⟵ posisi benar-benar tengah
+        alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
         width: "40%",
@@ -31,7 +31,13 @@ const PieChartWithInfo: React.FC<PieChartWithInfoProps> = ({
       <ReusablePieChart data={data} colors={colors} size={size} />
 
       <Box mt={2} sx={{ width: "100%", maxWidth: 220 }}>
-        <Typography fontWeight={600} mb={1}>
+        <Typography
+          fontWeight={600}
+          mb={1}
+          sx={{
+            fontSize: "clamp(0.9rem, 2vw, 1.2rem)",
+          }}
+        >
           Total: {totalAll.toLocaleString()}
         </Typography>
 
@@ -55,7 +61,11 @@ const PieChartWithInfo: React.FC<PieChartWithInfoProps> = ({
                   }}
                 />
 
-                <Typography fontSize={10} textAlign="left">
+                <Typography
+                  fontSize={10}
+                  textAlign="left"
+                  sx={{ fontSize: "clamp(0.9rem, 2vw, 1.2rem)" }}
+                >
                   {item.name}: {item.value.toLocaleString()} ({percent}%)
                 </Typography>
               </Box>

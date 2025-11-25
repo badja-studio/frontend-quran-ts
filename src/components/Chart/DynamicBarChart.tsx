@@ -38,17 +38,19 @@ const DynamicBarChart: React.FC<DynamicBarChartProps> = ({
             textAlign: "center",
             marginBottom: "15px",
             color: "#333",
-            fontSize: "clamp(1rem, 2vw, 1.5rem)",
+            fontSize: "clamp(1rem, 1.2vw, 1.3rem)",
           }}
         >
           {title}
         </h3>
       )}
 
-      <ResponsiveContainer width="100%" aspect={1.8}>
+      <ResponsiveContainer width="100%" height={350}>
         <BarChart
           data={data}
           margin={{ top: 50, right: 20, left: 5, bottom: 50 }}
+          width="100%"
+          height="100%"
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
@@ -56,7 +58,7 @@ const DynamicBarChart: React.FC<DynamicBarChartProps> = ({
             tick={{ fontSize: 10 }}
             angle={-45}
             textAnchor="end"
-            interval={0} // menampilkan semua label, tapi bisa diubah di mobile
+            interval={0}
           />
           <YAxis />
           <Tooltip />
