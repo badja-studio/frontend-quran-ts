@@ -1,4 +1,4 @@
-import { Cell, Pie, PieChart, PieLabelRenderProps } from "recharts";
+import { Cell, Pie, PieChart, Tooltip, PieLabelRenderProps } from "recharts";
 
 export interface PieDataItem {
   name: string;
@@ -36,6 +36,7 @@ const renderCustomizedLabel = ({
       fill="#fff"
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
+      fontSize={13}
     >
       {`${((percent ?? 1) * 100).toFixed(0)}%`}
     </text>
@@ -48,15 +49,20 @@ const ReusablePieChart: React.FC<ReusablePieChartProps> = ({
   isAnimationActive = true,
   size = "500px",
 }) => {
+  const total = data.reduce((sum, d) => sum + d.value, 0);
+
   return (
     <PieChart
-      style={{
-        width: "100%",
-        maxWidth: size,
-        aspectRatio: 1,
-      }}
+      style={{ width: "100%", maxWidth: size, aspectRatio: 1 }}
       responsive
     >
+      <Tooltip
+        formatter={(value: number, name: string) => {
+          const percent = ((value / total) * 100).toFixed(2);
+          return [`${value.toLocaleString()} (${percent}%)`, name];
+        }}
+      />
+
       <Pie
         data={data}
         labelLine={false}
