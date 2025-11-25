@@ -1,17 +1,14 @@
+import React, { useState } from "react";
 import {
   Box,
   Card,
-  CardContent,
   Typography,
   Grid,
-  Avatar,
   Button,
+  Paper,
+  Container,
   Divider,
-  TextField,
-  Checkbox,
-  FormControlLabel,
 } from "@mui/material";
-import React, { useState } from "react";
 
 const peserta = {
   akun: "320230003003",
@@ -20,202 +17,238 @@ const peserta = {
   jenjang: "SMP",
   status: "NON PNS",
   sekolah: "SMP ISLAM TERPADU YASPIDA 2",
-  kabupaten: "KABUPATEN SUKABUMI",
-  provinsi: "JAWA BARAT",
-  pendidikan: "S1 Pendidikan Agama Islam",
 };
 
-const PenilaianPage: React.FC = () => {
-  const [nilaiHuruf, setNilaiHuruf] = useState<string[]>([]);
-  const [nilaiMad, setNilaiMad] = useState<string[]>([]);
-  const [nilaiGharib, setNilaiGharib] = useState<string[]>([]);
+const huruf = [
+  "ا",
+  "ب",
+  "ت",
+  "ث",
+  "ج",
+  "ح",
+  "خ",
+  "د",
+  "ذ",
+  "ر",
+  "ز",
+  "س",
+  "ش",
+  "ص",
+  "ض",
+  "ط",
+  "ظ",
+  "ع",
+  "غ",
+  "ف",
+  "ق",
+  "ك",
+  "ل",
+  "م",
+  "ن",
+  "ه",
+  "و",
+  "ي",
+];
+const ahkamHuruf = ["Izhar", "Idgham", "Iqlab", "Ikhfa"];
+const madList = ["Thabi'i", "Wajib", "Jaiz", "Lazim", "Badal"];
+const gharibList = ["Isymam", "Naql", "Imalah", "Tashil"];
 
-  const huruf = [
-    "ا",
-    "ب",
-    "ت",
-    "ث",
-    "ج",
-    "ح",
-    "خ",
-    "د",
-    "ذ",
-    "ر",
-    "ز",
-    "س",
-    "ش",
-    "ص",
-    "ض",
-    "ط",
-    "ظ",
-    "ع",
-    "غ",
-    "ف",
-    "ق",
-    "ك",
-    "ل",
-    "م",
-    "ن",
-    "ه",
-    "و",
-    "ي",
-  ];
+const ruleSet: Record<string, { firstMinus: number; nextMinus: number }> = {
+  makhraj: { firstMinus: 2, nextMinus: 0.5 },
+  sifat: { firstMinus: 0.5, nextMinus: 0.25 },
+  ahkam: { firstMinus: 0.5, nextMinus: 0.25 },
+  madA: { firstMinus: 2, nextMinus: 0.5 },
+  madB: { firstMinus: 1, nextMinus: 0.5 },
+  gharib: { firstMinus: 1, nextMinus: 0.5 },
+};
 
-  const mad = [
-    "Mad Thabi‘i",
-    "Mad Wajib Muttasil",
-    "Mad Jaiz Munfasil",
-    "Mad Badal",
-    "Mad Lazim Harfi",
-    "Mad Lazim Kalimi",
-    "Mad ‘Aridh Lissukun",
-    "Mad Lin",
-    "Mad Shilah Qashirah",
-    "Mad Shilah Tawilah",
-    "Mad Tamkin",
-  ];
+const PenilaianPageCompact = () => {
+  const [mistakes, setMistakes] = useState<
+    Record<string, Record<string, number>>
+  >({
+    makhraj: huruf.reduce((a, h) => ({ ...a, [h]: 0 }), {}),
+    sifat: huruf.reduce((a, h) => ({ ...a, [h]: 0 }), {}),
+    ahkam: ahkamHuruf.reduce((a, h) => ({ ...a, [h]: 0 }), {}),
+    mad: madList.reduce((a, h) => ({ ...a, [h]: 0 }), {}),
+    gharib: gharibList.reduce((a, h) => ({ ...a, [h]: 0 }), {}),
+  });
 
-  const gharib = ["Imalah", "Isymam", "Saktah", "Tashil", "Naql", "Badal"];
-
-  const handleToggle = (
-    item: string,
-    list: string[],
-    setList: React.Dispatch<React.SetStateAction<string[]>>
+  const handleScore = (
+    category: string,
+    key: string,
+    type: "plus" | "minus"
   ) => {
-    if (list.includes(item)) {
-      setList(list.filter((i) => i !== item));
-    } else {
-      setList([...list, item]);
-    }
+    setMistakes((prev) => {
+      const current = prev[category][key];
+      const newVal = type === "minus" ? current + 1 : Math.max(0, current - 1);
+      return { ...prev, [category]: { ...prev[category], [key]: newVal } };
+    });
   };
 
-  const handleSubmit = () => {
-    alert(
-      `Nilai Huruf: ${nilaiHuruf.join(", ")}\nNilai Mad: ${nilaiMad.join(
-        ", "
-      )}\nNilai Gharib: ${nilaiGharib.join(", ")}`
-    );
+  const totalScore = (category: string) => {
+    const catRule =
+      category === "mad"
+        ? ruleSet["madA"]
+        : ruleSet[category as keyof typeof ruleSet];
+    const catMistakes = mistakes[category];
+    let score = 100,
+      firstDone = false;
+    Object.keys(catMistakes).forEach((h) => {
+      const count = catMistakes[h];
+      for (let i = 0; i < count; i++) {
+        score -= firstDone ? catRule.nextMinus : catRule.firstMinus;
+        firstDone = true;
+      }
+    });
+    return Math.max(0, score);
   };
+
+  const totalAverage = () =>
+    (
+      [
+        totalScore("makhraj"),
+        totalScore("sifat"),
+        totalScore("ahkam"),
+        totalScore("mad"),
+        totalScore("gharib"),
+      ].reduce((a, b) => a + b, 0) / 5
+    ).toFixed(2);
+
+  const renderGrid = (category: string, list: string[]) => (
+    <Grid container spacing={0.5}>
+      {list.map((h) => (
+        <Grid item xs={2} sm={1.5} key={h}>
+          <Paper elevation={1} sx={{ p: 0.5, textAlign: "center" }}>
+            <Typography
+              fontSize={
+                category === "makhraj" || category === "sifat" ? 18 : 12
+              }
+            >
+              {h}
+            </Typography>
+            <Typography fontWeight={600} fontSize={14}>
+              {mistakes[category][h]}
+            </Typography>
+            <Box display="flex" justifyContent="center" gap={0.5}>
+              <Button
+                size="small"
+                sx={{ minWidth: 20, minHeight: 20, p: 0, fontSize: 14 }}
+                onClick={() => handleScore(category, h, "minus")}
+              >
+                –
+              </Button>
+              <Button
+                size="small"
+                sx={{ minWidth: 20, minHeight: 20, p: 0, fontSize: 14 }}
+                onClick={() => handleScore(category, h, "plus")}
+              >
+                +
+              </Button>
+            </Box>
+          </Paper>
+        </Grid>
+      ))}
+    </Grid>
+  );
+
+  const renderSection = (title: string, category: string, list: string[]) => (
+    <Card sx={{ mb: 1, p: 1, border: "1px solid", borderColor: "grey.300" }}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={0.5}
+      >
+        <Typography fontWeight={600}>{title}</Typography>
+        <Paper
+          sx={{
+            px: 1,
+            py: 0.25,
+            bgcolor: "grey.100",
+            border: "1px solid",
+            borderColor: "grey.300",
+          }}
+        >
+          <Typography fontWeight={600} fontSize={14}>
+            {totalScore(category).toFixed(2)}
+          </Typography>
+        </Paper>
+      </Box>
+      <Divider sx={{ mb: 0.5 }} />
+      {renderGrid(category, list)}
+    </Card>
+  );
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Grid container spacing={3}>
-        {/* KIRI: Data Peserta */}
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Data Peserta
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-              <Typography>
-                <strong>Akun:</strong> {peserta.akun}
-              </Typography>
-              <Typography>
-                <strong>Nama:</strong> {peserta.nama}
-              </Typography>
-              <Typography>
-                <strong>Level:</strong> {peserta.level}
-              </Typography>
-              <Typography>
-                <strong>Jenjang:</strong> {peserta.jenjang}
-              </Typography>
-              <Typography>
-                <strong>Status:</strong> {peserta.status}
-              </Typography>
-              <Typography>
-                <strong>Sekolah:</strong> {peserta.sekolah}
-              </Typography>
-              <Typography>
-                <strong>Kabupaten:</strong> {peserta.kabupaten}
-              </Typography>
-              <Typography>
-                <strong>Provinsi:</strong> {peserta.provinsi}
-              </Typography>
-              <Typography>
-                <strong>Pendidikan:</strong> {peserta.pendidikan}
-              </Typography>
-            </CardContent>
-          </Card>
+    <Box sx={{ minHeight: "100vh", bgcolor: "grey.50", py: 2 }}>
+      <Container maxWidth="lg">
+        <Card
+          sx={{
+            mb: 2,
+            p: 1,
+            border: "1px solid",
+            borderColor: "grey.300",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Box>
+            <Typography fontWeight={600} fontSize={16}>
+              {peserta.nama}
+            </Typography>
+            <Typography fontSize={12} color="text.secondary">
+              {peserta.level} • {peserta.jenjang} • {peserta.status}
+            </Typography>
+            <Typography fontSize={12} color="text.secondary">
+              {peserta.sekolah}
+            </Typography>
+          </Box>
+          <Paper
+            sx={{
+              px: 1.5,
+              py: 0.5,
+              bgcolor: "grey.100",
+              border: "1px solid",
+              borderColor: "grey.300",
+              textAlign: "center",
+            }}
+          >
+            <Typography fontSize={14} color="text.secondary">
+              Rata-rata
+            </Typography>
+            <Typography fontWeight={600} fontSize={16}>
+              {totalAverage()}
+            </Typography>
+          </Paper>
+        </Card>
+
+        <Grid container spacing={1}>
+          <Grid item xs={12} md={6}>
+            {renderSection("Makharijul Huruf", "makhraj", huruf)}
+            {renderSection("Ahkamul Huruf", "ahkam", ahkamHuruf)}
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {renderSection("Sifatul Huruf", "sifat", huruf)}
+            {renderSection("Ahkamul Mad", "mad", madList)}
+            {renderSection("Gharib", "gharib", gharibList)}
+          </Grid>
         </Grid>
 
-        {/* KANAN: Form Penilaian */}
-        <Grid item xs={12} md={8}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Form Penilaian
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-
-              <Typography variant="subtitle1">Huruf Hijaiyah</Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", mb: 2 }}>
-                {huruf.map((h) => (
-                  <FormControlLabel
-                    key={h}
-                    control={
-                      <Checkbox
-                        checked={nilaiHuruf.includes(h)}
-                        onChange={() =>
-                          handleToggle(h, nilaiHuruf, setNilaiHuruf)
-                        }
-                      />
-                    }
-                    label={h}
-                    sx={{ width: "25%" }}
-                  />
-                ))}
-              </Box>
-
-              <Typography variant="subtitle1">Ahkamul Mad</Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", mb: 2 }}>
-                {mad.map((m) => (
-                  <FormControlLabel
-                    key={m}
-                    control={
-                      <Checkbox
-                        checked={nilaiMad.includes(m)}
-                        onChange={() => handleToggle(m, nilaiMad, setNilaiMad)}
-                      />
-                    }
-                    label={m}
-                    sx={{ width: "33%" }}
-                  />
-                ))}
-              </Box>
-
-              <Typography variant="subtitle1">Gharib</Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", mb: 2 }}>
-                {gharib.map((g) => (
-                  <FormControlLabel
-                    key={g}
-                    control={
-                      <Checkbox
-                        checked={nilaiGharib.includes(g)}
-                        onChange={() =>
-                          handleToggle(g, nilaiGharib, setNilaiGharib)
-                        }
-                      />
-                    }
-                    label={g}
-                    sx={{ width: "33%" }}
-                  />
-                ))}
-              </Box>
-
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-              >
-                Submit Penilaian
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+        <Paper
+          sx={{ mt: 1, p: 1, border: "1px solid", borderColor: "grey.300" }}
+        >
+          <Typography fontWeight={600} fontSize={12}>
+            Petunjuk:
+          </Typography>
+          <Typography fontSize={12}>
+            Klik tombol <strong>–</strong> untuk tambah kesalahan, tombol{" "}
+            <strong>+</strong> untuk kurangi kesalahan.
+          </Typography>
+        </Paper>
+      </Container>
     </Box>
   );
 };
 
-export default PenilaianPage;
+export default PenilaianPageCompact;

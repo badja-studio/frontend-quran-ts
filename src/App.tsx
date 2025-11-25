@@ -1,11 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import theme from './theme';
-import Login from './pages/Login';
-import GuruDashboard from './pages/Dashboard/GuruDashboard';
-import AdminDashboard from './pages/Dashboard/AdminDashboard';
-import GuruSiswa from './pages/Dashboard/GuruSiswa';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import theme from "./theme";
+import Login from "./pages/Login";
+import GuruDashboard from "./pages/Dashboard/GuruDashboard";
+import AdminDashboard from "./pages/Dashboard/AdminDashboard";
+import GuruSiswa from "./pages/Dashboard/GuruSiswa";
 import PesertaPage from "./pages/Peserta/PesertaPage";
 import PenilaianPage from "./pages/Asesor/PenilaianPage";
 
@@ -17,10 +17,11 @@ function App() {
         <Routes>
           <Route path="/dashboard/siswa" element={<GuruSiswa />} />
           <Route path="/" element={<Login />} />
+          <Route path="dashboard/guru" element={<GuruDashboard />} />
+          <Route path="dashboard/admin" element={<AdminDashboard />} />
+
           <Route path="/penilaian" element={<PenilaianPage />} />
           <Route path="/peserta" element={<PesertaPage />} />
-          <Route path="/guru" element={<GuruDashboard />} />
-          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </Router>
     </ThemeProvider>
