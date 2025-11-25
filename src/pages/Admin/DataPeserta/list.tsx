@@ -18,7 +18,7 @@ export default function ListPagesDataPeserta() {
     };
 
     return (
-        <DashboardLayout userRole="guru" userName="Ustadz Ahmad" userEmail="ahmad@quran.app">
+        <DashboardLayout userRole="admin" userName="Ustadz Ahmad" userEmail="ahmad@quran.app">
             <Box>
                 <Typography variant="h4" gutterBottom fontWeight="bold">
                     Daftar Peserta

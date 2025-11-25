@@ -5,7 +5,7 @@ import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import { filterConfigs } from "./config-filter";
 import dummyDataPeserta, { columnsPeserta } from "./colum-table";
 
-export default function ListPagesDataPesertaSiapAssement() {
+export default function ListPagesDataPesertaBelomAsesmen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState<FilterItem[]>([]);
 
@@ -21,10 +21,10 @@ export default function ListPagesDataPesertaSiapAssement() {
         <DashboardLayout userRole="admin" userName="Ustadz Ahmad" userEmail="ahmad@quran.app">
             <Box>
                 <Typography variant="h4" gutterBottom fontWeight="bold">
-                    Data Peserta Siap Asesmen
+                    Data Peserta Belum Asesmen
                 </Typography>
                 <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                    Peserta yang telah siap untuk mengikuti asesmen kompetensi
+                    Kelola pendaftaran dan verifikasi data peserta yang belum mengikuti asesmen
                 </Typography>
 
                 <DataTable
