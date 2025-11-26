@@ -80,9 +80,14 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
 
         <Divider sx={{ my: 2 }} />
 
-        <Typography variant="h6" color="success.main" fontWeight="bold">
-          Nilai Akhir: {nilaiAkhir.toFixed(1)}
-        </Typography>
+        <Grid container justifyContent="space-between" alignItems="center">
+          <Typography variant="h6" color="success.main" fontWeight="bold">
+            Nilai Akhir: {nilaiAkhir.toFixed(1)}
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            <strong>Predikat:</strong> Lancar
+          </Typography>
+        </Grid>
 
         {/* BAGIAN GRID HURUF */}
         <Card sx={{ p: 2, mt: 3, borderRadius: 3 }}>
@@ -113,26 +118,41 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
                     const huruf = typeof item === "string" ? item : item.simbol;
 
                     return (
-                      <Grid item xs={3} sm={2} md={1.5} key={i} width="100%">
-                        <Card sx={{ p: 1 }}>
+                      <Grid item xs={4} sm={3} md={2} lg={1.5} key={i}>
+                        <Card
+                          variant="outlined"
+                          sx={{
+                            p: 1.5,
+                            borderRadius: 2,
+                            height: "80px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            textAlign: "center",
+                            gap: "4px",
+                          }}
+                        >
                           <Typography
                             sx={{
                               fontSize: {
-                                xs: "0.5rem",
-                                sm: "0.75rem",
+                                xs: "0.55rem",
+                                sm: "0.7rem",
+                                md: "0.8rem",
                               },
-                              mb: 1,
+                              fontWeight: 500,
+                              lineHeight: 1.1,
                             }}
                           >
                             {huruf}
                           </Typography>
+
                           <Typography
                             sx={{
                               fontSize: {
-                                xs: "0.5rem",
-                                sm: "0.75rem",
-                                md: "0.875rem",
-                                lg: "1rem",
+                                xs: "0.65rem",
+                                sm: "0.8rem",
+                                md: "0.95rem",
                               },
                               fontWeight: "bold",
                             }}
