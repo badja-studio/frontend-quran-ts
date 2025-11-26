@@ -52,22 +52,22 @@ const menuConfig: MenuConfig = {
     {
       text: "Peserta yang siap asesmen",
       icon: <RecentActorsIcon />,
-      path: "/dashboard/kelas",
+      path: "/dashboard/asesor/siap-asesmen",
     },
     {
       text: "Sedang melaksanakan",
       icon: <RecentActorsIcon />,
-      path: "/dashboard/siswa",
+      path: "/dashboard/asesor/sedang-asesmen",
     },
     {
       text: "Belum asesmen",
       icon: <RecentActorsIcon />,
-      path: "/dashboard/materi",
+      path: "/dashboard/asesor/belum-asesmen",
     },
     {
       text: "Hasil Asesmen",
       icon: <AssignmentIcon />,
-      path: "/dashboard/tugas",
+      path: "/dashboard/asesor/hasil-asesmen",
     },
     {
       text: "Data Pengguna",
@@ -85,7 +85,7 @@ const menuConfig: MenuConfig = {
     {
       text: "Rekap Asesor",
       icon: <PeopleIcon />,
-      path: "/dashboard/rekap-asesor",
+      path: "/dashboard/data-asesor",
     },
     {
       text: "Asesmen",
