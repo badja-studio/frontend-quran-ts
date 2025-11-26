@@ -28,6 +28,10 @@ import {
   ExitToApp,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
+  EditAttributes,
+  UploadFile,
+  Delete,
+  Edit,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
@@ -86,6 +90,11 @@ const menuConfig: MenuConfig = {
       text: "Rekap Asesor",
       icon: <PeopleIcon />,
       path: "/dashboard/data-asesor",
+    },
+    {
+      text: "Input Data Baru",
+      icon: <UploadFile />,
+      path: "/dashboard/input-peserta",
     },
     {
       text: "Asesmen",
