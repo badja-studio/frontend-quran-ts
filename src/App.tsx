@@ -19,7 +19,7 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
 
           {/* ADMIN */}
           <Route

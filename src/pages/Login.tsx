@@ -13,16 +13,24 @@ import {
   IconButton,
   Link,
   Alert,
+  Tabs,
+  Tab,
+  CircularProgress,
 } from "@mui/material";
 import {
   MenuBook as MenuBookIcon,
   Visibility,
   VisibilityOff,
+  Email,
+  Person,
+  Badge,
 } from "@mui/icons-material";
-import api from "../utils/api";
+import authService from "../services/auth.service";
+
+type LoginType = "email" | "username" | "siaga";
+
 interface LoginFormInputs {
-  emailOrUsername: string;
-  siagaNumber: string;
+  identifier: string;
   password: string;
 }
 
@@ -30,14 +38,17 @@ function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState<string>("");
+  const [loginType, setLoginType] = useState<LoginType>("email");
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<LoginFormInputs>({
     defaultValues: {
-      emailOrUsername: "",
+      identifier: "",
       password: "",
     },
   });
@@ -46,42 +57,100 @@ function Login() {
     setShowPassword(!showPassword);
   };
 
+  const handleLoginTypeChange = (
+    _event: React.SyntheticEvent,
+    newValue: LoginType
+  ) => {
+    setLoginType(newValue);
+    setLoginError("");
+    reset(); // Clear form when switching tabs
+  };
+
+  const getIdentifierLabel = () => {
+    switch (loginType) {
+      case "email":
+        return "Email";
+      case "username":
+        return "Username";
+      case "siaga":
+        return "Nomor Siaga";
+      default:
+        return "Email";
+    }
+  };
+
+  const getIdentifierValidation = () => {
+    const baseValidation = {
+      required: `${getIdentifierLabel()} wajib diisi`,
+    };
+
+    if (loginType === "email") {
+      return {
+        ...baseValidation,
+        pattern: {
+          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+          message: "Format email tidak valid",
+        },
+      };
+    } else if (loginType === "siaga") {
+      return {
+        ...baseValidation,
+        pattern: {
+          value: /^[0-9]+$/,
+          message: "Nomor siaga hanya boleh berisi angka",
+        },
+      };
+    }
+
+    return {
+      ...baseValidation,
+      minLength: {
+        value: 3,
+        message: "Minimal 3 karakter",
+      },
+    };
+  };
+
   const onSubmit = async (data: LoginFormInputs) => {
     // Clear previous errors
     setLoginError("");
+    setIsLoading(true);
 
     try {
-      const res = await api.post("/v1/auth/login", {
-        emailOrUsername: data.emailOrUsername,
-        siagaNumber: data.siagaNumber,
+      // Prepare credentials based on login type
+      const credentials = {
         password: data.password,
-      });
-      if (!res.success) {
-        setLoginError(res.message || "Login gagal");
-        return;
-      }
+        ...(loginType === "siaga"
+          ? { siagaNumber: data.identifier }
+          : { emailOrUsername: data.identifier }),
+      };
 
-      const user = res.data;
-      console.log("Login successful:", user);
+      // Call login API
+      const response = await authService.login(credentials);
 
-      // Simpan token lewat helper API
-      api.auth.setTokens(user.authToken, user.refreshToken);
+      if (response.success && response.data) {
+        // Success - redirect based on role
+        const role = response.data.roles.toLowerCase();
 
-      // Role dari API
-      const role = user.roles?.toLowerCase();
-
-      // Remove this when implementing real authentication
-      if (role === "assessee") {
-        navigate("/dashboard/guru");
-      } else if (role === "user") {
-        navigate("/peserta");
-      } else if (role === "admin") {
-        navigate("/dashboard/admin");
+        // Navigate to appropriate dashboard
+        if (role === "Admin") {
+          navigate("/dashboard/admin");
+        } else if (role === "Assessor" || role === "guru") {
+          navigate("/dashboard/guru");
+        } else if (role === "Assessee" || role === "siswa") {
+          navigate("/dashboard/siswa");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
-        navigate("/dashboard");
+        // Login failed
+        setLoginError(response.message || "Login gagal. Silakan coba lagi.");
       }
-    } catch (err: any) {
-      setLoginError("Terjadi kesalahan. Coba lagi.");
+    } catch (error: any) {
+      console.error("Login error:", error);
+      setLoginError(error?.message || "Terjadi kesalahan. Silakan coba lagi.");
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -115,28 +184,59 @@ function Login() {
               </Alert>
             )}
 
+            {/* Login Type Tabs */}
+            <Tabs
+              value={loginType}
+              onChange={handleLoginTypeChange}
+              variant="fullWidth"
+              sx={{ mb: 3, borderBottom: 1, borderColor: "divider" }}
+            >
+              <Tab
+                icon={<Email />}
+                iconPosition="start"
+                label="Email"
+                value="email"
+                sx={{ textTransform: "none" }}
+              />
+              <Tab
+                icon={<Person />}
+                iconPosition="start"
+                label="Username"
+                value="username"
+                sx={{ textTransform: "none" }}
+              />
+              <Tab
+                icon={<Badge />}
+                iconPosition="start"
+                label="Nomor Siaga"
+                value="siaga"
+                sx={{ textTransform: "none" }}
+              />
+            </Tabs>
+
             <form onSubmit={handleSubmit(onSubmit)}>
               <Controller
-                name="emailOrUsername"
+                name="identifier"
                 control={control}
-                rules={{
-                  required: "Email atau Username wajib diisi",
-                  minLength: {
-                    value: 3,
-                    message: "Minimal 3 karakter",
-                  },
-                }}
+                rules={getIdentifierValidation()}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     fullWidth
-                    label="Email or Username"
+                    label={getIdentifierLabel()}
                     margin="normal"
                     variant="outlined"
-                    autoComplete="username"
+                    autoComplete={loginType === "email" ? "email" : "username"}
                     autoFocus
-                    error={!!errors.emailOrUsername}
-                    helperText={errors.emailOrUsername?.message}
+                    error={!!errors.identifier}
+                    helperText={errors.identifier?.message}
+                    placeholder={
+                      loginType === "email"
+                        ? "contoh@email.com"
+                        : loginType === "username"
+                        ? "username123"
+                        : "12345678"
+                    }
                   />
                 )}
               />
@@ -185,9 +285,20 @@ function Login() {
                 variant="contained"
                 color="primary"
                 size="large"
+                disabled={isLoading}
                 sx={{ mt: 3, mb: 2, py: 1.5 }}
               >
-                Sign In
+                {isLoading ? (
+                  <>
+                    <CircularProgress
+                      size={24}
+                      sx={{ mr: 1, color: "white" }}
+                    />
+                    Loading...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </Button>
 
               <Box sx={{ textAlign: "center", mt: 2 }}>
