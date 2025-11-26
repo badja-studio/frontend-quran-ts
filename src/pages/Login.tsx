@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
 import {
   Box,
   Container,
@@ -13,22 +13,23 @@ import {
   IconButton,
   Link,
   Alert,
-} from '@mui/material';
+} from "@mui/material";
 import {
   MenuBook as MenuBookIcon,
   Visibility,
   VisibilityOff,
-} from '@mui/icons-material';
-
+} from "@mui/icons-material";
+import api from "../utils/api";
 interface LoginFormInputs {
   emailOrUsername: string;
+  siagaNumber: string;
   password: string;
 }
 
 function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState<string>('');
+  const [loginError, setLoginError] = useState<string>("");
 
   const {
     control,
@@ -36,8 +37,8 @@ function Login() {
     formState: { errors },
   } = useForm<LoginFormInputs>({
     defaultValues: {
-      emailOrUsername: '',
-      password: '',
+      emailOrUsername: "",
+      password: "",
     },
   });
 
@@ -45,39 +46,59 @@ function Login() {
     setShowPassword(!showPassword);
   };
 
-  const onSubmit = (data: LoginFormInputs) => {
+  const onSubmit = async (data: LoginFormInputs) => {
     // Clear previous errors
-    setLoginError('');
+    setLoginError("");
 
-    // TODO: Implement actual login logic here
-    console.log('Login data:', data);
+    try {
+      const res = await api.post("/v1/auth/login", {
+        emailOrUsername: data.emailOrUsername,
+        siagaNumber: data.siagaNumber,
+        password: data.password,
+      });
+      if (!res.success) {
+        setLoginError(res.message || "Login gagal");
+        return;
+      }
 
-    // Demo: redirect based on hardcoded credentials
-    // Remove this when implementing real authentication
-    if (data.emailOrUsername === 'guru' && data.password === 'guru123') {
-      navigate('/dashboard/guru');
-    } else if (data.emailOrUsername === 'admin' && data.password === 'admin123') {
-      navigate('/dashboard/admin');
-    } else {
-      setLoginError('Email/Username atau Password salah!');
+      const user = res.data;
+      console.log("Login successful:", user);
+
+      // Simpan token lewat helper API
+      api.auth.setTokens(user.authToken, user.refreshToken);
+
+      // Role dari API
+      const role = user.roles?.toLowerCase();
+
+      // Remove this when implementing real authentication
+      if (role === "assessee") {
+        navigate("/dashboard/guru");
+      } else if (role === "user") {
+        navigate("/peserta");
+      } else if (role === "admin") {
+        navigate("/dashboard/admin");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (err: any) {
+      setLoginError("Terjadi kesalahan. Coba lagi.");
     }
   };
-
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        minHeight: "100vh",
         background: (theme) =>
           `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.primary.light}15 100%)`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         py: 4,
       }}
     >
       <Container maxWidth="sm">
-        <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <MenuBookIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
+        <Box sx={{ textAlign: "center", mb: 4 }}>
+          <MenuBookIcon sx={{ fontSize: 60, color: "primary.main", mb: 2 }} />
           <Typography variant="h4" component="h1" gutterBottom color="primary">
             Welcome Back
           </Typography>
@@ -99,10 +120,10 @@ function Login() {
                 name="emailOrUsername"
                 control={control}
                 rules={{
-                  required: 'Email atau Username wajib diisi',
+                  required: "Email atau Username wajib diisi",
                   minLength: {
                     value: 3,
-                    message: 'Minimal 3 karakter',
+                    message: "Minimal 3 karakter",
                   },
                 }}
                 render={({ field }) => (
@@ -124,10 +145,10 @@ function Login() {
                 name="password"
                 control={control}
                 rules={{
-                  required: 'Password wajib diisi',
+                  required: "Password wajib diisi",
                   minLength: {
                     value: 6,
-                    message: 'Password minimal 6 karakter',
+                    message: "Password minimal 6 karakter",
                   },
                 }}
                 render={({ field }) => (
@@ -135,7 +156,7 @@ function Login() {
                     {...field}
                     fullWidth
                     label="Password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     margin="normal"
                     variant="outlined"
                     autoComplete="current-password"
@@ -169,20 +190,20 @@ function Login() {
                 Sign In
               </Button>
 
-              <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Box sx={{ textAlign: "center", mt: 2 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Don't have an account?{' '}
+                  Don't have an account?{" "}
                   <Link
                     component="button"
                     type="button"
                     variant="body2"
-                    onClick={() => navigate('/register')}
+                    onClick={() => navigate("/register")}
                     sx={{
-                      color: 'primary.main',
-                      textDecoration: 'none',
+                      color: "primary.main",
+                      textDecoration: "none",
                       fontWeight: 600,
-                      '&:hover': {
-                        textDecoration: 'underline',
+                      "&:hover": {
+                        textDecoration: "underline",
                       },
                     }}
                   >

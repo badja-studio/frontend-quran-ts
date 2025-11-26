@@ -1,21 +1,126 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Grid,
-  Avatar,
-  Button,
-} from "@mui/material";
+import { Box, Card, Typography, Grid } from "@mui/material";
 import { Person, Edit, Visibility, AccessTime } from "@mui/icons-material";
 import AsesmenResultModal from "../../components/Peserta/AsesmenResultModal";
+import PesertaInfoCard from "../../components/Peserta/PesertaInfoCard";
+import AsesmenListCard from "../../components/Peserta/AsesmenListCard";
 
 interface AsesmenItem {
   asesor: string;
   waktu: string;
   status: string;
 }
+
+const dataQuiz = {
+  makharij: [
+    "د",
+    "خ",
+    "ح",
+    "ج",
+    "ث",
+    "ت",
+    "ب",
+    "ا",
+    "ط",
+    "ض",
+    "ص",
+    "ش",
+    "س",
+    "ز",
+    "ر",
+    "ذ",
+    "م",
+    "ل",
+    "ك",
+    "ق",
+    "ف",
+    "غ",
+    "ع",
+    "ظ",
+    { simbol: "ــُ", arti: "Dlammah" },
+    { simbol: "ــِـ", arti: "Kasrah" },
+    { simbol: "ــَـ", arti: "Fathah" },
+    "ي",
+    "ء",
+    "هـ",
+    "و",
+    "ن",
+    { simbol: "ــّـ", arti: "Tasydid" },
+    { simbol: "ــٌـ", arti: "Dlammatain" },
+    { simbol: "ــٍـ", arti: "Kasratain" },
+    { simbol: "ــًـ", arti: "Fathatain" },
+    { simbol: "ــْـ", arti: "Sukun" },
+  ],
+  shifat: [
+    "د",
+    "خ",
+    "ح",
+    "ج",
+    "ث",
+    "ت",
+    "ب",
+    "ا",
+    "ط",
+    "ض",
+    "ص",
+    "ش",
+    "س",
+    "ز",
+    "ر",
+    "ذ",
+    "م",
+    "ل",
+    "ك",
+    "ق",
+    "ف",
+    "غ",
+    "ع",
+    "ظ",
+    "ي",
+    "ء",
+    "هـ",
+    "و",
+    "ن",
+  ],
+  ahkamHuruf: [
+    "Izhhar",
+    "Izhhar Syafawi",
+    "Idzgham Bighunnah",
+    "Ikhfa’ Syafawi",
+    "Idzgham Bilaghunnah",
+    "Idzgham Mimi",
+    "Ikhfa’",
+    "Idzgham Mutajannisain",
+    "Iqlab",
+    "Idzgham Mutaqarribain",
+  ],
+  ahkamMad: [
+    "Mad Thabi’i",
+    "Mad Lazim Kilmi Mutsaqqal",
+    "Mad Wajib Muttashil",
+    "Mad Lazim Kilmi Mukhaffaf",
+    "Mad Jaiz Munfashil",
+    "Mad Lazim Harfi Mutsaqqal",
+    "Mad Iwadz",
+    "Mad Lazim Harfi Mukhaffaf",
+    "Mad Lin",
+    "Mad Badal",
+    "Mad Aridlissukun",
+    "Mad Shilah Qashirah",
+    "Mad Tamkin",
+    "Mad Shilah Thawilah",
+    "Mad Farq",
+  ],
+  gharib: [
+    "Iysmam",
+    "Imalah",
+    "Saktah",
+    "Tashil",
+    "Naql",
+    "Badal",
+    "Mad dan Qashr",
+  ],
+};
 
 const peserta = {
   akun: "320230003003",
@@ -53,9 +158,6 @@ const PesertaPage: React.FC = () => {
     setSelectedAsesmen(null);
   };
 
-  const isAssessmentCompleted = (status: string) =>
-    status.toLowerCase().includes("selesai");
-
   return (
     <Box
       sx={{
@@ -92,225 +194,30 @@ const PesertaPage: React.FC = () => {
       </Box>
 
       <Grid container spacing={4}>
-        {/* DATA PESERTA */}
         <Grid item xs={12} lg={8}>
-          <Card
-            elevation={4}
-            sx={{
-              borderRadius: 4,
-              overflow: "hidden",
-              backdropFilter: "blur(6px)",
-              transition: "0.3s",
-              "&:hover": {
-                transform: "translateY(-5px)",
-                boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                bgcolor: "primary.main",
-                color: "white",
-                p: 2,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              <Person sx={{ fontSize: { xs: 20, sm: 26, md: 32 } }} />
-              <Typography variant="h6" fontWeight="bold">
-                Data Peserta
-              </Typography>
-            </Box>
-
-            <CardContent sx={{ p: 3 }}>
-              <Grid container spacing={3}>
-                {/* FOTO */}
-                <Grid item xs={12} sm={4}>
-                  <Avatar
-                    src="/foto.jpg"
-                    variant="rounded"
-                    sx={{
-                      width: "100%",
-                      height: 260,
-                      boxShadow: "0 6px 18px rgba(0,0,0,0.15)",
-                      borderRadius: 3,
-                    }}
-                  />
-                </Grid>
-
-                {/* DETAIL */}
-                <Grid item xs={12} sm={8}>
-                  {[
-                    ["No. Akun", peserta.akun],
-                    ["Nama", peserta.nama],
-                    ["Jenjang", peserta.jenjang],
-                    ["Status", peserta.status],
-                    ["Sekolah/Madrasah", peserta.sekolah],
-                    ["Kabupaten/Kota", peserta.kabupaten],
-                    ["Provinsi", peserta.provinsi],
-                  ].map(([label, value]) => (
-                    <Box key={label} sx={{ mb: 2 }}>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        fontWeight={600}
-                      >
-                        {label}
-                      </Typography>
-
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        sx={{
-                          p: 1,
-                          mt: 0.5,
-                          borderRadius: 2,
-                          background: "#f8f9fa",
-                          border: "1px solid #e0e0e0",
-                        }}
-                      >
-                        {value}
-                      </Typography>
-                    </Box>
-                  ))}
-
-                  {/* Pendidikan */}
-                  <Box sx={{ mt: 3 }}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      fontWeight={600}
-                    >
-                      Pendidikan Terakhir
-                    </Typography>
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                        mt: 1,
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        sx={{
-                          flex: 1,
-                          p: 1,
-                          borderRadius: 2,
-                          background: "#f8f9fa",
-                          border: "1px solid #e0e0e0",
-                        }}
-                      >
-                        {peserta.pendidikan}
-                      </Typography>
-
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        startIcon={<Edit />}
-                        sx={{ textTransform: "none", fontWeight: "bold" }}
-                      >
-                        Edit
-                      </Button>
-                    </Box>
-                  </Box>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+          <PesertaInfoCard peserta={peserta} />
         </Grid>
 
-        {/* ASESMEN */}
         <Grid item xs={12} lg={4}>
-          <Card
-            elevation={4}
-            sx={{
-              borderRadius: 4,
-              overflow: "hidden",
-              transition: "0.3s",
-              "&:hover": {
-                transform: "translateY(-5px)",
-                boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                bgcolor: "primary.main",
-                color: "white",
-                p: 2,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              <AccessTime sx={{ fontSize: { xs: 20, sm: 26, md: 32 } }} />
-              <Typography variant="h6" fontWeight="bold">
-                Asesmen
-              </Typography>
-            </Box>
-
-            <CardContent sx={{ p: 3 }}>
-              {asesmen.map((row, i) => (
-                <Box
-                  key={i}
-                  sx={{
-                    p: 2,
-                    mb: 3,
-                    borderRadius: 3,
-                    border: "1px solid #ddd",
-                    background: "white",
-                    transition: "0.3s",
-                  }}
-                >
-                  <Typography variant="body2" color="text.secondary">
-                    Asesor
-                  </Typography>
-                  <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
-                    {row.asesor}
-                  </Typography>
-
-                  <Typography variant="body2" color="text.secondary">
-                    Waktu
-                  </Typography>
-                  <Typography variant="body1" sx={{ mb: 2 }}>
-                    {row.waktu}
-                  </Typography>
-
-                  {isAssessmentCompleted(row.status) ? (
-                    <Button
-                      variant="contained"
-                      startIcon={<Visibility />}
-                      fullWidth
-                      sx={{ textTransform: "none", fontWeight: "bold" }}
-                      onClick={() => handleOpen(row)}
-                    >
-                      Lihat Hasil
-                    </Button>
-                  ) : (
-                    <Button variant="outlined" color="error" fullWidth disabled>
-                      Belum Asesmen
-                    </Button>
-                  )}
-                </Box>
-              ))}
-            </CardContent>
-          </Card>
+          <AsesmenListCard asesmen={asesmen} onOpen={handleOpen} />
         </Grid>
       </Grid>
 
-      {/* MODAL HASIL ASESMEN */}
       {selectedAsesmen && (
         <AsesmenResultModal
           open={modalVisible}
-          onClose={handleClose}
-          pesertaName={peserta.nama}
-          asesorName={selectedAsesmen.asesor}
-          waktuPelaksanaan={selectedAsesmen.waktu}
-          nilaiAkhir={87.5} // dummy
+          onClose={() => setModalVisible(false)}
+          pesertaName="Ahmad Zaki"
+          asesorName="Ustadz Fauzan"
+          waktuPelaksanaan="26 Nov 2025"
+          nilaiAkhir={97.5}
+          sections={[
+            { title: "Makharijul Huruf", list: dataQuiz.makharij },
+            { title: "Shifatul Huruf", list: dataQuiz.shifat },
+            { title: "Ahkam Al-Huruf", list: dataQuiz.ahkamHuruf },
+            { title: "Ahkam Al-Mad wa Qashr", list: dataQuiz.ahkamMad },
+            { title: "Gharib", list: dataQuiz.gharib },
+          ]}
         />
       )}
     </Box>
