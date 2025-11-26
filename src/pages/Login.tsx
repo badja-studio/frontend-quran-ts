@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
 import {
   Box,
   Container,
@@ -16,7 +16,7 @@ import {
   Tabs,
   Tab,
   CircularProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   MenuBook as MenuBookIcon,
   Visibility,
@@ -24,10 +24,10 @@ import {
   Email,
   Person,
   Badge,
-} from '@mui/icons-material';
-import authService from '../services/auth.service';
+} from "@mui/icons-material";
+import authService from "../services/auth.service";
 
-type LoginType = 'email' | 'username' | 'siaga';
+type LoginType = "email" | "username" | "siaga";
 
 interface LoginFormInputs {
   identifier: string;
@@ -37,8 +37,8 @@ interface LoginFormInputs {
 function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState<string>('');
-  const [loginType, setLoginType] = useState<LoginType>('email');
+  const [loginError, setLoginError] = useState<string>("");
+  const [loginType, setLoginType] = useState<LoginType>("email");
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -48,8 +48,8 @@ function Login() {
     reset,
   } = useForm<LoginFormInputs>({
     defaultValues: {
-      identifier: '',
-      password: '',
+      identifier: "",
+      password: "",
     },
   });
 
@@ -57,22 +57,25 @@ function Login() {
     setShowPassword(!showPassword);
   };
 
-  const handleLoginTypeChange = (_event: React.SyntheticEvent, newValue: LoginType) => {
+  const handleLoginTypeChange = (
+    _event: React.SyntheticEvent,
+    newValue: LoginType
+  ) => {
     setLoginType(newValue);
-    setLoginError('');
+    setLoginError("");
     reset(); // Clear form when switching tabs
   };
 
   const getIdentifierLabel = () => {
     switch (loginType) {
-      case 'email':
-        return 'Email';
-      case 'username':
-        return 'Username';
-      case 'siaga':
-        return 'Nomor Siaga';
+      case "email":
+        return "Email";
+      case "username":
+        return "Username";
+      case "siaga":
+        return "Nomor Siaga";
       default:
-        return 'Email';
+        return "Email";
     }
   };
 
@@ -81,20 +84,20 @@ function Login() {
       required: `${getIdentifierLabel()} wajib diisi`,
     };
 
-    if (loginType === 'email') {
+    if (loginType === "email") {
       return {
         ...baseValidation,
         pattern: {
           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-          message: 'Format email tidak valid',
+          message: "Format email tidak valid",
         },
       };
-    } else if (loginType === 'siaga') {
+    } else if (loginType === "siaga") {
       return {
         ...baseValidation,
         pattern: {
           value: /^[0-9]+$/,
-          message: 'Nomor siaga hanya boleh berisi angka',
+          message: "Nomor siaga hanya boleh berisi angka",
         },
       };
     }
@@ -103,21 +106,21 @@ function Login() {
       ...baseValidation,
       minLength: {
         value: 3,
-        message: 'Minimal 3 karakter',
+        message: "Minimal 3 karakter",
       },
     };
   };
 
   const onSubmit = async (data: LoginFormInputs) => {
     // Clear previous errors
-    setLoginError('');
+    setLoginError("");
     setIsLoading(true);
 
     try {
       // Prepare credentials based on login type
       const credentials = {
         password: data.password,
-        ...(loginType === 'siaga'
+        ...(loginType === "siaga"
           ? { siagaNumber: data.identifier }
           : { emailOrUsername: data.identifier }),
       };
@@ -128,46 +131,43 @@ function Login() {
       if (response.success && response.data) {
         // Success - redirect based on role
         const role = response.data.roles.toLowerCase();
-        
+
         // Navigate to appropriate dashboard
-        if (role === 'Admin') {
-          navigate('/dashboard/admin');
-        } else if (role === 'Assessor' || role === 'guru') {
-          navigate('/dashboard/guru');
-        } else if (role === 'Assessee' || role === 'siswa') {
-          navigate('/dashboard/siswa');
+        if (role === "Admin") {
+          navigate("/dashboard/admin");
+        } else if (role === "Assessor" || role === "guru") {
+          navigate("/dashboard/guru");
+        } else if (role === "Assessee" || role === "siswa") {
+          navigate("/dashboard/siswa");
         } else {
-          navigate('/dashboard');
+          navigate("/dashboard");
         }
       } else {
         // Login failed
-        setLoginError(response.message || 'Login gagal. Silakan coba lagi.');
+        setLoginError(response.message || "Login gagal. Silakan coba lagi.");
       }
     } catch (error: any) {
-      console.error('Login error:', error);
-      setLoginError(
-        error?.message || 'Terjadi kesalahan. Silakan coba lagi.'
-      );
+      console.error("Login error:", error);
+      setLoginError(error?.message || "Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        minHeight: "100vh",
         background: (theme) =>
           `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.primary.light}15 100%)`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         py: 4,
       }}
     >
       <Container maxWidth="sm">
-        <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <MenuBookIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
+        <Box sx={{ textAlign: "center", mb: 4 }}>
+          <MenuBookIcon sx={{ fontSize: 60, color: "primary.main", mb: 2 }} />
           <Typography variant="h4" component="h1" gutterBottom color="primary">
             Welcome Back
           </Typography>
@@ -189,28 +189,28 @@ function Login() {
               value={loginType}
               onChange={handleLoginTypeChange}
               variant="fullWidth"
-              sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}
+              sx={{ mb: 3, borderBottom: 1, borderColor: "divider" }}
             >
               <Tab
                 icon={<Email />}
                 iconPosition="start"
                 label="Email"
                 value="email"
-                sx={{ textTransform: 'none' }}
+                sx={{ textTransform: "none" }}
               />
               <Tab
                 icon={<Person />}
                 iconPosition="start"
                 label="Username"
                 value="username"
-                sx={{ textTransform: 'none' }}
+                sx={{ textTransform: "none" }}
               />
               <Tab
                 icon={<Badge />}
                 iconPosition="start"
                 label="Nomor Siaga"
                 value="siaga"
-                sx={{ textTransform: 'none' }}
+                sx={{ textTransform: "none" }}
               />
             </Tabs>
 
@@ -226,16 +226,16 @@ function Login() {
                     label={getIdentifierLabel()}
                     margin="normal"
                     variant="outlined"
-                    autoComplete={loginType === 'email' ? 'email' : 'username'}
+                    autoComplete={loginType === "email" ? "email" : "username"}
                     autoFocus
                     error={!!errors.identifier}
                     helperText={errors.identifier?.message}
                     placeholder={
-                      loginType === 'email'
-                        ? 'contoh@email.com'
-                        : loginType === 'username'
-                        ? 'username123'
-                        : '12345678'
+                      loginType === "email"
+                        ? "contoh@email.com"
+                        : loginType === "username"
+                        ? "username123"
+                        : "12345678"
                     }
                   />
                 )}
@@ -245,10 +245,10 @@ function Login() {
                 name="password"
                 control={control}
                 rules={{
-                  required: 'Password wajib diisi',
+                  required: "Password wajib diisi",
                   minLength: {
                     value: 6,
-                    message: 'Password minimal 6 karakter',
+                    message: "Password minimal 6 karakter",
                   },
                 }}
                 render={({ field }) => (
@@ -256,7 +256,7 @@ function Login() {
                     {...field}
                     fullWidth
                     label="Password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     margin="normal"
                     variant="outlined"
                     autoComplete="current-password"
@@ -290,28 +290,31 @@ function Login() {
               >
                 {isLoading ? (
                   <>
-                    <CircularProgress size={24} sx={{ mr: 1, color: 'white' }} />
+                    <CircularProgress
+                      size={24}
+                      sx={{ mr: 1, color: "white" }}
+                    />
                     Loading...
                   </>
                 ) : (
-                  'Sign In'
+                  "Sign In"
                 )}
               </Button>
 
-              <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Box sx={{ textAlign: "center", mt: 2 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Don't have an account?{' '}
+                  Don't have an account?{" "}
                   <Link
                     component="button"
                     type="button"
                     variant="body2"
-                    onClick={() => navigate('/register')}
+                    onClick={() => navigate("/register")}
                     sx={{
-                      color: 'primary.main',
-                      textDecoration: 'none',
+                      color: "primary.main",
+                      textDecoration: "none",
                       fontWeight: 600,
-                      '&:hover': {
-                        textDecoration: 'underline',
+                      "&:hover": {
+                        textDecoration: "underline",
                       },
                     }}
                   >

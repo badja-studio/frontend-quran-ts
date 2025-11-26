@@ -1,5 +1,13 @@
 import React from "react";
-import { Modal, Box, Typography, Button, Divider, Card } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  Divider,
+  Card,
+  Grid,
+} from "@mui/material";
 import { Close } from "@mui/icons-material";
 
 const modalStyle = {
@@ -7,14 +15,18 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: { xs: "90%", sm: "70%", md: "50%" },
+  width: { xs: "95%", sm: "80%", md: "60%" },
   bgcolor: "background.paper",
   borderRadius: 4,
   boxShadow: 24,
-  p: 4,
+  p: 3,
   maxHeight: "90vh",
   overflowY: "auto",
 };
+interface SectionItem {
+  title: string;
+  list: any[];
+}
 
 interface AsesmenResultModalProps {
   open: boolean;
@@ -23,7 +35,7 @@ interface AsesmenResultModalProps {
   asesorName: string;
   waktuPelaksanaan: string;
   nilaiAkhir: number;
-  // Anda bisa menambahkan props untuk data chart/grid di sini
+  sections: SectionItem[];
 }
 
 const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
@@ -33,15 +45,12 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
   asesorName,
   waktuPelaksanaan,
   nilaiAkhir,
+  sections,
 }) => {
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="modal-title"
-      aria-describedby="modal-description"
-    >
+    <Modal open={open} onClose={onClose}>
       <Box sx={modalStyle}>
+        {/* HEADER */}
         <Box
           sx={{
             display: "flex",
@@ -49,50 +58,102 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
             alignItems: "center",
             mb: 2,
             borderBottom: "2px solid #2E7D32",
+            pb: 1,
           }}
         >
-          <Typography id="modal-title" variant="h5" fontWeight="bold">
+          <Typography variant="h5" fontWeight="bold">
             Hasil Asesmen: {pesertaName}
           </Typography>
+
           <Button onClick={onClose}>
             <Close />
           </Button>
         </Box>
 
-        <Box id="modal-description" sx={{ mt: 2 }}>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            **Asesor:** {asesorName}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 3 }}>
-            **Waktu Pelaksanaan:** {waktuPelaksanaan}
-          </Typography>
+        {/* INFO PESERTA */}
+        <Typography>
+          <strong>Asesor:</strong> {asesorName}
+        </Typography>
+        <Typography>
+          <strong>Waktu Pelaksanaan:</strong> {waktuPelaksanaan}
+        </Typography>
 
-          <Divider sx={{ mb: 3 }} />
+        <Divider sx={{ my: 2 }} />
 
-          <Typography
-            variant="h6"
-            color="success.main"
-            fontWeight="bold"
-            gutterBottom
-          >
-            Nilai Akhir: {nilaiAkhir.toFixed(1)}
-          </Typography>
+        <Typography variant="h6" color="success.main" fontWeight="bold">
+          Nilai Akhir: {nilaiAkhir.toFixed(1)}
+        </Typography>
 
-          {/* Placeholder untuk komponen data aktual */}
-          <Card sx={{ mt: 2, p: 2, bgcolor: "#f5f5f5" }}>
-            <Typography fontWeight="bold">Ringkasan Kelancaran:</Typography>
-            <Typography>Kelancaran Membaca Al-Quran: Sangat Baik</Typography>
-            <Typography>
-              Hukum Mad dan Qashr: Terdapat beberapa kesalahan minor.
-            </Typography>
-          </Card>
-        </Box>
+        {/* BAGIAN GRID HURUF */}
+        <Card sx={{ p: 2, mt: 3, borderRadius: 3 }}>
+          <Grid container spacing={2}>
+            {sections.map((sec, idx) => (
+              <Card key={idx} sx={{ p: 2, mt: 3, borderRadius: 3 }}>
+                <Grid container justifyContent="space-between" sx={{ mb: 2 }}>
+                  <Typography variant="h6" fontWeight="bold">
+                    {sec.title}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      background: "#e8f5e9",
+                      px: 2,
+                      py: "2px",
+                      borderRadius: 2,
+                      fontWeight: "bold",
+                      color: "green",
+                    }}
+                  >
+                    100.00
+                  </Typography>
+                </Grid>
+
+                <Grid container spacing={2}>
+                  {sec.list.map((item, i) => {
+                    const huruf = typeof item === "string" ? item : item.simbol;
+
+                    return (
+                      <Grid item xs={3} sm={2} md={1.5} key={i} width="100%">
+                        <Card sx={{ p: 1 }}>
+                          <Typography
+                            sx={{
+                              fontSize: {
+                                xs: "0.5rem",
+                                sm: "0.75rem",
+                              },
+                              mb: 1,
+                            }}
+                          >
+                            {huruf}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: {
+                                xs: "0.5rem",
+                                sm: "0.75rem",
+                                md: "0.875rem",
+                                lg: "1rem",
+                              },
+                              fontWeight: "bold",
+                            }}
+                          >
+                            0
+                          </Typography>
+                        </Card>
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </Card>
+            ))}
+          </Grid>
+        </Card>
 
         <Button
           onClick={onClose}
           variant="contained"
           fullWidth
-          sx={{ mt: 4, borderRadius: 2 }}
+          sx={{ mt: 3, borderRadius: 2 }}
         >
           Tutup
         </Button>

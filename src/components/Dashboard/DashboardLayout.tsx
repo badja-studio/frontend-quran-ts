@@ -76,9 +76,17 @@ const menuConfig: MenuConfig = {
     },
   ],
   admin: [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
-    { text: "Data Peserta", icon: <PeopleIcon />, path: "/dashboard/data-peserta" },
-    { text: "Rekap Asesor", icon: <PeopleIcon />, path: "/dashboard/rekap-asesor" },
+    { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard/admin" },
+    {
+      text: "Data Peserta",
+      icon: <PeopleIcon />,
+      path: "/dashboard/data-peserta",
+    },
+    {
+      text: "Rekap Asesor",
+      icon: <PeopleIcon />,
+      path: "/dashboard/rekap-asesor",
+    },
     {
       text: "Asesmen",
       icon: <BookIcon />,
@@ -284,8 +292,9 @@ export default function DashboardLayout({
         position="fixed"
         sx={{
           width: {
-            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
-              }px)`,
+            sm: `calc(100% - ${
+              drawerOpen ? drawerWidth : drawerWidthCollapsed
+            }px)`,
           },
           ml: { sm: `${drawerOpen ? drawerWidth : drawerWidthCollapsed}px` },
           transition: "all 0.3s",
@@ -401,8 +410,9 @@ export default function DashboardLayout({
           flexGrow: 1,
           p: 3,
           width: {
-            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
-              }px)`,
+            sm: `calc(100% - ${
+              drawerOpen ? drawerWidth : drawerWidthCollapsed
+            }px)`,
           },
           minHeight: "100vh",
           bgcolor: "grey.50",
