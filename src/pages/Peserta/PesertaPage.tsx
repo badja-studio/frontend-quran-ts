@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Box, Card, Typography, Grid } from "@mui/material";
-import { Person, Edit, Visibility, AccessTime } from "@mui/icons-material";
+import { Box, Typography, Grid } from "@mui/material";
+import { Person } from "@mui/icons-material";
 import AsesmenResultModal from "../../components/Peserta/AsesmenResultModal";
 import PesertaInfoCard from "../../components/Peserta/PesertaInfoCard";
 import AsesmenListCard from "../../components/Peserta/AsesmenListCard";
@@ -9,6 +9,7 @@ interface AsesmenItem {
   asesor: string;
   waktu: string;
   status: string;
+  linkWa?: string;
 }
 
 const dataQuiz = {
@@ -138,7 +139,8 @@ const asesmen: AsesmenItem[] = [
   {
     asesor: "Liana Masruroh",
     waktu: "27/08/2025 19:26–19:28",
-    status: "selesai asesmen",
+    status: "belum asesmen",
+    linkWa: "https://chat.whatsapp.com/xxxxxx",
   },
 ];
 

@@ -72,7 +72,7 @@ const menuConfig: MenuConfig = {
     {
       text: "Data Pengguna",
       icon: <SettingsIcon />,
-      path: "/dashboard/settings",
+      path: "/dashboard/asesor/kelola-data-pengguna",
     },
   ],
   admin: [
@@ -113,7 +113,7 @@ const menuConfig: MenuConfig = {
     {
       text: "Data Pengguna",
       icon: <SettingsIcon />,
-      path: "/dashboard/settings",
+      path: "/dashboard/admin/kelola-data-pengguna",
     },
   ],
 };

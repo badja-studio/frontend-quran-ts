@@ -1,5 +1,12 @@
-import { Card, CardContent, Typography, Box, Button } from "@mui/material";
-import { AccessTime, Visibility } from "@mui/icons-material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Button,
+  Chip,
+} from "@mui/material";
+import { AccessTime, Visibility, WhatsApp } from "@mui/icons-material";
 
 interface Props {
   asesmen: any[];
@@ -8,6 +15,8 @@ interface Props {
 
 const AsesmenListCard: React.FC<Props> = ({ asesmen, onOpen }) => {
   const isDone = (status: string) => status.toLowerCase().includes("selesai");
+
+  const isNotDone = (status: string) => status.toLowerCase().includes("belum");
 
   return (
     <Card
@@ -64,7 +73,8 @@ const AsesmenListCard: React.FC<Props> = ({ asesmen, onOpen }) => {
               {row.waktu}
             </Typography>
 
-            {isDone(row.status) ? (
+            {/* STATUS SELESAI → BISA DIBUKA */}
+            {isDone(row.status) && (
               <Button
                 variant="contained"
                 startIcon={<Visibility />}
@@ -74,10 +84,33 @@ const AsesmenListCard: React.FC<Props> = ({ asesmen, onOpen }) => {
               >
                 Lihat Hasil
               </Button>
-            ) : (
-              <Button variant="outlined" color="error" fullWidth disabled>
-                Belum Asesmen
-              </Button>
+            )}
+
+            {/* STATUS BELUM / BELUM SELESAI → MUNCUL LINK WA GRUP */}
+            {isNotDone(row.status) && (
+              <Box sx={{ mt: 2 }}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  fullWidth
+                  startIcon={<WhatsApp />}
+                  sx={{ textTransform: "none", fontWeight: "bold" }}
+                  href={row.linkWa}
+                  target="_blank"
+                >
+                  Masuk Grup Asesor
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  color="error"
+                  fullWidth
+                  disabled
+                  sx={{ mt: 1 }}
+                >
+                  Belum Asesmen
+                </Button>
+              </Box>
             )}
           </Box>
         ))}

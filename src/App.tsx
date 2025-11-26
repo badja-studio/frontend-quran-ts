@@ -5,7 +5,7 @@ import theme from "./theme";
 import Login from "./pages/Login";
 import GuruDashboard from "./pages/Dashboard/GuruDashboard";
 import AdminDashboard from "./pages/Dashboard/AdminDashboard";
-import GuruSiswa from "./pages/Asesor/GuruSiswa";
+import GuruSiswa from "./pages/Dashboard/GuruSiswa";
 import PesertaPage from "./pages/Peserta/PesertaPage";
 import PenilaianPage from "./pages/Asesor/PenilaianPage";
 import ListPagesDataPeserta from "./pages/Admin/DataPeserta/list";
@@ -17,6 +17,8 @@ import ListAsesorPagesDataPesertaBelomAsesmen from "./pages/Asesor/DataBelumAses
 import ListAsesorPagesDataPesertaHasilAsesmen from "./pages/Asesor/DataHasilAsesmen/list";
 import ListAsesorPagesDataPesertaSedangAssement from "./pages/Asesor/DataPesertaSedangAssesmen/list";
 import ListPagesDataAsesor from "./pages/Admin/DataAsesor/list";
+import AsesmenForm from "./pages/Asesor/KelolaDataPengguna/FormPengguna";
+import AdminForm from "./pages/Admin/KelolaDataPengguna/FormPengguna";
 
 function App() {
   return (
@@ -27,6 +29,10 @@ function App() {
           <Route path="/login" element={<Login />} />
 
           {/* ADMIN */}
+          <Route
+            path="/dashboard/admin/kelola-data-pengguna"
+            element={<AdminForm />}
+          />
           <Route
             path="/dashboard/data-peserta"
             element={<ListPagesDataPeserta />}
@@ -71,6 +77,10 @@ function App() {
           <Route
             path="/dashboard/asesor/penilaian"
             element={<PenilaianPage />}
+          />
+          <Route
+            path="/dashboard/asesor/kelola-data-pengguna"
+            element={<AsesmenForm />}
           />
 
           {/* USER */}
