@@ -29,12 +29,13 @@ import authService, { RegisterPayload } from '../services/authService';
 function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<RegisterPayload>({
+    siagaNumber: '',
     email: '',
     password: '',
     username: '',
     name: '',
     fullname: '',
-    roles: 'Student',
+    roles: 'Assessee',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -117,6 +118,18 @@ function Register() {
 
               <TextField
                 fullWidth
+                label="Siaga Number"
+                name="siagaNumber"
+                value={formData.siagaNumber}
+                onChange={handleChange}
+                required
+                margin="normal"
+                variant="outlined"
+                autoComplete="off"
+              />
+
+              <TextField
+                fullWidth
                 label="Username"
                 name="username"
                 value={formData.username}
@@ -186,8 +199,8 @@ function Register() {
                   onChange={handleChange as any}
                   required
                 >
-                  <MenuItem value="Student">Student</MenuItem>
-                  <MenuItem value="Teacher">Teacher</MenuItem>
+                  <MenuItem value="Assessee">Assessee</MenuItem>
+                  <MenuItem value="Assessor">Assessor</MenuItem>
                   <MenuItem value="Admin">Admin</MenuItem>
                 </Select>
               </FormControl>
