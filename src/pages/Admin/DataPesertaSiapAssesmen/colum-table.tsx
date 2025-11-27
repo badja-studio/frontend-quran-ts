@@ -1,131 +1,106 @@
-import { DataPerseta } from "./type";
+import { DataPersetaSiapAssesment } from "./type";
 import { Column } from "../../../components/Table/DataTable";
 import { Box, Typography, Chip, Avatar } from "@mui/material";
 
-export const dummyDataPeserta: DataPerseta[] = [
+// Data dummy sesuai dengan kolom table
+const dummyData: DataPersetaSiapAssesment[] = [
     {
         id: 1,
-        no_akun: "A001",
-        nip: "1987654321",
-        nama: "Budi Santoso",
+        status: "Siap",
+        no_akun: "AK001",
+        nama: "Ahmad Fauzi",
         jk: "L",
-        tl: "Jakarta",
+        usia: "35 tahun",
         pegawai: "Guru",
         jenjang: "SMA",
         level: "Senior",
-        provinsi: "DKI Jakarta",
-        kab_kota: "Jakarta Selatan",
-        sekolah: "SMA Negeri 8",
-        pendidikan: "S1",
-        program_studi: "Pendidikan Matematika",
-        perguruan_tinggi: "UNJ",
-        jenis_pt: "Negeri",
-        tahun_lulus: "2018",
-        jadwal: "2025-01-10",
-        asesor: "Andi",
+        provinsi: "Jawa Barat",
+        kab_kota: "Bandung",
+        sekolah: "SMAN 1 Bandung"
     },
     {
         id: 2,
-        no_akun: "A002",
-        nip: "1987654322",
-        nama: "Siti Rahma",
+        status: "Siap",
+        no_akun: "AK002",
+        nama: "Siti Nurhaliza",
         jk: "P",
-        tl: "Bandung",
-        pegawai: "Staf TU",
+        usia: "28 tahun",
+        pegawai: "Guru",
         jenjang: "SMP",
-        level: "Junior",
-        provinsi: "Jawa Barat",
-        kab_kota: "Bandung",
-        sekolah: "SMP Negeri 3",
-        pendidikan: "D3",
-        program_studi: "Administrasi Perkantoran",
-        perguruan_tinggi: "Polban",
-        jenis_pt: "Negeri",
-        tahun_lulus: "2016",
-        jadwal: "2025-01-15",
-        asesor: "Rina",
+        level: "Middle",
+        provinsi: "Jawa Tengah",
+        kab_kota: "Semarang",
+        sekolah: "SMPN 5 Semarang"
     },
     {
         id: 3,
-        no_akun: "A003",
-        nip: "1987654323",
-        nama: "Agus Kurniawan",
+        status: "Siap",
+        no_akun: "AK003",
+        nama: "Budi Santoso",
         jk: "L",
-        tl: "Surabaya",
-        pegawai: "Guru",
+        usia: "42 tahun",
+        pegawai: "Kepala Sekolah",
         jenjang: "SD",
-        level: "Middle",
+        level: "Senior",
         provinsi: "Jawa Timur",
         kab_kota: "Surabaya",
-        sekolah: "SDN 01 Ketintang",
-        pendidikan: "S1",
-        program_studi: "PGSD",
-        perguruan_tinggi: "UNESA",
-        jenis_pt: "Negeri",
-        tahun_lulus: "2019",
-        jadwal: "2025-02-03",
-        asesor: "Dewi",
+        sekolah: "SDN 12 Surabaya"
     },
     {
         id: 4,
-        no_akun: "A004",
-        nip: "1987654324",
-        nama: "Nur Aisyah",
+        status: "Menunggu",
+        no_akun: "AK004",
+        nama: "Dewi Lestari",
         jk: "P",
-        tl: "Medan",
+        usia: "30 tahun",
         pegawai: "Guru",
         jenjang: "SMA",
-        level: "Junior",
-        provinsi: "Sumatera Utara",
-        kab_kota: "Medan",
-        sekolah: "SMA Negeri 5",
-        pendidikan: "S2",
-        program_studi: "Pendidikan Bahasa Indonesia",
-        perguruan_tinggi: "UNIMED",
-        jenis_pt: "Negeri",
-        tahun_lulus: "2020",
-        jadwal: "2025-02-07",
-        asesor: "Fajar",
+        level: "Middle",
+        provinsi: "DKI Jakarta",
+        kab_kota: "Jakarta Selatan",
+        sekolah: "SMAN 8 Jakarta"
     },
     {
         id: 5,
-        no_akun: "A005",
-        nip: "1987654325",
-        nama: "Rizky Pratama",
+        status: "Siap",
+        no_akun: "AK005",
+        nama: "Rizki Ramadhan",
         jk: "L",
-        tl: "Yogyakarta",
-        pegawai: "Staf IT",
+        usia: "26 tahun",
+        pegawai: "Guru",
         jenjang: "SMP",
-        level: "Middle",
-        provinsi: "DI Yogyakarta",
-        kab_kota: "Yogyakarta",
-        sekolah: "SMP Muhammadiyah 4",
-        pendidikan: "S1",
-        program_studi: "Teknik Informatika",
-        perguruan_tinggi: "UGM",
-        jenis_pt: "Negeri",
-        tahun_lulus: "2021",
-        jadwal: "2025-03-01",
-        asesor: "Talitha",
-    },
+        level: "Junior",
+        provinsi: "Banten",
+        kab_kota: "Tangerang",
+        sekolah: "SMPN 3 Tangerang"
+    }
 ];
 
-export const columnsPeserta: Column<DataPerseta>[] = [
+export const columnsPeserta: Column<DataPersetaSiapAssesment>[] = [
+    {
+        id: "status",
+        label: "Status",
+        minWidth: 100,
+        align: "center",
+        format: (value) => {
+            const status = String(value);
+            let color: "success" | "warning" | "error" = "success";
+            if (status === "Menunggu") color = "warning";
+            else if (status === "Tidak Siap") color = "error";
+            return (
+                <Chip label={status} size="small" color={color} />
+            );
+        },
+    },
     {
         id: "no_akun",
         label: "No. Akun",
-        minWidth: 100,
-        align: "center",
-    },
-    {
-        id: "nip",
-        label: "NIP",
         minWidth: 130,
         align: "center",
     },
     {
         id: "nama",
-        label: "Nama Peserta",
+        label: "Nama",
         minWidth: 200,
         format: (value) => {
             const nama = String(value);
@@ -158,14 +133,14 @@ export const columnsPeserta: Column<DataPerseta>[] = [
         },
     },
     {
-        id: "tl",
-        label: "Tempat Lahir",
+        id: "usia",
+        label: "Usia",
         minWidth: 130,
         align: "center",
     },
     {
         id: "pegawai",
-        label: "Jabatan",
+        label: "Pegawai",
         minWidth: 120,
         align: "center",
         format: (value) => {
@@ -224,60 +199,6 @@ export const columnsPeserta: Column<DataPerseta>[] = [
         label: "Sekolah",
         minWidth: 200,
     },
-    {
-        id: "pendidikan",
-        label: "Pendidikan",
-        minWidth: 100,
-        align: "center",
-        format: (value) => {
-            return (
-                <Chip
-                    label={String(value)}
-                    size="small"
-                    color="secondary"
-                    variant="outlined"
-                />
-            );
-        },
-    },
-    {
-        id: "program_studi",
-        label: "Program Studi",
-        minWidth: 200,
-    },
-    {
-        id: "perguruan_tinggi",
-        label: "Perguruan Tinggi",
-        minWidth: 180,
-    },
-    {
-        id: "jenis_pt",
-        label: "Jenis PT",
-        minWidth: 100,
-        align: "center",
-    },
-    {
-        id: "tahun_lulus",
-        label: "Tahun Lulus",
-        minWidth: 110,
-        align: "center",
-    },
-    {
-        id: "jadwal",
-        label: "Jadwal",
-        minWidth: 130,
-        align: "center",
-        format: (value) => {
-            const date = new Date(String(value));
-            return date.toLocaleDateString("id-ID");
-        },
-    },
-    {
-        id: "asesor",
-        label: "Asesor",
-        minWidth: 130,
-        align: "center",
-    },
 ];
 
-export default dummyDataPeserta;
+export default dummyData;
