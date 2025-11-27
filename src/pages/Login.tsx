@@ -136,7 +136,7 @@ function Login() {
         if (role === "Admin") {
           navigate("/dashboard/admin");
         } else if (role === "Assessor" || role === "guru") {
-          navigate("/dashboard/guru");
+          navigate("/dashboard/asesor/siap-asesmen");
         } else if (role === "Assessee" || role === "siswa") {
           navigate("/dashboard/siswa");
         } else {
