@@ -270,7 +270,7 @@ export const columnsPeserta: Column<DataPerseta>[] = [
     label: "Action",
     minWidth: 120,
     align: "center",
-    format: (_, row) => {
+    format: (_, _row) => {
       return (
         <Button
           variant="contained"

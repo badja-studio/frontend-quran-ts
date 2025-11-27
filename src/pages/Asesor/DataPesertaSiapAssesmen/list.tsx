@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
-import DataTable, { FilterItem } from "../../../components/Table/DataTable";
+import DataTable from "../../../components/Table/DataTable";
 import { filterConfigs } from "./config-filter";
 import dummyDataPeserta, { columnsPeserta } from "./colum-table";
 
 export default function ListAsesorPagesDataPesertaSiapAssement() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filters, setFilters] = useState<FilterItem[]>([]);
+  // const [filters, setFilters] = useState<FilterItem[]>([]);
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
   };
 
-  const handleFiltersApplied = (appliedFilters: FilterItem[]) => {
-    setFilters(appliedFilters);
-  };
+  // const handleFiltersApplied = (appliedFilters: FilterItem[]) => {
+  //   setFilters(appliedFilters);
+  // };
 
   return (
     <DashboardLayout
@@ -40,7 +40,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
           emptyMessage="Belum ada data peserta"
           enableFilter={true}
           filterConfigs={filterConfigs}
-          onFiltersApplied={handleFiltersApplied}
+          // onFiltersApplied={handleFiltersApplied}
           enableSearch={true}
           searchValue={searchQuery}
           onSearchChange={handleSearchChange}
