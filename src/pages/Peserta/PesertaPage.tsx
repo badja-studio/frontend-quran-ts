@@ -139,7 +139,7 @@ const asesmen: AsesmenItem[] = [
   {
     asesor: "Liana Masruroh",
     waktu: "27/08/2025 19:26–19:28",
-    status: "belum asesmen",
+    status: "selesai asesmen",
     linkWa: "https://chat.whatsapp.com/xxxxxx",
   },
 ];

@@ -1,4 +1,4 @@
-export interface DataPerseta extends Record<string, unknown> {
+export interface DataAsesor extends Record<string, unknown> {
   id: number;
   nama: string;
   username: string;

@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import DynamicProfileForm from "../../../components/FormKelolaPengguna/DynamicProfileForm";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import { Box } from "@mui/material";
@@ -20,13 +23,30 @@ export default function AsesmenForm() {
     { name: "link_wa", label: "Link Grup WA", type: "tel" },
   ];
 
-  const defaultValues = {
+  // --- State penyimpanan data yg berubah ---
+  const [formData, setFormData] = useState({
     nama: "Budi Santoso",
     nip: "1987654321001",
-    status: "Aktif",
+    status: "pns",
     email: "budi.santoso@example.com",
-    nomor: "081234567890",
+    nomor_telp: "081234567890",
     link_wa: "https://wa.me/6281234567890",
+  });
+
+  // --- Handler ketika tombol SIMPAN ditekan ---
+  const handleSave = async (values: any) => {
+    console.log("Data Baru:", values);
+
+    // update state
+    setFormData(values);
+
+    // misal kirim ke API
+    // await fetch("/api/update-user", {
+    //   method: "POST",
+    //   body: JSON.stringify(values),
+    // });
+
+    alert("Data berhasil diperbarui!");
   };
 
   return (
@@ -41,8 +61,8 @@ export default function AsesmenForm() {
           role="guru"
           status="AKTIF"
           fields={fields}
-          defaultValues={defaultValues}
-          onSubmit={(data) => console.log("Admin Save:", data)}
+          defaultValues={formData} // <= berubah otomatis
+          onSubmit={handleSave}
         />
       </Box>
     </DashboardLayout>

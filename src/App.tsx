@@ -19,6 +19,8 @@ import ListAsesorPagesDataPesertaSedangAssement from "./pages/Asesor/DataPeserta
 import ListPagesDataAsesor from "./pages/Admin/DataAsesor/list";
 import AsesmenForm from "./pages/Asesor/KelolaDataPengguna/FormPengguna";
 import AdminForm from "./pages/Admin/KelolaDataPengguna/FormPengguna";
+import InputAsesorPage from "./pages/Admin/InputData/input-asesor";
+import InputPesertaPage from "./pages/Admin/InputData/input-peserta";
 
 function App() {
   return (
@@ -32,6 +34,14 @@ function App() {
           <Route
             path="/dashboard/admin/kelola-data-pengguna"
             element={<AdminForm />}
+          />
+          <Route
+            path="/dashboard/admin/input-asesor"
+            element={<InputAsesorPage />}
+          />
+          <Route
+            path="/dashboard/admin/input-peserta"
+            element={<InputPesertaPage />}
           />
           <Route
             path="/dashboard/data-peserta"

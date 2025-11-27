@@ -324,19 +324,16 @@ export const columnsPeserta: Column<DataPerseta>[] = [
     label: "Detail",
     minWidth: 120,
     align: "center",
-    format: (_, row) => {
-      return (
-        <Chip
-          label="Lihat Detail"
-          size="small"
-          color="primary"
-          variant="outlined"
-          component={Link}
-          to={`/peserta/${row.id}`}
-          clickable
-        />
-      );
-    },
+    format: (_, row: any) => (
+      <Chip
+        label="Lihat Detail"
+        size="small"
+        color="primary"
+        variant="outlined"
+        onClick={() => row.onDetailClick?.(row)}
+        sx={{ cursor: "pointer" }}
+      />
+    ),
   },
 ];
 

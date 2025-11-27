@@ -5,7 +5,7 @@ import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import { filterConfigs } from "./config-filter";
 import dummyDataPeserta, { columnsPeserta } from "./colum-table";
 
-export default function ListAsesorPagesDataPesertaSiapAssement() {
+export default function ListAsesorPagesDataPesertaSedangAssement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterItem[]>([]);
 
