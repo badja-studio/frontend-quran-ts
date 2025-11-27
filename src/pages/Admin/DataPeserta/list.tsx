@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Box, Typography, CircularProgress, Alert } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
-import DataTable, { FilterItem } from "../../../components/Table/DataTable";
+import DataTable from "../../../components/Table/DataTable";
 import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
 import { DataPerseta } from "./type";
@@ -9,7 +9,7 @@ import userService from "../../../services/user.service";
 
 export default function ListPagesDataPeserta() {
     const [searchQuery, setSearchQuery] = useState('');
-    const [filters, setFilters] = useState<FilterItem[]>([]);
+    // const [filters, setFilters] = useState<FilterItem[]>([]);
     const [data, setData] = useState<DataPerseta[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -81,9 +81,6 @@ export default function ListPagesDataPeserta() {
         setPagination(prev => ({ ...prev, page: 1 }));
     };
 
-    const handleFiltersApplied = (appliedFilters: FilterItem[]) => {
-        setFilters(appliedFilters);
-    };
 
     if (loading && data.length === 0) {
         return (
@@ -119,7 +116,6 @@ export default function ListPagesDataPeserta() {
                     emptyMessage={loading ? "Memuat data..." : "Belum ada data peserta"}
                     enableFilter={true}
                     filterConfigs={filterConfigs}
-                    onFiltersApplied={handleFiltersApplied}
                     enableSearch={true}
                     searchValue={searchQuery}
                     onSearchChange={handleSearchChange}

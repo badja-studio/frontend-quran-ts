@@ -28,10 +28,10 @@ import {
   ExitToApp,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
-  EditAttributes,
+  // EditAttributes,
   UploadFile,
-  Delete,
-  Edit,
+  // Delete,
+  // Edit,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
