@@ -94,7 +94,19 @@ const menuConfig: MenuConfig = {
     {
       text: "Input Data Baru",
       icon: <UploadFile />,
-      path: "/dashboard/input-peserta",
+      path: "",
+      children: [
+        {
+          text: "Input Asesor",
+          icon: <PeopleIcon />,
+          path: "/dashboard/admin/input-asesor",
+        },
+        {
+          text: "Input Peserta",
+          icon: <PeopleIcon />,
+          path: "/dashboard/admin/input-peserta",
+        },
+      ],
     },
     {
       text: "Asesmen",
