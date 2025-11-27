@@ -59,6 +59,13 @@ interface DataTableProps<T> {
   searchPlaceholder?: string; // Placeholder for search input
   enableExport?: boolean; // Enable export functionality
   onExport?: (type: ExportType, data: T[]) => void; // Unified export callback
+  // Server-side pagination props
+  serverSide?: boolean; // Enable server-side mode (parent controls everything)
+  totalCount?: number; // Total records from server
+  page?: number; // Current page (0-indexed) from parent
+  rowsPerPage?: number; // Rows per page from parent
+  onPageChange?: (page: number) => void; // Callback when page changes
+  onRowsPerPageChange?: (rowsPerPage: number) => void; // Callback when rows per page changes
 }
 
 type Order = 'asc' | 'desc';
@@ -80,20 +87,31 @@ export default function DataTable<T extends Record<string, unknown>>({
   searchPlaceholder = 'Cari data...',
   enableExport = false,
   onExport,
+  serverSide = false,
+  totalCount,
+  page: externalPage,
+  rowsPerPage: externalRowsPerPage,
+  onPageChange,
+  onRowsPerPageChange,
 }: DataTableProps<T>) {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(initialRowsPerPage);
+  // Internal state (used only if not server-side)
+  const [internalPage, setInternalPage] = useState(0);
+  const [internalRowsPerPage, setInternalRowsPerPage] = useState(initialRowsPerPage);
   const [orderBy, setOrderBy] = useState<keyof T | string>('');
   const [order, setOrder] = useState<Order>('asc');
   const [filters, setFilters] = useState<FilterItem[]>([]);
   const [exportAnchorEl, setExportAnchorEl] = useState<null | HTMLElement>(null);
   const exportMenuOpen = Boolean(exportAnchorEl);
 
-  // Apply filters first
-  const filteredData = applyFilters(data, filters);
+  // Use external or internal state
+  const currentPage = serverSide && externalPage !== undefined ? externalPage : internalPage;
+  const currentRowsPerPage = serverSide && externalRowsPerPage !== undefined ? externalRowsPerPage : internalRowsPerPage;
 
-  // Apply search query (controlled by parent)
-  const searchedData = searchValue
+  // Apply filters first (only for client-side)
+  const filteredData = serverSide ? data : applyFilters(data, filters);
+
+  // Apply search query (only for client-side)
+  const searchedData = serverSide ? filteredData : (searchValue
     ? filteredData.filter((row) => {
         // Search across all columns
         return columns.some((column) => {
@@ -102,10 +120,10 @@ export default function DataTable<T extends Record<string, unknown>>({
           return String(value).toLowerCase().includes(searchValue.toLowerCase());
         });
       })
-    : filteredData;
+    : filteredData);
 
-  // Handle sorting
-  const sortedData = [...searchedData].sort((a, b) => {
+  // Handle sorting (only for client-side)
+  const sortedData = serverSide ? searchedData : [...searchedData].sort((a, b) => {
     if (!orderBy) return 0;
 
     const aValue = a[orderBy];
@@ -126,19 +144,32 @@ export default function DataTable<T extends Record<string, unknown>>({
     return order === 'asc' ? comparison : -comparison;
   });
 
-  // Paginated data
-  const paginatedData = sortedData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
+  // Paginated data (only for client-side)
+  const paginatedData = serverSide ? data : sortedData.slice(
+    currentPage * currentRowsPerPage,
+    currentPage * currentRowsPerPage + currentRowsPerPage
   );
 
+  // Total count
+  const totalRecords = serverSide && totalCount !== undefined ? totalCount : sortedData.length;
+
   const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
+    if (serverSide && onPageChange) {
+      onPageChange(newPage);
+    } else {
+      setInternalPage(newPage);
+    }
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    if (serverSide && onRowsPerPageChange) {
+      onRowsPerPageChange(newRowsPerPage);
+      onPageChange?.(0); // Reset to first page
+    } else {
+      setInternalRowsPerPage(newRowsPerPage);
+      setInternalPage(0);
+    }
   };
 
   const handleRequestSort = (property: keyof T | string) => {
@@ -149,7 +180,11 @@ export default function DataTable<T extends Record<string, unknown>>({
 
   const handleFilterChange = (newFilters: FilterItem[]) => {
     setFilters(newFilters);
-    setPage(0); // Reset to first page when filters change
+    if (serverSide && onPageChange) {
+      onPageChange(0); // Reset to first page when filters change
+    } else {
+      setInternalPage(0);
+    }
   };
 
   const handleExportMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -221,7 +256,12 @@ export default function DataTable<T extends Record<string, unknown>>({
               value={searchValue}
               onChange={(e) => {
                 onSearchChange?.(e.target.value);
-                setPage(0); // Reset to first page when searching
+                // Reset to first page when searching
+                if (serverSide && onPageChange) {
+                  onPageChange(0);
+                } else {
+                  setInternalPage(0);
+                }
               }}
               InputProps={{
                 startAdornment: (
@@ -388,9 +428,9 @@ export default function DataTable<T extends Record<string, unknown>>({
       <TablePagination
         rowsPerPageOptions={rowsPerPageOptions}
         component="div"
-        count={sortedData.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
+        count={totalRecords}
+        rowsPerPage={currentRowsPerPage}
+        page={currentPage}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         labelRowsPerPage="Baris per halaman:"
