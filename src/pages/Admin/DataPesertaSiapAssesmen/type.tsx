@@ -1,10 +1,10 @@
-export interface DataPersetaSiapAssesment extends Record<string, unknown> {
+export interface DataPersetaSiapAssesmen extends Record<string, unknown> {
     id: number;
-    status: string; // Tambahan sesuai kolom
+    status: string;
     no_akun: string;
     nama: string;
     jk: string;
-    usia: string; // Tambahan sesuai kolom
+    usia: string;
     pegawai: string;
     jenjang: string;
     level: string;

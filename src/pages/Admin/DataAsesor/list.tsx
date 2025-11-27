@@ -25,10 +25,10 @@ export default function ListPagesDataAsesor() {
     >
       <Box>
         <Typography variant="h4" gutterBottom fontWeight="bold">
-          Daftar Peserta
+          Daftar Rekap Asesor
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Kelola dan pantau data peserta
+          Pantau dan kelola rekap data asesor serta jumlah peserta yang ditangani
         </Typography>
 
         <DataTable
@@ -46,7 +46,7 @@ export default function ListPagesDataAsesor() {
           onSearchChange={handleSearchChange}
           searchPlaceholder="Cari peserta (nama, NIS, kelas, dll)..."
           enableExport={true}
-          // onExport={handleExport}
+        // onExport={handleExport}
         />
       </Box>
     </DashboardLayout>

@@ -1,82 +1,81 @@
-import { DataPersetaSiapAssesment } from "./type";
+import { DataPersetaSiapAssesmen } from "./type";
 import { Column } from "../../../components/Table/DataTable";
 import { Box, Typography, Chip, Avatar } from "@mui/material";
 
-// Data dummy sesuai dengan kolom table
-const dummyData: DataPersetaSiapAssesment[] = [
+export const dummyDataPeserta: DataPersetaSiapAssesmen[] = [
     {
         id: 1,
         status: "Siap",
-        no_akun: "AK001",
-        nama: "Ahmad Fauzi",
+        no_akun: "A001",
+        nama: "Budi Santoso",
         jk: "L",
-        usia: "35 tahun",
+        usia: "35",
         pegawai: "Guru",
         jenjang: "SMA",
         level: "Senior",
-        provinsi: "Jawa Barat",
-        kab_kota: "Bandung",
-        sekolah: "SMAN 1 Bandung"
+        provinsi: "DKI Jakarta",
+        kab_kota: "Jakarta Selatan",
+        sekolah: "SMA Negeri 8",
     },
     {
         id: 2,
         status: "Siap",
-        no_akun: "AK002",
-        nama: "Siti Nurhaliza",
+        no_akun: "A002",
+        nama: "Siti Rahma",
         jk: "P",
-        usia: "28 tahun",
-        pegawai: "Guru",
+        usia: "32",
+        pegawai: "Staf TU",
         jenjang: "SMP",
-        level: "Middle",
-        provinsi: "Jawa Tengah",
-        kab_kota: "Semarang",
-        sekolah: "SMPN 5 Semarang"
+        level: "Junior",
+        provinsi: "Jawa Barat",
+        kab_kota: "Bandung",
+        sekolah: "SMP Negeri 3",
     },
     {
         id: 3,
         status: "Siap",
-        no_akun: "AK003",
-        nama: "Budi Santoso",
+        no_akun: "A003",
+        nama: "Agus Kurniawan",
         jk: "L",
-        usia: "42 tahun",
-        pegawai: "Kepala Sekolah",
+        usia: "38",
+        pegawai: "Guru",
         jenjang: "SD",
-        level: "Senior",
+        level: "Middle",
         provinsi: "Jawa Timur",
         kab_kota: "Surabaya",
-        sekolah: "SDN 12 Surabaya"
+        sekolah: "SDN 01 Ketintang",
     },
     {
         id: 4,
-        status: "Menunggu",
-        no_akun: "AK004",
-        nama: "Dewi Lestari",
+        status: "Siap",
+        no_akun: "A004",
+        nama: "Nur Aisyah",
         jk: "P",
-        usia: "30 tahun",
+        usia: "29",
         pegawai: "Guru",
         jenjang: "SMA",
-        level: "Middle",
-        provinsi: "DKI Jakarta",
-        kab_kota: "Jakarta Selatan",
-        sekolah: "SMAN 8 Jakarta"
+        level: "Junior",
+        provinsi: "Sumatera Utara",
+        kab_kota: "Medan",
+        sekolah: "SMA Negeri 5",
     },
     {
         id: 5,
         status: "Siap",
-        no_akun: "AK005",
-        nama: "Rizki Ramadhan",
+        no_akun: "A005",
+        nama: "Rizky Pratama",
         jk: "L",
-        usia: "26 tahun",
-        pegawai: "Guru",
+        usia: "30",
+        pegawai: "Staf IT",
         jenjang: "SMP",
-        level: "Junior",
-        provinsi: "Banten",
-        kab_kota: "Tangerang",
-        sekolah: "SMPN 3 Tangerang"
-    }
+        level: "Middle",
+        provinsi: "DI Yogyakarta",
+        kab_kota: "Yogyakarta",
+        sekolah: "SMP Muhammadiyah 4",
+    },
 ];
 
-export const columnsPeserta: Column<DataPersetaSiapAssesment>[] = [
+export const columnsPeserta: Column<DataPersetaSiapAssesmen>[] = [
     {
         id: "status",
         label: "Status",
@@ -84,23 +83,24 @@ export const columnsPeserta: Column<DataPersetaSiapAssesment>[] = [
         align: "center",
         format: (value) => {
             const status = String(value);
-            let color: "success" | "warning" | "error" = "success";
-            if (status === "Menunggu") color = "warning";
-            else if (status === "Tidak Siap") color = "error";
             return (
-                <Chip label={status} size="small" color={color} />
+                <Chip
+                    label={status}
+                    size="small"
+                    color="success"
+                />
             );
         },
     },
     {
         id: "no_akun",
         label: "No. Akun",
-        minWidth: 130,
+        minWidth: 100,
         align: "center",
     },
     {
         id: "nama",
-        label: "Nama",
+        label: "Nama Peserta",
         minWidth: 200,
         format: (value) => {
             const nama = String(value);
@@ -135,12 +135,12 @@ export const columnsPeserta: Column<DataPersetaSiapAssesment>[] = [
     {
         id: "usia",
         label: "Usia",
-        minWidth: 130,
+        minWidth: 80,
         align: "center",
     },
     {
         id: "pegawai",
-        label: "Pegawai",
+        label: "Jabatan",
         minWidth: 120,
         align: "center",
         format: (value) => {
@@ -201,4 +201,4 @@ export const columnsPeserta: Column<DataPersetaSiapAssesment>[] = [
     },
 ];
 
-export default dummyData;
+export default dummyDataPeserta;
