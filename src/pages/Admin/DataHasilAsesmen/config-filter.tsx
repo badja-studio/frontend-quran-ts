@@ -1,7 +1,7 @@
 import { FilterConfig } from "../../../components/Table/DataTableFilter";
-import { DataPerseta } from "./type";
+import { DataPesertaHasilAssesment } from "./type";
 
-export const filterConfigs: FilterConfig<DataPerseta>[] = [
+export const filterConfigs: FilterConfig<DataPesertaHasilAssesment>[] = [
     {
         key: 'no_akun',
         label: 'No Akun',
@@ -30,10 +30,10 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
         ],
     },
     {
-        key: 'tl',
-        label: 'Tempat Lahir',
-        type: 'text',
-        operators: ['contains', 'startsWith', 'endsWith'],
+        key: 'usia',
+        label: 'Usia',
+        type: 'number',
+        operators: ['equals', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'],
     },
     {
         key: 'pegawai',
@@ -121,14 +121,50 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
         operators: ['equals', 'contains'],
     },
     {
-        key: 'jadwal',
-        label: 'Jadwal',
-        type: 'date',
-    },
-    {
         key: 'asesor',
         label: 'Asesor',
         type: 'text',
         operators: ['contains', 'startsWith', 'endsWith'],
+    },
+    {
+        key: 'waktu',
+        label: 'Waktu',
+        type: 'date',
+    },
+    {
+        key: 'nilai_1',
+        label: 'Nilai 1',
+        type: 'number',
+        operators: ['equals', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'],
+    },
+    {
+        key: 'nilai_2',
+        label: 'Nilai 2',
+        type: 'number',
+        operators: ['equals', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'],
+    },
+    {
+        key: 'nilai_3',
+        label: 'Nilai 3',
+        type: 'number',
+        operators: ['equals', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'],
+    },
+    {
+        key: 'nilai_4',
+        label: 'Nilai 4',
+        type: 'number',
+        operators: ['equals', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'],
+    },
+    {
+        key: 'm_1',
+        label: 'M 1',
+        type: 'number',
+        operators: ['equals', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'],
+    },
+    {
+        key: 'm_2',
+        label: 'M 2',
+        type: 'number',
+        operators: ['equals', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'],
     },
 ];

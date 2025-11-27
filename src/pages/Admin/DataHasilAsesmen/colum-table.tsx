@@ -1,15 +1,67 @@
-import { DataPerseta } from "./type";
+import { DataPesertaHasilAssesment } from "./type";
 import { Column } from "../../../components/Table/DataTable";
-import { Box, Typography, Chip, Avatar } from "@mui/material";
+import { Box, Typography, Chip, Avatar, IconButton, Menu, MenuItem } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { useState, MouseEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
-export const dummyDataPeserta: DataPerseta[] = [
+// Component untuk Action Menu
+const ActionMenu = ({ row }: { row: DataPesertaHasilAssesment }) => {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const navigate = useNavigate();
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event: MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleView = () => {
+        console.log("View - No Akun:", row.no_akun);
+        navigate(`/admin/data-hasil-asesmen/view/${row.no_akun}`);
+        handleClose();
+    };
+
+    const handleEdit = () => {
+        console.log("Edit - No Akun:", row.no_akun);
+        navigate(`/admin/data-hasil-asesmen/edit/${row.no_akun}`);
+        handleClose();
+    };
+
+    return (
+        <>
+            <IconButton
+                aria-label="more"
+                aria-controls={open ? 'action-menu' : undefined}
+                aria-haspopup="true"
+                onClick={handleClick}
+            >
+                <MoreVertIcon />
+            </IconButton>
+            <Menu
+                id="action-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={handleView}>View</MenuItem>
+                <MenuItem onClick={handleEdit}>Edit</MenuItem>
+            </Menu>
+        </>
+    );
+};
+
+export const dummyDataPeserta: DataPesertaHasilAssesment[] = [
     {
         id: 1,
         no_akun: "A001",
         nip: "1987654321",
         nama: "Budi Santoso",
         jk: "L",
-        tl: "Jakarta",
+        usia: 35,
         pegawai: "Guru",
         jenjang: "SMA",
         level: "Senior",
@@ -21,8 +73,14 @@ export const dummyDataPeserta: DataPerseta[] = [
         perguruan_tinggi: "UNJ",
         jenis_pt: "Negeri",
         tahun_lulus: "2018",
-        jadwal: "2025-01-10",
         asesor: "Andi",
+        waktu: "2025-01-10",
+        nilai_1: 85,
+        nilai_2: 90,
+        nilai_3: 88,
+        nilai_4: 92,
+        m_1: 87,
+        m_2: 89,
     },
     {
         id: 2,
@@ -30,7 +88,7 @@ export const dummyDataPeserta: DataPerseta[] = [
         nip: "1987654322",
         nama: "Siti Rahma",
         jk: "P",
-        tl: "Bandung",
+        usia: 32,
         pegawai: "Staf TU",
         jenjang: "SMP",
         level: "Junior",
@@ -42,8 +100,14 @@ export const dummyDataPeserta: DataPerseta[] = [
         perguruan_tinggi: "Polban",
         jenis_pt: "Negeri",
         tahun_lulus: "2016",
-        jadwal: "2025-01-15",
         asesor: "Rina",
+        waktu: "2025-01-15",
+        nilai_1: 78,
+        nilai_2: 82,
+        nilai_3: 80,
+        nilai_4: 85,
+        m_1: 81,
+        m_2: 83,
     },
     {
         id: 3,
@@ -51,7 +115,7 @@ export const dummyDataPeserta: DataPerseta[] = [
         nip: "1987654323",
         nama: "Agus Kurniawan",
         jk: "L",
-        tl: "Surabaya",
+        usia: 38,
         pegawai: "Guru",
         jenjang: "SD",
         level: "Middle",
@@ -63,8 +127,14 @@ export const dummyDataPeserta: DataPerseta[] = [
         perguruan_tinggi: "UNESA",
         jenis_pt: "Negeri",
         tahun_lulus: "2019",
-        jadwal: "2025-02-03",
         asesor: "Dewi",
+        waktu: "2025-02-03",
+        nilai_1: 92,
+        nilai_2: 88,
+        nilai_3: 90,
+        nilai_4: 87,
+        m_1: 89,
+        m_2: 91,
     },
     {
         id: 4,
@@ -72,7 +142,7 @@ export const dummyDataPeserta: DataPerseta[] = [
         nip: "1987654324",
         nama: "Nur Aisyah",
         jk: "P",
-        tl: "Medan",
+        usia: 29,
         pegawai: "Guru",
         jenjang: "SMA",
         level: "Junior",
@@ -84,8 +154,14 @@ export const dummyDataPeserta: DataPerseta[] = [
         perguruan_tinggi: "UNIMED",
         jenis_pt: "Negeri",
         tahun_lulus: "2020",
-        jadwal: "2025-02-07",
         asesor: "Fajar",
+        waktu: "2025-02-07",
+        nilai_1: 88,
+        nilai_2: 91,
+        nilai_3: 89,
+        nilai_4: 93,
+        m_1: 90,
+        m_2: 92,
     },
     {
         id: 5,
@@ -93,7 +169,7 @@ export const dummyDataPeserta: DataPerseta[] = [
         nip: "1987654325",
         nama: "Rizky Pratama",
         jk: "L",
-        tl: "Yogyakarta",
+        usia: 30,
         pegawai: "Staf IT",
         jenjang: "SMP",
         level: "Middle",
@@ -105,12 +181,18 @@ export const dummyDataPeserta: DataPerseta[] = [
         perguruan_tinggi: "UGM",
         jenis_pt: "Negeri",
         tahun_lulus: "2021",
-        jadwal: "2025-03-01",
         asesor: "Talitha",
+        waktu: "2025-03-01",
+        nilai_1: 95,
+        nilai_2: 92,
+        nilai_3: 94,
+        nilai_4: 90,
+        m_1: 93,
+        m_2: 94,
     },
 ];
 
-export const columnsPeserta: Column<DataPerseta>[] = [
+export const columnsPeserta: Column<DataPesertaHasilAssesment>[] = [
     {
         id: "no_akun",
         label: "No. Akun",
@@ -158,14 +240,14 @@ export const columnsPeserta: Column<DataPerseta>[] = [
         },
     },
     {
-        id: "tl",
-        label: "Tempat Lahir",
+        id: "usia",
+        label: "Usia",
         minWidth: 130,
         align: "center",
     },
     {
         id: "pegawai",
-        label: "Jabatan",
+        label: "Pegawai",
         minWidth: 120,
         align: "center",
         format: (value) => {
@@ -263,8 +345,14 @@ export const columnsPeserta: Column<DataPerseta>[] = [
         align: "center",
     },
     {
-        id: "jadwal",
-        label: "Jadwal",
+        id: "asesor",
+        label: "Asesor",
+        minWidth: 130,
+        align: "center",
+    },
+    {
+        id: "waktu",
+        label: "Waktu",
         minWidth: 130,
         align: "center",
         format: (value) => {
@@ -273,10 +361,66 @@ export const columnsPeserta: Column<DataPerseta>[] = [
         },
     },
     {
-        id: "asesor",
-        label: "Asesor",
+        id: "nilai_1",
+        label: "Nilai 1",
         minWidth: 130,
         align: "center",
+    },
+    {
+        id: "nilai_2",
+        label: "Nilai 2",
+        minWidth: 130,
+        align: "center",
+    },
+    {
+        id: "nilai_3",
+        label: "Nilai 3",
+        minWidth: 130,
+        align: "center",
+    },
+    {
+        id: "nilai_4",
+        label: "Nilai 4",
+        minWidth: 130,
+        align: "center",
+    },
+    {
+        id: "m_1",
+        label: "M 1",
+        minWidth: 130,
+        align: "center",
+    },
+    {
+        id: "m_2",
+        label: "M 2",
+        minWidth: 130,
+        align: "center",
+    },
+    {
+        id: "total",
+        label: "Total",
+        minWidth: 130,
+        align: "center",
+        format: (_value: unknown, row: DataPesertaHasilAssesment) => {
+            const total = row.nilai_1 + row.nilai_2 + row.nilai_3 + row.nilai_4 + row.m_1 + row.m_2;
+            return (
+                <Chip
+                    label={total}
+                    size="small"
+                    color="primary"
+                    sx={{ fontWeight: "bold" }}
+                />
+            );
+        },
+    },
+    {
+        id: "action",
+        label: "Action",
+        minWidth: 150,
+        align: "center",
+        format: (_value: unknown, row: DataPesertaHasilAssesment) => {
+            return <ActionMenu row={row} />;
+        },
     },
 ];
 

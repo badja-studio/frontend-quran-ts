@@ -1,10 +1,10 @@
-export interface DataPerseta extends Record<string, unknown> {
+export interface DataPesertaHasilAssesment extends Record<string, unknown> {
     id: number;
     no_akun: string;
     nip: string;
     nama: string;
     jk: string;
-    tl: string;
+    usia: number;
     pegawai: string;
     jenjang: string;
     level: string;
@@ -16,6 +16,12 @@ export interface DataPerseta extends Record<string, unknown> {
     perguruan_tinggi: string;
     jenis_pt: string;
     tahun_lulus: string;
-    jadwal: string;
     asesor: string;
+    waktu: string;
+    nilai_1: number;
+    nilai_2: number;
+    nilai_3: number;
+    nilai_4: number;
+    m_1: number;
+    m_2: number;
 }
