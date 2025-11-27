@@ -1,4 +1,4 @@
-import { Grid, Typography, Box } from "@mui/material";
+import { Grid, Paper, Typography, Box, Card, CardContent } from "@mui/material";
 import { People as PeopleIcon } from "@mui/icons-material";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";

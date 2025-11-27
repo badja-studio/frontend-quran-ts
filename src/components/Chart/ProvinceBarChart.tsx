@@ -25,7 +25,7 @@ export default function ProvinceBarChart({
   data,
   barColor1 = "#8884d8",
   barColor2 = "#82ca9d",
-  // maxWidth = "900px",
+  maxWidth = "900px",
 }: ProvinceBarChartProps) {
   return (
     <BarChart
