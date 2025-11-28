@@ -129,16 +129,17 @@ function Login() {
       const response = await authService.login(credentials);
 
       if (response.success && response.data) {
+        console.log("Login berhasil. user:", response.data);
         // Success - redirect based on role
         const role = response.data.roles.toLowerCase();
 
         // Navigate to appropriate dashboard
-        if (role === "Admin") {
+        if (role === "admin") {
           navigate("/dashboard/admin");
         } else if (role === "Assessor" || role === "guru") {
           navigate("/dashboard/asesor/siap-asesmen");
-        } else if (role === "Assessee" || role === "siswa") {
-          navigate("/dashboard/siswa");
+        } else if (role === "assessee" || role === "siswa") {
+          navigate("/peserta");
         } else {
           navigate("/dashboard");
         }
