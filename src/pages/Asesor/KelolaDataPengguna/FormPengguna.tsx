@@ -23,7 +23,6 @@ export default function AsesmenForm() {
     { name: "link_wa", label: "Link Grup WA", type: "tel" },
   ];
 
-  // --- State penyimpanan data yg berubah ---
   const [formData, setFormData] = useState({
     nama: "Budi Santoso",
     nip: "1987654321001",
@@ -33,7 +32,6 @@ export default function AsesmenForm() {
     link_wa: "https://wa.me/6281234567890",
   });
 
-  // --- Handler ketika tombol SIMPAN ditekan ---
   const handleSave = async (values: any) => {
     console.log("Data Baru:", values);
 
@@ -61,7 +59,7 @@ export default function AsesmenForm() {
           role="guru"
           status="AKTIF"
           fields={fields}
-          defaultValues={formData} // <= berubah otomatis
+          defaultValues={formData}
           onSubmit={handleSave}
         />
       </Box>

@@ -7,7 +7,6 @@ import GuruDashboard from "./pages/Dashboard/GuruDashboard";
 import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 import GuruSiswa from "./pages/Dashboard/GuruSiswa";
 import PesertaPage from "./pages/Peserta/PesertaPage";
-import PenilaianPage from "./pages/Asesor/PenilaianPage";
 import ListPagesDataPeserta from "./pages/Admin/DataPeserta/list";
 import ListPagesDataPesertaSiapAssement from "./pages/Admin/DataPesertaSiapAssesmen/list";
 import ListPagesDataPesertaBelomAsesmen from "./pages/Admin/DataBelumAsesmen/list";
@@ -21,6 +20,7 @@ import AsesmenForm from "./pages/Asesor/KelolaDataPengguna/FormPengguna";
 import AdminForm from "./pages/Admin/KelolaDataPengguna/FormPengguna";
 import InputAsesorPage from "./pages/Admin/InputData/input-asesor";
 import InputPesertaPage from "./pages/Admin/InputData/input-peserta";
+import PenilaianPageCompact from "./pages/Asesor/Penilaian/PenilaianPageCompact";
 
 function App() {
   return (
@@ -86,7 +86,7 @@ function App() {
           />
           <Route
             path="/dashboard/asesor/penilaian"
-            element={<PenilaianPage />}
+            element={<PenilaianPageCompact />}
           />
           <Route
             path="/dashboard/asesor/kelola-data-pengguna"

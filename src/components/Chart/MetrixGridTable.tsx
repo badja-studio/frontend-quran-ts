@@ -79,7 +79,10 @@ const MetrixGridTable: React.FC<MetrixGridTableProps> = ({
                   <TableCell sx={{ padding: 1, fontSize: 16, width: "40%" }}>
                     {item.name}
                   </TableCell>
-                  <TableCell sx={{ padding: 1, width: "10%" }}>
+                  <TableCell
+                    sx={{ padding: 1, width: "10%", fontSize: 9 }}
+                    align="right"
+                  >
                     {item.percent} %
                   </TableCell>
                 </React.Fragment>
