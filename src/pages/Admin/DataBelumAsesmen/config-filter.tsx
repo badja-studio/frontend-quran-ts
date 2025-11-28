@@ -1,7 +1,7 @@
 import { FilterConfig } from "../../../components/Table/DataTableFilter";
-import { DataPerseta } from "./type";
+import { DataPesertaBelomAsesment } from "./type";
 
-export const filterConfigs: FilterConfig<DataPerseta>[] = [
+export const filterConfigs: FilterConfig<DataPesertaBelomAsesment>[] = [
     {
         key: 'no_akun',
         label: 'No Akun',
@@ -30,10 +30,10 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
         ],
     },
     {
-        key: 'tl',
-        label: 'Tempat Lahir',
-        type: 'text',
-        operators: ['contains', 'startsWith', 'endsWith'],
+        key: 'usia',
+        label: 'Usia',
+        type: 'number',
+        operators: ['equals', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'],
     },
     {
         key: 'pegawai',
@@ -82,43 +82,6 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
         label: 'Sekolah',
         type: 'text',
         operators: ['contains', 'startsWith', 'endsWith'],
-    },
-    {
-        key: 'pendidikan',
-        label: 'Pendidikan',
-        type: 'select',
-        options: [
-            { label: 'D3', value: 'D3' },
-            { label: 'S1', value: 'S1' },
-            { label: 'S2', value: 'S2' },
-        ],
-    },
-    {
-        key: 'program_studi',
-        label: 'Program Studi',
-        type: 'text',
-        operators: ['contains', 'startsWith', 'endsWith'],
-    },
-    {
-        key: 'perguruan_tinggi',
-        label: 'Perguruan Tinggi',
-        type: 'text',
-        operators: ['contains', 'startsWith', 'endsWith'],
-    },
-    {
-        key: 'jenis_pt',
-        label: 'Jenis PT',
-        type: 'select',
-        options: [
-            { label: 'Negeri', value: 'Negeri' },
-            { label: 'Swasta', value: 'Swasta' },
-        ],
-    },
-    {
-        key: 'tahun_lulus',
-        label: 'Tahun Lulus',
-        type: 'text',
-        operators: ['equals', 'contains'],
     },
     {
         key: 'jadwal',
