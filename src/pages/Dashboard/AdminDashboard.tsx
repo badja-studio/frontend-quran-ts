@@ -246,6 +246,7 @@ export default function AdminDashboard() {
         >
           <ParticipationGroup items={participationData} />
         </Grid>
+
         <Grid
           container
           spacing={3}
@@ -271,19 +272,23 @@ export default function AdminDashboard() {
           />
         </Grid>
         <Grid container spacing={2} sx={{ mt: 4 }}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6} md={6} lg={6}>
             <PieChartWithInfo data={jenisKelaminData} size={260} />
           </Grid>
-          <Grid item xs={12} sm={6}>
+
+          <Grid item xs={6} sm={6} md={6} lg={6}>
             <PieChartWithInfo data={statusPegawaiData} size={260} />
           </Grid>
-          <Grid item xs={12} sm={6}>
+
+          <Grid item xs={6} sm={6} md={6} lg={6}>
             <PieChartWithInfo data={jenjangSekolahData} size={260} />
           </Grid>
-          <Grid item xs={12} sm={6}>
+
+          <Grid item xs={6} sm={6} md={6} lg={6}>
             <PieChartWithInfo data={statusKampusData} size={260} />
           </Grid>
         </Grid>
+
         <Grid
           container
           spacing={1}
@@ -299,7 +304,6 @@ export default function AdminDashboard() {
           <StatCardGroup items={dataDashboard} />
         </Grid>
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {/* ===== ROW 1 ===== */}
           <Grid item xs={12} md={6}>
             <DynamicBarChart
               title="Capaian Nilai Ujian Peserta per Provinsi"

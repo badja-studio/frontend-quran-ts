@@ -1,9 +1,9 @@
-import { DataPerseta } from "./type";
+import { DataPersetaSiap } from "./type";
 import { Column } from "../../../components/Table/DataTable";
 import { Link } from "react-router-dom";
 import { Box, Typography, Chip, Avatar, Button } from "@mui/material";
 
-export const columnsPeserta: Column<DataPerseta>[] = [
+export const columnsPeserta: Column<DataPersetaSiap>[] = [
   {
     id: "no_akun",
     label: "No. Akun",
@@ -169,6 +169,7 @@ export const columnsPeserta: Column<DataPerseta>[] = [
           size="small"
           component={Link}
           to={`/dashboard/asesor/penilaian/${row.id}`}
+          state={{ peserta: row }}
         >
           Mulai Asesmen
         </Button>

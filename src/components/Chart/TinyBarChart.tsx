@@ -34,7 +34,7 @@ const ReusableKesalahanBarChart: React.FC<KesalahanBarProps> = ({
         >
           <XAxis
             dataKey="name"
-            angle={-45}
+            angle={-55}
             textAnchor="end"
             interval={0}
             height={80}

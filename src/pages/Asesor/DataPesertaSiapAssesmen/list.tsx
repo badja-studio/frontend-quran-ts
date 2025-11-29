@@ -11,7 +11,7 @@ import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
-import { DataPerseta, GetUsersResponse } from "./type";
+import { DataPersetaSiap, GetUsersResponse } from "./type";
 import apiClient, { handleApiError } from "../../../services/api.config";
 import useUserStore from "../../../store/user.store";
 
@@ -66,7 +66,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
     staleTime: 30000, // 30 seconds
   });
 
-  const transformedData: DataPerseta[] =
+  const transformedData: DataPersetaSiap[] =
     response?.data?.map((user) => ({
       id: user.id,
       no_akun: user.no_akun || "-",

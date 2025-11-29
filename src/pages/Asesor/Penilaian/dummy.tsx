@@ -1,12 +1,3 @@
-export const peserta = {
-  akun: "320230003003",
-  nama: "Neneng Halimah",
-  level: "Guru",
-  jenjang: "SMP",
-  status: "NON PNS",
-  sekolah: "SMP ISLAM TERPADU YASPIDA 2",
-};
-
 export const makhraj = [
   "د",
   "خ",
@@ -119,3 +110,7 @@ export const gharibList = [
   "Badal",
   "Mad dan Qashr",
 ];
+
+export const kelancaran = ["Mahir", "Cukup", "Kurang"];
+
+export const PenguranganNilai = ["Kelebihan Waktu", "Tidak Bisa Membaca"];

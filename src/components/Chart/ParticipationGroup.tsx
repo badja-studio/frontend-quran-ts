@@ -1,3 +1,4 @@
+import { Grid } from "@mui/material";
 import StatParticipationCard from "./StatParticipationCard";
 
 interface ParticipationItem {
@@ -13,16 +14,23 @@ export default function ParticipationGroup({
   items: ParticipationItem[];
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+    <>
       {items.map((item, i) => (
-        <StatParticipationCard
+        <Grid
+          item // ← PENTING
           key={i}
-          title={item.title}
-          total={item.total}
-          done={item.done}
-          color={item.color}
-        />
+          xs={6} // HP → 2 kolom
+          sm={4} // Tablet → 3 kolom
+          md={2} // Desktop → 6 kolom
+        >
+          <StatParticipationCard
+            title={item.title}
+            total={item.total}
+            done={item.done}
+            color={item.color}
+          />
+        </Grid>
       ))}
-    </div>
+    </>
   );
 }
