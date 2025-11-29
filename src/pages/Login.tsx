@@ -119,24 +119,22 @@ function Login() {
     try {
       // Prepare credentials based on login type
       const credentials = {
+        username: data.identifier,
         password: data.password,
-        ...(loginType === "siaga"
-          ? { siagaNumber: data.identifier }
-          : { emailOrUsername: data.identifier }),
       };
 
       // Call login API
       const response = await authService.login(credentials);
 
       if (response.success && response.data) {
-        console.log("Login berhasil. user:", response.data);
+
         // Success - redirect based on role
-        const role = response.data.roles.toLowerCase();
+        const role = response.data.user.role.toLowerCase();
 
         // Navigate to appropriate dashboard
         if (role === "admin") {
           navigate("/dashboard/admin");
-        } else if (role === "Assessor" || role === "guru") {
+        } else if (role === "assessor" || role === "guru") {
           navigate("/dashboard/asesor/siap-asesmen");
         } else if (role === "assessee" || role === "siswa") {
           navigate("/peserta");
@@ -147,9 +145,11 @@ function Login() {
         // Login failed
         setLoginError(response.message || "Login gagal. Silakan coba lagi.");
       }
-    } catch (error: any) {
-      console.error("Login error:", error);
-      setLoginError(error?.message || "Terjadi kesalahan. Silakan coba lagi.");
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : "Terjadi kesalahan. Silakan coba lagi.";
+      setLoginError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -235,8 +235,8 @@ function Login() {
                       loginType === "email"
                         ? "contoh@email.com"
                         : loginType === "username"
-                        ? "username123"
-                        : "12345678"
+                          ? "username123"
+                          : "12345678"
                     }
                   />
                 )}

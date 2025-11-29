@@ -12,7 +12,7 @@ import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
 import { DataPerseta, GetUsersResponse } from "./type";
-import { api, handleApiError } from "../../../services/api.config";
+import apiClient, { handleApiError } from "../../../services/api.config";
 
 export default function ListPagesDataPeserta() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,8 +37,8 @@ export default function ListPagesDataPeserta() {
       params.append("sortBy", "createdAt");
       params.append("sortOrder", "DESC");
 
-      const result = await api.get<GetUsersResponse>(
-        `/v1/users?${params.toString()}`
+      const result = await apiClient.get<GetUsersResponse>(
+        `/api/participants?${params.toString()}`
       );
 
       // Setelah load pertama selesai
@@ -46,7 +46,7 @@ export default function ListPagesDataPeserta() {
         setIsInitialLoad(false);
       }
 
-      return result;
+      return result.data;
     },
     retry: 1,
     staleTime: 30000, // 30 seconds
@@ -54,35 +54,34 @@ export default function ListPagesDataPeserta() {
 
   // Transform data untuk table
   const transformedData: DataPerseta[] =
-    response?.data?.users?.map((user, index) => ({
-      id: index + 1 + (page - 1) * limit,
-      no_akun: user.accountNumber || "-",
+    response?.data?.map((user) => ({
+      id: user.id,
+      no_akun: user.no_akun || "-",
       nip: user.nip || "-",
-      nama: user.fullname || user.name,
-      jk: user.gender || "L",
-      tl: user.birthPlace || "-",
-      pegawai: user.position || "-",
-      jenjang: user.schoolLevels || "-",
-      level: user.levels || "-",
-      provinsi: user.province || "-",
-      kab_kota: user.district || "-",
-      sekolah: user.schoolName || "-",
-      pendidikan: user.education || "-",
-      program_studi: user.studyProgram || "-",
-      perguruan_tinggi: user.university || "-",
-      jenis_pt: user.universityType || "-",
-      tahun_lulus: user.graduationYear || "-",
-      jadwal: "-",
-      asesor: "-",
+      nama: user.nama || "-",
+      jenis_kelamin: user.jenis_kelamin || "L",
+      tempat_lahir: user.tempat_lahir || "-",
+      jabatan: user.jabatan || "-",
+      jenjang: user.jenjang || "-",
+      level: user.level || "-",
+      provinsi: user.provinsi || "-",
+      kab_kota: user.kab_kota || "-",
+      sekolah: user.sekolah || "-",
+      pendidikan: user.pendidikan || "-",
+      prodi: user.prodi || "-",
+      perguruan_tinggi: user.perguruan_tinggi || "-",
+      jenis_pt: user.jenis_pt || "-",
+      tahun_lulus: user.tahun_lulus || "-",
+      jadwal: user.jadwal || "-",
+      asesor: user.assessor?.name || "-",
+      status: user.status || "-",
     })) || [];
 
-  const pagination = response?.data?.pagination || {
-    page: 1,
-    limit: 10,
+  const pagination = response?.pagination || {
+    current_page: 1,
+    per_page: 10,
     total: 0,
-    totalPages: 0,
-    hasNext: false,
-    hasPrevious: false,
+    total_pages: 0,
   };
 
   const handleSearchChange = (value: string) => {

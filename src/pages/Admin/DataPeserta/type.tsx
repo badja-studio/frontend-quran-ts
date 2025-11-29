@@ -1,57 +1,71 @@
 export interface DataPerseta extends Record<string, unknown> {
-    id: number;
+    id: string;
     no_akun: string;
     nip: string;
     nama: string;
-    jk: string;
-    tl: string;
-    pegawai: string;
+    jenis_kelamin: string;
+    tempat_lahir: string;
+    jabatan: string;
     jenjang: string;
     level: string;
     provinsi: string;
     kab_kota: string;
     sekolah: string;
     pendidikan: string;
-    program_studi: string;
+    prodi: string;
     perguruan_tinggi: string;
     jenis_pt: string;
-    tahun_lulus: string;
+    tahun_lulus: number | string;
     jadwal: string;
     asesor: string;
+    status?: string;
 }
 
 // User interface untuk response API
 export interface User {
-    id: number;
-    accountNumber?: string;
+    id: string;
+    no_akun?: string;
     nip?: string;
-    fullname: string;
-    name: string;
-    email?: string;
-    gender?: "L" | "P";
-    birthPlace?: string;
-    birthDate?: string;
-    position?: string;
-    schoolLevels?: string;
-    levels?: string;
-    province?: string;
-    district?: string;
-    schoolName?: string;
-    education?: string;
-    studyProgram?: string;
-    university?: string;
-    universityType?: string;
-    graduationYear?: string;
+    nama: string;
+    jenis_kelamin?: "L" | "P";
+    tempat_lahir?: string;
+    tanggal_lahir?: string;
+    jabatan?: string;
+    jenjang?: string;
+    level?: string;
+    provinsi?: string;
+    kab_kota?: string;
+    sekolah?: string;
+    pendidikan?: string;
+    prodi?: string;
+    perguruan_tinggi?: string;
+    jenis_pt?: string;
+    tahun_lulus?: number;
+    jadwal?: string;
+    asesor_id?: string | null;
+    status?: string;
+    akun_id?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    assessor?: {
+        id: string;
+        name: string;
+        email: string;
+    } | null;
+    akun?: {
+        id: string;
+        username: string;
+    };
 }
 
 export interface GetUsersResponse {
-    users: User[];
+    success: boolean;
+    message: string;
+    data: User[];
     pagination: {
-        page: number;
-        limit: number;
+        current_page: number;
+        per_page: number;
         total: number;
-        totalPages: number;
-        hasNext: boolean;
-        hasPrevious: boolean;
+        total_pages: number;
     };
 }

@@ -1,8 +1,7 @@
 import apiClient from './api.config';
 
 export interface LoginCredentials {
-  emailOrUsername?: string;
-  siagaNumber?: string;
+  username: string;
   password: string;
 }
 
@@ -11,10 +10,11 @@ export interface LoginResponse {
   message: string;
   data?: {
     token: string;
-    name: string;
-    roles: string;
-    authToken: string;
-    refreshToken: string;
+    user: {
+      id: string;
+      username: string;
+      role: string;
+    };
   };
 }
 
@@ -23,7 +23,6 @@ export interface RefreshTokenResponse {
   message: string;
   data?: {
     authToken: string;
-    token: string;
   };
 }
 
@@ -33,20 +32,27 @@ class AuthService {
    */
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-      const response = await apiClient.post<LoginResponse>('/v1/auth/login', credentials);
-      
+      const response = await apiClient.post<LoginResponse>('/api/auth/login', credentials);
+
       if (response.data.success && response.data.data) {
         // Store tokens and user info in localStorage
-        localStorage.setItem('authToken', response.data.data.authToken);
-        localStorage.setItem('refreshToken', response.data.data.refreshToken);
-        localStorage.setItem('userName', response.data.data.name);
-        localStorage.setItem('userRole', response.data.data.roles);
+        localStorage.setItem('authToken', response.data.data.token);
+        localStorage.setItem('refreshToken', response.data.data.token); // Use same token as refresh for now
+        localStorage.setItem('userName', response.data.data.user.username);
+        localStorage.setItem('userRole', response.data.data.user.role);
       }
-      
+
       return response.data;
-    } catch (error: any) {
-      // Error is already formatted by axios interceptor
-      return error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Login failed';
+      const responseMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+
+      return {
+        success: false,
+        message: responseMessage || errorMessage,
+      };
     }
   }
 
@@ -101,12 +107,15 @@ class AuthService {
   async refreshToken(): Promise<RefreshTokenResponse> {
     try {
       const refreshToken = this.getRefreshToken();
-      
+
       if (!refreshToken) {
-        throw new Error('No refresh token found');
+        return {
+          success: false,
+          message: 'No refresh token found',
+        };
       }
 
-      const response = await apiClient.post<RefreshTokenResponse>('/v1/auth/refresh', {
+      const response = await apiClient.post<RefreshTokenResponse>('/api/auth/refresh', {
         refreshToken,
       });
 
@@ -116,10 +125,18 @@ class AuthService {
       }
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Clear tokens if refresh fails
       this.logout();
-      return error;
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Token refresh failed';
+      const responseMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+
+      return {
+        success: false,
+        message: responseMessage || errorMessage,
+      };
     }
   }
 }
