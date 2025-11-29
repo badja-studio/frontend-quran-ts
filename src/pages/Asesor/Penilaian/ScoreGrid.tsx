@@ -4,7 +4,7 @@ import { Grid, Paper, Typography, Box, Button } from "@mui/material";
 interface Props {
   category: string;
   list: string[];
-  mistakes: any;
+  mistakes: { [key: string]: { [key: string]: number } };
   handleScore: (category: string, key: string, type: string) => void;
 }
 
@@ -24,13 +24,15 @@ const ScoreGrid: React.FC<Props> = ({
               textAlign: "center",
               borderRadius: 1.5,
               bgcolor: "white",
+              height: "100%",
             }}
             elevation={1}
           >
             <Typography
               sx={{
                 fontWeight: 600,
-                fontSize: "clamp(0.85rem, 1vw, 1rem)",
+                fontSize:
+                  item.length > 7 ? "0.65rem" : "clamp(0.85rem, 1vw, 1rem)",
                 whiteSpace: "normal",
                 overflowWrap: "break-word",
                 lineHeight: 1.2,
@@ -40,9 +42,10 @@ const ScoreGrid: React.FC<Props> = ({
             </Typography>
 
             <Typography
-              fontSize="clamp(0.5rem, 1vw, 0.65rem)"
+              fontSize="clamp(0.5rem, 1vw, 0.7rem)"
               color="primary.main"
               fontWeight={600}
+              sx={{ mt: 1 }}
             >
               {mistakes[category][item]}
             </Typography>

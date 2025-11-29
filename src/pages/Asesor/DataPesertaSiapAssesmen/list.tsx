@@ -1,91 +1,121 @@
-import { useState, useEffect } from "react";
-import { Box, Typography, CircularProgress, Alert } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Box,
+  Typography,
+  CircularProgress,
+  Alert,
+  LinearProgress,
+} from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
-import { DataPerseta } from "./type";
-import userService from "../../../services/user.service";
+import { DataPerseta, GetUsersResponse } from "./type";
+import apiClient, { handleApiError } from "../../../services/api.config";
+import useUserStore from "../../../store/user.store";
 
 export default function ListAsesorPagesDataPesertaSiapAssement() {
+  const { user, fetchUser } = useUserStore();
   const [searchQuery, setSearchQuery] = useState("");
-  const [data, setData] = useState<DataPerseta[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 0,
-  });
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await userService.getAssesseesReadyForAssessment({
-        page: pagination.page,
-        limit: pagination.limit,
-        search: searchQuery,
-        sortBy: "createdAt",
-        sortOrder: "DESC",
-      });
-
-      if (response.success) {
-        const transformedData: DataPerseta[] = response.data.assessees.map(
-          (user, index) => ({
-            id: index + 1,
-            no_akun: user.accountNumber || "-",
-            nip: user.nip || "-",
-            nama: user.fullname || user.name,
-            jk: user.gender || "L",
-            tl: user.birthPlace || "-",
-            pegawai: user.position || "-",
-            jenjang: user.schoolLevels || "-",
-            level: user.levels || "-",
-            provinsi: user.province || "-",
-            kab_kota: user.district || "-",
-            sekolah: user.schoolName || "-",
-            pendidikan: user.education || "-",
-            program_studi: user.studyProgram || "-",
-            perguruan_tinggi: user.university || "-",
-            jenis_pt: user.universityType || "-",
-            tahun_lulus: user.graduationYear || "-",
-            jadwal: "-",
-            asesor: "-",
-          })
-        );
-
-        setData(transformedData);
-        setPagination(response.data.pagination);
-      }
-    } catch (err: any) {
-      setError(err.message || "Gagal memuat data");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [filters, setFilters] = useState<FilterItem[]>([]);
 
   useEffect(() => {
-    fetchData();
-  }, [pagination.page, pagination.limit, searchQuery]);
+    fetchUser()
+      .then(() => console.log("User fetched successfully"))
+      .catch((err) => console.error("Error fetching user:", err));
+  }, [fetchUser]);
+  const endpoint =
+    user?.role === "admin"
+      ? "/api/admin/profile"
+      : user?.role === "assessor"
+      ? "/api/assessors/profile"
+      : "/api/participants/profile";
+
+  const {
+    data: response,
+    isLoading,
+    isFetching,
+    error,
+  } = useQuery({
+    queryKey: ["users", page, limit, searchQuery, endpoint],
+    queryFn: async () => {
+      if (!endpoint) return { data: [] };
+      const params = new URLSearchParams();
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
+      if (searchQuery) params.append("search", searchQuery);
+      params.append("sortBy", "createdAt");
+      params.append("sortOrder", "DESC");
+
+      const result = await apiClient.get<GetUsersResponse>(
+        `/api/participants?${params.toString()}`
+      );
+
+      // Setelah load pertama selesai
+      if (isInitialLoad) {
+        setIsInitialLoad(false);
+      }
+
+      return result.data;
+    },
+    retry: 1,
+    staleTime: 30000, // 30 seconds
+  });
+
+  const transformedData: DataPerseta[] =
+    response?.data?.map((user) => ({
+      id: user.id,
+      no_akun: user.no_akun || "-",
+      nip: user.nip || "-",
+      nama: user.nama || "-",
+      jenis_kelamin: user.jenis_kelamin || "L",
+      tempat_lahir: user.tempat_lahir || "-",
+      jabatan: user.jabatan || "-",
+      jenjang: user.jenjang || "-",
+      level: user.level || "-",
+      provinsi: user.provinsi || "-",
+      kab_kota: user.kab_kota || "-",
+      sekolah: user.sekolah || "-",
+      pendidikan: user.pendidikan || "-",
+      prodi: user.prodi || "-",
+      perguruan_tinggi: user.perguruan_tinggi || "-",
+      jenis_pt: user.jenis_pt || "-",
+      tahun_lulus: user.tahun_lulus || "-",
+      jadwal: user.jadwal || "-",
+      asesor: user.assessor?.name || "-",
+      status: user.status || "-",
+    })) || [];
+
+  const pagination =
+    response && "pagination" in response && response.pagination
+      ? response.pagination
+      : {
+          current_page: 1,
+          per_page: 10,
+          total: 0,
+          total_pages: 0,
+        };
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    setPagination((prev) => ({ ...prev, page: 1 }));
+    setPage(1); // Reset ke halaman 1 saat search
   };
 
-  const handleFiltersApplied = (_appliedFilters: FilterItem[]) => {
-    // Filters can be applied here if needed
+  const handleFiltersApplied = (appliedFilters: FilterItem[]) => {
+    setFilters(appliedFilters);
   };
 
-  if (loading && data.length === 0) {
+  // Full screen loading hanya di awal
+  if (isInitialLoad && isLoading) {
     return (
       <DashboardLayout
-        userRole="admin"
-        userName="Ustadz Ahmad"
-        userEmail="ahmad@quran.app"
+        userRole={user?.role === "admin" ? "admin" : "assessor"}
+        userName={user?.name || "Ustadz Ahmad"}
+        userEmail={user?.email || "ahmad@quran.app"}
       >
         <Box
           display="flex"
@@ -101,9 +131,9 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
 
   return (
     <DashboardLayout
-      userRole="guru"
-      userName="Ustadz Ahmad"
-      userEmail="ahmad@quran.app"
+      userRole={user?.role === "admin" ? "admin" : "assessor"}
+      userName={user?.name || "Ustadz Ahmad"}
+      userEmail={user?.email || "ahmad@quran.app"}
     >
       <Box>
         <Typography variant="h4" gutterBottom fontWeight="bold">
@@ -113,19 +143,24 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
           Peserta yang telah siap untuk mengikuti asesmen kompetensi
         </Typography>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-            {error}
-          </Alert>
+        {/* Loading indicator untuk search/filter/pagination */}
+        {isFetching && !isInitialLoad && (
+          <Box sx={{ width: "100%", mb: 2 }}>
+            <LinearProgress />
+          </Box>
         )}
 
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {handleApiError(error).message}
+          </Alert>
+        )}
         <DataTable
           columns={columnsPeserta}
-          data={data}
-          initialRowsPerPage={10}
+          data={transformedData}
           rowsPerPageOptions={[5, 10, 25]}
           emptyMessage={
-            loading ? "Memuat data..." : "Belum ada peserta siap asesmen"
+            isFetching ? "Memuat data..." : "Belum ada data peserta"
           }
           enableFilter={true}
           filterConfigs={filterConfigs}
@@ -133,18 +168,19 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
           enableSearch={true}
           searchValue={searchQuery}
           onSearchChange={handleSearchChange}
-          searchPlaceholder="Cari peserta (nama, NIS, kelas, dll)..."
+          searchPlaceholder="Cari peserta (nama, NIP, NIS, dll)..."
           enableExport={true}
+          // Server-side pagination
+          serverSide={true}
+          totalCount={pagination.total}
+          page={page - 1} // DataTable uses 0-indexed, API uses 1-indexed
+          rowsPerPage={limit}
+          onPageChange={(newPage) => setPage(newPage + 1)} // Convert back to 1-indexed
+          onRowsPerPageChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1); // Reset to page 1
+          }}
         />
-
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ mt: 2, display: "block" }}
-        >
-          Halaman {pagination.page} dari {pagination.totalPages} | Total:{" "}
-          {pagination.total} peserta
-        </Typography>
       </Box>
     </DashboardLayout>
   );

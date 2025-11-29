@@ -1,7 +1,12 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { useMutation, useInfiniteQuery, InfiniteData, QueryFunctionContext } from "@tanstack/react-query";
+import {
+  useMutation,
+  useInfiniteQuery,
+  InfiniteData,
+  QueryFunctionContext,
+} from "@tanstack/react-query";
 import {
   Box,
   Card,
@@ -101,7 +106,8 @@ export default function InputPesertaPage() {
       data: payload.data ?? [],
       page: payload.page ?? pageParam,
       totalPages: payload.totalPages,
-      hasMore: typeof payload.hasMore === "boolean" ? payload.hasMore : undefined,
+      hasMore:
+        typeof payload.hasMore === "boolean" ? payload.hasMore : undefined,
     };
   };
 
@@ -376,7 +382,10 @@ export default function InputPesertaPage() {
                   control={control}
                   rules={{
                     required: "Pegawai wajib diisi",
-                    minLength: { value: 3, message: "Pegawai minimal 3 karakter" },
+                    minLength: {
+                      value: 3,
+                      message: "Pegawai minimal 3 karakter",
+                    },
                   }}
                   render={({ field }) => (
                     <TextField
@@ -629,12 +638,15 @@ export default function InputPesertaPage() {
                         setAsesorSearch(newInputValue);
                       }}
                       ListboxProps={{
-                        onScroll: (event: React.SyntheticEvent<HTMLUListElement>) => {
-                          const listboxNode = event.currentTarget as HTMLElement;
+                        onScroll: (
+                          event: React.SyntheticEvent<HTMLUListElement>
+                        ) => {
+                          const listboxNode =
+                            event.currentTarget as HTMLElement;
                           // when scrolled to bottom, try to fetch next page
                           if (
                             listboxNode.scrollTop + listboxNode.clientHeight >=
-                            listboxNode.scrollHeight - 1 &&
+                              listboxNode.scrollHeight - 1 &&
                             hasNextPage &&
                             !isFetchingNextPage
                           ) {
@@ -651,11 +663,7 @@ export default function InputPesertaPage() {
                           helperText={errors.asesor_id?.message}
                           InputProps={{
                             ...params.InputProps,
-                            endAdornment: (
-                              <>
-                                {params.InputProps.endAdornment}
-                              </>
-                            ),
+                            endAdornment: <>{params.InputProps.endAdornment}</>,
                           }}
                         />
                       )}

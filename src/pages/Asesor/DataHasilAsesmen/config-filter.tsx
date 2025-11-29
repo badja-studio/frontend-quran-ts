@@ -135,8 +135,7 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
   { key: "makhraj", label: "Skor Makhraj", type: "number" },
   { key: "sifat", label: "Skor Sifat", type: "number" },
   { key: "ahkam", label: "Skor Ahkam", type: "number" },
-  { key: "madA", label: "Skor Mad A", type: "number" },
-  { key: "madB", label: "Skor Mad B", type: "number" },
+  { key: "mad", label: "Skor Mad A", type: "number" },
   { key: "gharib", label: "Skor Gharib", type: "number" },
   {
     key: "total",

@@ -21,8 +21,7 @@ export interface DataPerseta extends Record<string, unknown> {
   makhraj: number;
   sifat: number;
   ahkam: number;
-  madA: number;
-  madB: number;
+  mad: number;
   gharib: number;
   total: number;
 }

@@ -125,6 +125,14 @@ interface AsesmenItem {
 export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
+  });
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAsesmen, setSelectedAsesmen] = useState<AsesmenItem | null>(
     null
@@ -151,7 +159,7 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
 
   return (
     <DashboardLayout
-      userRole="guru"
+      userRole="assessor"
       userName="Ustadz Ahmad"
       userEmail="ahmad@quran.app"
     >

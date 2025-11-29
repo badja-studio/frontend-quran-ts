@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Button,
-  Chip,
-} from "@mui/material";
+import { Card, CardContent, Typography, Box, Button } from "@mui/material";
 import { AccessTime, Visibility, WhatsApp } from "@mui/icons-material";
 
 interface Props {
@@ -14,9 +7,9 @@ interface Props {
 }
 
 const AsesmenListCard: React.FC<Props> = ({ asesmen, onOpen }) => {
-  const isDone = (status: string) => status.toLowerCase().includes("selesai");
+  const isDone = (status: string) => status?.toLowerCase().includes("selesai");
 
-  const isNotDone = (status: string) => status.toLowerCase().includes("belum");
+  const isNotDone = (status: string) => status?.toLowerCase().includes("belum");
 
   return (
     <Card
@@ -59,21 +52,22 @@ const AsesmenListCard: React.FC<Props> = ({ asesmen, onOpen }) => {
               background: "white",
             }}
           >
+            {/* Nama Asesor */}
             <Typography variant="body2" color="text.secondary">
               Asesor
             </Typography>
             <Typography variant="h6" fontWeight="bold" sx={{ mb: 1.5 }}>
-              {row.asesor}
+              {row.asesor?.name || "-"}
             </Typography>
 
+            {/* Waktu */}
             <Typography variant="body2" color="text.secondary">
               Waktu
             </Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
-              {row.waktu}
+              {row.jadwal || "-"}
             </Typography>
 
-            {/* STATUS SELESAI → BISA DIBUKA */}
             {isDone(row.status) && (
               <Button
                 variant="contained"
@@ -86,7 +80,6 @@ const AsesmenListCard: React.FC<Props> = ({ asesmen, onOpen }) => {
               </Button>
             )}
 
-            {/* STATUS BELUM / BELUM SELESAI → MUNCUL LINK WA GRUP */}
             {isNotDone(row.status) && (
               <Box sx={{ mt: 2 }}>
                 <Button
@@ -95,7 +88,7 @@ const AsesmenListCard: React.FC<Props> = ({ asesmen, onOpen }) => {
                   fullWidth
                   startIcon={<WhatsApp />}
                   sx={{ textTransform: "none", fontWeight: "bold" }}
-                  href={row.linkWa}
+                  href={row.asesor?.link_wa || "#"}
                   target="_blank"
                 >
                   Masuk Grup Asesor

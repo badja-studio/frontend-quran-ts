@@ -6,7 +6,7 @@ interface Props {
   title: string;
   category: string;
   list: string[];
-  mistakes: any;
+  mistakes: { [key: string]: { [key: string]: number } };
   totalScore: (cat: string) => number;
   handleScore: (category: string, key: string, type: string) => void;
 }

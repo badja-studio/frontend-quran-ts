@@ -1,18 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Grid } from "@mui/material";
 import { Person } from "@mui/icons-material";
+import { useQuery } from "@tanstack/react-query";
 import AsesmenResultModal from "../../components/Peserta/AsesmenResultModal";
 import PesertaInfoCard from "../../components/Peserta/PesertaInfoCard";
 import AsesmenListCard from "../../components/Peserta/AsesmenListCard";
+import apiClient, { handleApiError } from "../../services/api.config";
+import useUserStore from "../../store/user.store";
+import { DataPeserta, ApiParticipant, QuizSection } from "./type";
 
-interface AsesmenItem {
-  asesor: string;
-  waktu: string;
-  status: string;
-  linkWa?: string;
-}
-
-const dataQuiz = {
+const dataQuiz: Record<string, QuizSection["list"]> = {
   makharij: [
     "د",
     "خ",
@@ -123,41 +120,83 @@ const dataQuiz = {
   ],
 };
 
-const peserta = {
-  akun: "320230003003",
-  nama: "Neneng Halimah",
-  level: "Guru",
-  jenjang: "SMP",
-  status: "NON PNS",
-  sekolah: "SMP ISLAM TERPADU YASPIDA 2",
-  kabupaten: "KABUPATEN SUKABUMI",
-  provinsi: "JAWA BARAT",
-  pendidikan: "S1 Pendidikan Agama Islam",
-};
-
-const asesmen: AsesmenItem[] = [
-  {
-    asesor: "Liana Masruroh",
-    waktu: "27/08/2025 19:26–19:28",
-    status: "selesai asesmen",
-    linkWa: "https://chat.whatsapp.com/xxxxxx",
-  },
-];
-
 const PesertaPage: React.FC = () => {
+  const { user, loading, error, fetchUser } = useUserStore();
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedAsesmen, setSelectedAsesmen] = useState<AsesmenItem | null>(
+  const [selectedAsesmen, setSelectedAsesmen] = useState<DataPeserta | null>(
     null
   );
+  useEffect(() => {
+    console.log("Fetching user profile...");
+    fetchUser()
+      .then(() => console.log("User fetched successfully"))
+      .catch((err) => console.error("Error fetching user:", err));
+  }, [fetchUser]);
 
-  const handleOpen = (asesmen: AsesmenItem) => {
+  // Pilih endpoint berdasarkan role user
+  const endpoint =
+    user?.role === "admin"
+      ? "/api/admin/profile"
+      : user?.role === "assessor"
+      ? "/api/assessors/profile"
+      : "/api/participants/profile";
+  console.log("Selected API endpoint based on role:", endpoint);
+  const { data: response } = useQuery<{
+    data: ApiParticipant | ApiParticipant[];
+  }>({
+    queryKey: ["participants", endpoint],
+    queryFn: async () => {
+      if (!endpoint) return { data: [] };
+      const result = await apiClient.get(endpoint);
+      return result.data;
+    },
+    staleTime: 30000,
+    enabled: !!user,
+  });
+
+  // transform API data ke DataPeserta
+  const transformUser = (user: ApiParticipant): DataPeserta => ({
+    id: user.id,
+    no_akun: user.no_akun || "-",
+    nip: user.nip || "-",
+    nama: user.nama || "-",
+    jenis_kelamin: user.jenis_kelamin || "L",
+    tempat_lahir: user.tempat_lahir || "-",
+    jabatan: user.jabatan || "-",
+    jenjang: user.jenjang || "-",
+    level: user.level || "-",
+    provinsi: user.provinsi || "-",
+    kab_kota: user.kab_kota || "-",
+    sekolah: user.sekolah || "-",
+    pendidikan: user.pendidikan || "-",
+    prodi: user.prodi || "-",
+    perguruan_tinggi: user.perguruan_tinggi || "-",
+    jenis_pt: user.jenis_pt || "-",
+    tahun_lulus: user.tahun_lulus || "-",
+    jadwal: user.jadwal || "-",
+    asesor: user.assessor
+      ? {
+          id: user.assessor.id,
+          name: user.assessor.name,
+          email: user.assessor.email,
+          link_wa: user.assessor.link_wa,
+        }
+      : null,
+    status: user.status || "-",
+    link_wa: user.link_wa || "-",
+  });
+
+  const asesmenList: DataPeserta[] = response?.data
+    ? Array.isArray(response.data)
+      ? response.data.map(transformUser)
+      : [transformUser(response.data)]
+    : [];
+
+  console.log("Transformed asesmenList:", asesmenList);
+
+  const handleOpen = (asesmen: DataPeserta) => {
     setSelectedAsesmen(asesmen);
     setModalVisible(true);
-  };
-
-  const handleClose = () => {
-    setModalVisible(false);
-    setSelectedAsesmen(null);
   };
 
   return (
@@ -197,11 +236,15 @@ const PesertaPage: React.FC = () => {
 
       <Grid container spacing={4}>
         <Grid item xs={12} lg={8}>
-          <PesertaInfoCard peserta={peserta} />
+          {asesmenList.length > 0 ? (
+            <PesertaInfoCard peserta={asesmenList[0]} />
+          ) : (
+            <Typography>Loading data peserta...</Typography>
+          )}
         </Grid>
 
         <Grid item xs={12} lg={4}>
-          <AsesmenListCard asesmen={asesmen} onOpen={handleOpen} />
+          <AsesmenListCard asesmen={asesmenList} onOpen={handleOpen} />
         </Grid>
       </Grid>
 
@@ -209,9 +252,9 @@ const PesertaPage: React.FC = () => {
         <AsesmenResultModal
           open={modalVisible}
           onClose={() => setModalVisible(false)}
-          pesertaName="Ahmad Zaki"
-          asesorName="Ustadz Fauzan"
-          waktuPelaksanaan="26 Nov 2025"
+          pesertaName={selectedAsesmen.nama || "Peserta"}
+          asesorName={selectedAsesmen.asesor?.name || "Ustadz/ah"}
+          waktuPelaksanaan={selectedAsesmen.jadwal || "26 Nov 2025"}
           nilaiAkhir={97.5}
           sections={[
             { title: "Makharijul Huruf", list: dataQuiz.makharij },

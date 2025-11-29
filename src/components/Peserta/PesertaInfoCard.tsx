@@ -61,12 +61,12 @@ const PesertaInfoCard: React.FC<Props> = ({ peserta }) => {
           </Grid>
 
           <Grid item xs={12} sm={8}>
-            <InfoField label="No. Akun" value={peserta.akun} />
+            <InfoField label="No. Akun" value={peserta.no_akun} />
             <InfoField label="Nama" value={peserta.nama} />
             <InfoField label="Jenjang" value={peserta.jenjang} />
             <InfoField label="Status" value={peserta.status} />
             <InfoField label="Sekolah/Madrasah" value={peserta.sekolah} />
-            <InfoField label="Kabupaten/Kota" value={peserta.kabupaten} />
+            <InfoField label="Kabupaten/Kota" value={peserta.kab_kota} />
             <InfoField label="Provinsi" value={peserta.provinsi} />
 
             {/* Pendidikan Terakhir */}

@@ -12,7 +12,7 @@ import React from "react";
 
 export interface DynamicBarItem {
   name: string;
-  [key: string]: any;
+  [key: string]: string | number;
 }
 
 interface DynamicBarChartProps {

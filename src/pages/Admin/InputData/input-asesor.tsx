@@ -143,7 +143,8 @@ export default function InputAsesorPage() {
                     },
                     pattern: {
                       value: /^[a-zA-Z0-9_]+$/,
-                      message: "Username hanya boleh huruf, angka, dan underscore",
+                      message:
+                        "Username hanya boleh huruf, angka, dan underscore",
                     },
                   }}
                   render={({ field }) => (

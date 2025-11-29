@@ -1,17 +1,12 @@
 import React, { useState } from "react";
 import { Box, Container, Grid, Paper, Typography, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import {
-  peserta,
-  makhraj,
-  shifat,
-  ahkamHuruf,
-  madList,
-  gharibList,
-} from "./types";
-
+import { useParams } from "react-router-dom";
+import { makhraj, shifat, ahkamHuruf, madList, gharibList } from "./types";
 import ScoreSection from "./ScoreSection";
 import HeaderPeserta from "./HeaderPeserta";
+import useUserStore from "../../../store/user.store";
+import { useQuery } from "@tanstack/react-query";
+import apiClient from "../../../services/api.config";
 
 type Category = "makhraj" | "sifat" | "ahkam" | "mad" | "gharib";
 type ScoreAction = "plus" | "minus";
@@ -24,27 +19,37 @@ type MistakesState = {
   gharib: MistakeMap;
 };
 
-type Rule = { first: number; next: number };
-type RuleSet = {
-  makhraj: Rule;
-  sifat: Rule;
-  ahkam: Rule;
-  gharib: Rule;
-  madA: Rule;
-  madB: Rule;
-};
-
-const ruleSet: RuleSet = {
-  makhraj: { first: 2, next: 0.5 },
-  sifat: { first: 0.5, next: 0.25 },
-  ahkam: { first: 0.5, next: 0.25 },
-  madA: { first: 2, next: 0.5 },
-  madB: { first: 1, next: 0.5 },
-  gharib: { first: 1, next: 0.5 },
-};
+interface Peserta {
+  id: number;
+  akun: string;
+  nama: string;
+  level: string;
+  jenjang: string;
+  status: string;
+  sekolah: string;
+}
 
 const PenilaianPageCompact: React.FC = () => {
-  const navigate = useNavigate();
+  const { id: participantId } = useParams<{ id: string }>();
+  console.log("Peserta ID:", participantId);
+  const { user } = useUserStore();
+
+  const {
+    data: peserta,
+    isLoading,
+    error,
+  } = useQuery<Peserta>({
+    queryKey: ["peserta", participantId],
+    queryFn: async () => {
+      console.log("Fetching peserta dengan ID:", participantId); // log ID yang dicari
+      const res = await apiClient.get(
+        `/api/assessments/participant/${participantId}`
+      );
+      console.log("Response API:", res.data);
+      return res.data.data;
+    },
+    enabled: !!participantId,
+  });
 
   const [mistakes, setMistakes] = useState<MistakesState>(() => {
     const mk = makhraj.map((h) => (typeof h === "string" ? h : h.simbol));
@@ -156,48 +161,40 @@ const PenilaianPageCompact: React.FC = () => {
     return (list.reduce((a, b) => a + b, 0) / 5).toFixed(2);
   };
 
-  const handleSubmit = () => {
-    const payload = {
-      peserta,
-      nilai: {
-        makhraj: {
-          score: totalScore("makhraj"),
-          detail: mistakes.makhraj,
-        },
-        sifat: {
-          score: totalScore("sifat"),
-          detail: mistakes.sifat,
-        },
-        ahkam: {
-          score: totalScore("ahkam"),
-          detail: mistakes.ahkam,
-        },
-        mad: {
-          score: totalScore("mad"),
-          detail: mistakes.mad,
-        },
-        gharib: {
-          score: totalScore("gharib"),
-          detail: mistakes.gharib,
-        },
-      },
-      totalAverage: totalAverage(),
-    };
+  const handleSubmit = async () => {
+    if (!peserta || !user) return;
 
-    console.log("DATA DIKIRIM:", payload);
+    const assessments = Object.entries(mistakes).flatMap(([kategori, obj]) =>
+      Object.entries(obj).map(([huruf, _]) => ({
+        peserta_id: peserta.id,
+        asesor_id: user.id, // ambil dari user store
+        huruf,
+        nilai: totalScore(kategori),
+        kategori,
+      }))
+    );
 
-    // Contoh redirect:
-    // navigate("/hasil", { state: payload });
-
-    // Contoh POST ke API:
-    /*
-  fetch("/api/kirim-nilai", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  */
+    try {
+      const res = await apiClient.post("/assessments/bulk", { assessments });
+      console.log("Response bulk:", res.data);
+      alert("Penilaian berhasil dikirim!");
+    } catch (err) {
+      console.error("Error submit penilaian:", err);
+    }
   };
+
+  if (isLoading) return <Typography>Loading peserta...</Typography>;
+  // Tambahkan console.log sebelum return
+  if (error)
+    return (
+      <Typography>
+        Peserta tidak ditemukan! {JSON.stringify({ participantId, error })}
+      </Typography>
+    );
+
+  if (!peserta) {
+    return <Typography>Peserta tidak ditemukan</Typography>;
+  }
 
   return (
     <Box sx={{ width: "100%", minHeight: "100vh", bgcolor: "grey.50", py: 2 }}>

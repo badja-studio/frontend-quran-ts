@@ -20,7 +20,7 @@ export default function AdminForm() {
   });
 
   // Handler ketika klik tombol SIMPAN
-  const handleSave = async (values: any) => {
+  const handleSave = async (values: typeof formData) => {
     console.log("Admin Save:", values);
 
     // update state supaya form merefresh
