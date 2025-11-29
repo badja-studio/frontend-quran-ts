@@ -94,8 +94,8 @@ export const columnsPeserta: Column<DataPerseta>[] = [
         format: (value) => {
             const level = String(value);
             let color: "success" | "warning" | "info" = "info";
-            if (level === "Senior") color = "success";
-            else if (level === "Middle") color = "warning";
+            if (level === "Lanjut") color = "success";
+            else if (level === "Menengah") color = "warning";
             return (
                 <Chip label={level} size="small" color={color} />
             );

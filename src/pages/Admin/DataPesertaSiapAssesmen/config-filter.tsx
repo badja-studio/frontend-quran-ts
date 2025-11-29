@@ -3,14 +3,6 @@ import { DataPersetaSiapAssesmen } from "./type";
 
 export const filterConfigs: FilterConfig<DataPersetaSiapAssesmen>[] = [
     {
-        key: 'status',
-        label: 'Status',
-        type: 'select',
-        options: [
-            { label: 'Siap', value: 'Siap' },
-        ],
-    },
-    {
         key: 'no_akun',
         label: 'No Akun',
         type: 'text',
@@ -23,7 +15,7 @@ export const filterConfigs: FilterConfig<DataPersetaSiapAssesmen>[] = [
         operators: ['contains', 'startsWith', 'endsWith'],
     },
     {
-        key: 'jk',
+        key: 'jenis_kelamin',
         label: 'Jenis Kelamin',
         type: 'select',
         options: [

@@ -20,6 +20,8 @@ export default function ListPagesDataPeserta() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
 
   // Fetch data with React Query
   const {
@@ -28,14 +30,38 @@ export default function ListPagesDataPeserta() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["users", page, limit, searchQuery],
+    queryKey: ["users", page, limit, searchQuery, sortBy, sortOrder, filters],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
       params.append("limit", limit.toString());
       if (searchQuery) params.append("search", searchQuery);
-      params.append("sortBy", "createdAt");
-      params.append("sortOrder", "DESC");
+      params.append("sortBy", sortBy);
+      params.append("sortOrder", sortOrder);
+
+      // Add filters if any
+      if (filters.length > 0) {
+        // Map operator names to backend format
+        const operatorMap: Record<string, string> = {
+          'equals': 'eq',
+          'contains': 'contains',
+          'startsWith': 'startsWith',
+          'endsWith': 'endsWith',
+          'greaterThan': 'gt',
+          'lessThan': 'lt',
+          'greaterThanOrEqual': 'gte',
+          'lessThanOrEqual': 'lte',
+          'between': 'between',
+          'in': 'in'
+        };
+
+        const formattedFilters = filters.map(filter => ({
+          field: filter.key,
+          op: operatorMap[filter.operator] || filter.operator,
+          value: filter.value
+        }));
+        params.append("filters", JSON.stringify(formattedFilters));
+      }
 
       const result = await apiClient.get<GetUsersResponse>(
         `/api/participants?${params.toString()}`
@@ -91,6 +117,19 @@ export default function ListPagesDataPeserta() {
 
   const handleFiltersApplied = (appliedFilters: FilterItem[]) => {
     setFilters(appliedFilters);
+    setPage(1); // Reset to page 1 when filters change
+  };
+
+  const handleSortChange = (columnId: string) => {
+    if (sortBy === columnId) {
+      // Toggle sort order if same column
+      setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
+    } else {
+      // New column, default to DESC
+      setSortBy(columnId);
+      setSortOrder("DESC");
+    }
+    setPage(1); // Reset to page 1 on sort change
   };
 
   // Full screen loading hanya di awal
@@ -165,6 +204,10 @@ export default function ListPagesDataPeserta() {
             setLimit(newLimit);
             setPage(1); // Reset to page 1
           }}
+          // Server-side sorting
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={handleSortChange}
         />
       </Box>
     </DashboardLayout>
