@@ -10,7 +10,6 @@ import {
   Paper,
   TableSortLabel,
   Typography,
-  Chip,
   Box,
   TextField,
   InputAdornment,
@@ -27,7 +26,8 @@ import {
   TableChart as TableChartIcon,
   Print as PrintIcon,
 } from '@mui/icons-material';
-import DataTableFilter, { FilterItem, FilterConfig, applyFilters } from './DataTableFilter';
+import DataTableFilter, { FilterItem, FilterConfig } from './DataTableFilter';
+import { applyFilters } from './filterUtils';
 export type { FilterConfig, FilterItem } from './DataTableFilter';
 
 // Generic column definition
@@ -122,13 +122,13 @@ export default function DataTable<T extends Record<string, unknown>>({
   // Apply search query (only for client-side)
   const searchedData = serverSide ? filteredData : (searchValue
     ? filteredData.filter((row) => {
-        // Search across all columns
-        return columns.some((column) => {
-          const value = row[column.id as keyof T];
-          if (value === null || value === undefined) return false;
-          return String(value).toLowerCase().includes(searchValue.toLowerCase());
-        });
-      })
+      // Search across all columns
+      return columns.some((column) => {
+        const value = row[column.id as keyof T];
+        if (value === null || value === undefined) return false;
+        return String(value).toLowerCase().includes(searchValue.toLowerCase());
+      });
+    })
     : filteredData);
 
   // Handle sorting (only for client-side)
@@ -239,31 +239,36 @@ export default function DataTable<T extends Record<string, unknown>>({
 
   return (
     <Box>
-      {/* Filter Section */}
+      {/* Filter Section - Container terpisah dengan maxWidth */}
       {enableFilter && (
-        <DataTableFilter
-          columns={columns}
-          filterConfigs={filterConfigs}
-          onFilterChange={handleFilterChange}
-          onFiltersApplied={onFiltersApplied}
-          initialFilters={filters}
-        />
+        <Box sx={{ maxWidth: '100vw', overflow: 'hidden', mb: 2 }}>
+          <DataTableFilter
+            columns={columns}
+            filterConfigs={filterConfigs}
+            onFilterChange={handleFilterChange}
+            onFiltersApplied={onFiltersApplied}
+            initialFilters={filters}
+          />
+        </Box>
       )}
 
-      {/* Search and Export Section */}
+      {/* Search and Export Section - Container terpisah dengan maxWidth */}
       <Box
         sx={{
+          maxWidth: '100vw',
+          overflow: 'hidden',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: 2,
           mb: 2,
-          flexWrap: 'wrap',
+          flexDirection: { xs: 'row', sm: 'row' },
+          flexWrap: 'nowrap',
         }}
       >
         {/* Left side - Search */}
-        <Box sx={{ flex: 1, minWidth: { xs: '100%', sm: 300 }, maxWidth: { sm: 500 } }}>
-          {enableSearch && (
+        {enableSearch && (
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <TextField
               fullWidth
               size="small"
@@ -291,24 +296,29 @@ export default function DataTable<T extends Record<string, unknown>>({
                 },
               }}
             />
-          )}
-        </Box>
+          </Box>
+        )}
 
         {/* Right side - Export */}
         {enableExport && (
-          <Box>
+          <Box sx={{ flexShrink: 0 }}>
             <Button
-              variant="outlined"
-              startIcon={<FileDownloadIcon />}
+              variant="contained"
               onClick={handleExportMenuOpen}
+              size="small"
               sx={{
-                borderWidth: 2,
+                minWidth: { xs: 40, sm: 'auto' },
+                px: { xs: 1, sm: 2 },
+                bgcolor: { xs: 'error.main', sm: 'primary.main' },
                 '&:hover': {
-                  borderWidth: 2,
+                  bgcolor: { xs: 'error.dark', sm: 'primary.dark' },
                 },
               }}
             >
-              Export
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                Export
+              </Box>
+              <FileDownloadIcon sx={{ display: { xs: 'block', sm: 'none' }, fontSize: 20 }} />
             </Button>
             <Menu
               anchorEl={exportAnchorEl}
@@ -346,136 +356,117 @@ export default function DataTable<T extends Record<string, unknown>>({
         )}
       </Box>
 
-      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 600 }}>
-        <Table stickyHeader={stickyHeader} aria-label="data table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={String(column.id)}
-                  align={column.align || 'left'}
-                  style={{ minWidth: column.minWidth }}
-                  sx={{
-                    fontWeight: 'bold',
-                    bgcolor: '#2E7D32',
-                    color: 'white',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {column.sortable !== false ? (
-                    <TableSortLabel
-                      active={currentOrderBy === column.id}
-                      direction={currentOrderBy === column.id ? currentOrder : 'asc'}
-                      onClick={() => handleRequestSort(column.id)}
-                      sx={{
-                        '&.MuiTableSortLabel-root': {
-                          color: 'white',
-                        },
-                        '&.MuiTableSortLabel-root:hover': {
-                          color: '#FFEB3B',
-                        },
-                        '&.Mui-active': {
-                          color: 'white',
-                        },
-                        '& .MuiTableSortLabel-icon': {
-                          color: 'rgba(255, 255, 255, 0.7) !important',
-                          fontSize: '1.2rem',
-                        },
-                        '&:hover .MuiTableSortLabel-icon': {
-                          color: '#FFEB3B !important', // Yellow on hover
-                          opacity: 1,
-                        },
-                        '&.Mui-active .MuiTableSortLabel-icon': {
-                          color: '#FFD700 !important', // Gold color for active sort
-                          opacity: 1,
-                        },
-                        '&.Mui-active:hover .MuiTableSortLabel-icon': {
-                          color: '#FFC107 !important', // Darker gold on hover when active
-                        },
-                      }}
-                    >
-                      {column.label}
-                    </TableSortLabel>
-                  ) : (
-                    column.label
-                  )}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedData.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} align="center" sx={{ py: 4 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    {emptyMessage}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            ) : (
-              paginatedData.map((row, index) => (
-                <TableRow
-                  hover
-                  key={index}
-                  onClick={() => onRowClick?.(row)}
-                  sx={{
-                    cursor: onRowClick ? 'pointer' : 'default',
-                    '&:hover': onRowClick ? { bgcolor: 'action.hover' } : {},
-                  }}
-                >
+      {/* Table wrapper with overflow - Hanya table yang scroll */}
+      <Box sx={{ maxWidth: '100vw', overflowX: 'auto' }}>
+        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+          <TableContainer sx={{ maxHeight: 600 }}>
+            <Table stickyHeader={stickyHeader} aria-label="data table" sx={{ minWidth: 650 }}>
+              <TableHead>
+                <TableRow>
                   {columns.map((column) => (
                     <TableCell
                       key={String(column.id)}
                       align={column.align || 'left'}
-                      sx={{ whiteSpace: 'nowrap' }}
+                      style={{ minWidth: column.minWidth }}
+                      sx={{
+                        fontWeight: 'bold',
+                        bgcolor: '#2E7D32',
+                        color: 'white',
+                        whiteSpace: 'nowrap',
+                      }}
                     >
-                      {getCellValue(row, column)}
+                      {column.sortable !== false ? (
+                        <TableSortLabel
+                          active={currentOrderBy === column.id}
+                          direction={currentOrderBy === column.id ? currentOrder : 'asc'}
+                          onClick={() => handleRequestSort(column.id)}
+                          sx={{
+                            '&.MuiTableSortLabel-root': {
+                              color: 'white',
+                            },
+                            '&.MuiTableSortLabel-root:hover': {
+                              color: '#FFEB3B',
+                            },
+                            '&.Mui-active': {
+                              color: 'white',
+                            },
+                            '& .MuiTableSortLabel-icon': {
+                              color: 'rgba(255, 255, 255, 0.7) !important',
+                              fontSize: '1.2rem',
+                            },
+                            '&:hover .MuiTableSortLabel-icon': {
+                              color: '#FFEB3B !important', // Yellow on hover
+                              opacity: 1,
+                            },
+                            '&.Mui-active .MuiTableSortLabel-icon': {
+                              color: '#FFD700 !important', // Gold color for active sort
+                              opacity: 1,
+                            },
+                            '&.Mui-active:hover .MuiTableSortLabel-icon': {
+                              color: '#FFC107 !important', // Darker gold on hover when active
+                            },
+                          }}
+                        >
+                          {column.label}
+                        </TableSortLabel>
+                      ) : (
+                        column.label
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </TableHead>
+              <TableBody>
+                {paginatedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} align="center" sx={{ py: 4 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        {emptyMessage}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedData.map((row, index) => (
+                    <TableRow
+                      hover
+                      key={index}
+                      onClick={() => onRowClick?.(row)}
+                      sx={{
+                        cursor: onRowClick ? 'pointer' : 'default',
+                        '&:hover': onRowClick ? { bgcolor: 'action.hover' } : {},
+                      }}
+                    >
+                      {columns.map((column) => (
+                        <TableCell
+                          key={String(column.id)}
+                          align={column.align || 'left'}
+                          sx={{ whiteSpace: 'nowrap' }}
+                        >
+                          {getCellValue(row, column)}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-      <TablePagination
-        rowsPerPageOptions={rowsPerPageOptions}
-        component="div"
-        count={totalRecords}
-        rowsPerPage={currentRowsPerPage}
-        page={currentPage}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage="Baris per halaman:"
-        labelDisplayedRows={({ from, to, count }) =>
-          `${from}-${to} dari ${count !== -1 ? count : `lebih dari ${to}`}`
-        }
-      />
-    </Paper>
+          <TablePagination
+            rowsPerPageOptions={rowsPerPageOptions}
+            component="div"
+            count={totalRecords}
+            rowsPerPage={currentRowsPerPage}
+            page={currentPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage="Baris per halaman:"
+            labelDisplayedRows={({ from, to, count }) =>
+              `${from}-${to} dari ${count !== -1 ? count : `lebih dari ${to}`}`
+            }
+          />
+        </Paper>
+      </Box>
     </Box>
   );
 }
-
-// Helper function untuk format status dengan Chip
-export const formatStatus = (
-  status: string,
-  colorMap?: Record<string, 'success' | 'warning' | 'error' | 'info' | 'default'>
-) => {
-  const defaultColorMap: Record<string, 'success' | 'warning' | 'error' | 'info' | 'default'> = {
-    active: 'success',
-    aktif: 'success',
-    pending: 'warning',
-    menunggu: 'warning',
-    inactive: 'error',
-    nonaktif: 'error',
-    completed: 'success',
-    selesai: 'success',
-    ...colorMap,
-  };
-
-  const color = defaultColorMap[status.toLowerCase()] || 'default';
-
-  return <Chip label={status} color={color} size="small" />;
-};

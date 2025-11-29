@@ -23,7 +23,6 @@ interface AsesorFormData {
   no_telepon: string;
   email: string;
   link_grup_wa: string;
-  akun_id: number;
 }
 
 export default function InputAsesorPage() {
@@ -42,7 +41,6 @@ export default function InputAsesorPage() {
       no_telepon: "",
       email: "",
       link_grup_wa: "",
-      akun_id: 0,
     },
   });
 
@@ -225,10 +223,10 @@ export default function InputAsesorPage() {
                   control={control}
                   rules={{
                     required: "Link WhatsApp wajib diisi",
-                    pattern: {
-                      value: /^https?:\/\/(wa\.me|chat\.whatsapp\.com)\/.+$/,
-                      message: "Link WhatsApp tidak valid",
-                    },
+                    // pattern: {
+                    //   value: /^https?:\/\/(wa\.me|chat\.whatsapp\.com)\/.+$/,
+                    //   message: "Link WhatsApp tidak valid",
+                    // },
                   }}
                   render={({ field }) => (
                     <TextField
@@ -239,39 +237,6 @@ export default function InputAsesorPage() {
                       error={!!errors.link_grup_wa}
                       helperText={errors.link_grup_wa?.message}
                       placeholder="https://wa.me/628xxxxxxx"
-                      sx={{
-                        "& .MuiInputBase-root": { borderRadius: 2, height: 52 },
-                      }}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="akun_id"
-                  control={control}
-                  rules={{
-                    required: "Akun ID wajib diisi",
-                    min: {
-                      value: 1,
-                      message: "Akun ID harus lebih dari 0",
-                    },
-                  }}
-                  render={({ field: { onChange, value, ...field } }) => (
-                    <TextField
-                      {...field}
-                      label="Akun ID"
-                      fullWidth
-                      required
-                      type="number"
-                      value={value || ""}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        onChange(val ? parseInt(val, 10) : 0);
-                      }}
-                      error={!!errors.akun_id}
-                      helperText={errors.akun_id?.message}
                       sx={{
                         "& .MuiInputBase-root": { borderRadius: 2, height: 52 },
                       }}

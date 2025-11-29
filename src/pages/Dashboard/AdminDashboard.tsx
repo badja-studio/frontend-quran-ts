@@ -10,26 +10,27 @@ import DynamicBarChart from "../../components/Chart/DynamicBarChart";
 import ReusableKesalahanBarChart from "../../components/Chart/TinyBarChart";
 import MetrixGridTable from "../../components/Chart/MetrixGridTable";
 import { useDashboard } from "../../hooks/useDashboard";
+import { AverageScoreData, ParticipationByLevel } from "../../services/dashboard.service";
 
 export default function AdminDashboard() {
   const { data, loading, error, refetch } = useDashboard();
 
   // Transform average scores data to match the expected format
-  const transformAverageScores = (scores: any[]) => {
+  const transformAverageScores = (scores: AverageScoreData[]): AverageScoreData[] => {
     return scores.map((score, index) => ({
       ...score,
-      color: index === 0 ? "#1B5E20" : 
-            score.label.includes('PAUD') ? "#FFC107" :
-            score.label.includes('SD') ? "#D32F2F" :
+      color: index === 0 ? "#1B5E20" :
+        score.label.includes('PAUD') ? "#FFC107" :
+          score.label.includes('SD') ? "#D32F2F" :
             score.label.includes('SMP') ? "#1565C0" :
-            score.label.includes('SMA') ? "#546E7A" :
-            "#E64A19", // Default for Pengawas
+              score.label.includes('SMA') ? "#546E7A" :
+                "#E64A19", // Default for Pengawas
       icon: <PeopleIcon />
     }));
   };
 
   // Transform participation data with colors
-  const transformParticipationData = (participation: any[]) => {
+  const transformParticipationData = (participation: ParticipationByLevel[]) => {
     const colorMap: { [key: string]: string } = {
       "Partisipan": "#1E3A24",
       "PAUD/TK": "#548B54",
@@ -38,11 +39,11 @@ export default function AdminDashboard() {
       "SMA/Umum": "#6B8E23",
       "Pengawas": "#2E8B57"
     };
-    
+
     return participation.map(item => ({
       ...item,
       color: colorMap[item.title] || "#2E8B57"
-    }));
+    })) as Array<ParticipationByLevel & { color: string }>;
   };
 
   if (loading) {
@@ -52,10 +53,10 @@ export default function AdminDashboard() {
         userName="Admin Utama"
         userEmail="admin@quran.app"
       >
-        <Box 
-          display="flex" 
-          justifyContent="center" 
-          alignItems="center" 
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
           minHeight="50vh"
         >
           <CircularProgress size={60} />
@@ -75,13 +76,13 @@ export default function AdminDashboard() {
           <Typography variant="h4" gutterBottom fontWeight="bold">
             Dashboard Admin
           </Typography>
-          <Alert 
-            severity="error" 
+          <Alert
+            severity="error"
             sx={{ mb: 3 }}
             action={
-              <Button 
-                color="inherit" 
-                size="small" 
+              <Button
+                color="inherit"
+                size="small"
                 onClick={refetch}
                 startIcon={<RefreshIcon />}
               >
@@ -219,7 +220,7 @@ export default function AdminDashboard() {
           <Grid item xs={12} md={6}>
             <DynamicBarChart
               title="Capaian Nilai Ujian Peserta per Provinsi"
-              data={performance.provinceAchievement.map(item => ({ 
+              data={performance.provinceAchievement.map(item => ({
                 ...item,
                 [item.name]: item.name // Add index signature requirement
               }))}
@@ -231,7 +232,7 @@ export default function AdminDashboard() {
           <Grid item xs={12} md={6}>
             <DynamicBarChart
               title="Persentase Tingkat Kelancaran Al-Quran per Provinsi"
-              data={performance.fluencyLevels.map(item => ({ 
+              data={performance.fluencyLevels.map(item => ({
                 ...item,
                 [item.name]: item.name // Add index signature requirement
               }))}

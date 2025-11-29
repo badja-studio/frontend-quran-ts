@@ -2,43 +2,10 @@ import { DataAsesor } from "./type";
 import { Column } from "../../../components/Table/DataTable";
 import { Box, Typography, Chip, Avatar } from "@mui/material";
 
-export const dummyDataAsesor: DataAsesor[] = [
-  {
-    id: 1,
-    nama: "Budi Santoso",
-    username: "budi123",
-    no_telp: 628123456789,
-    email: "budi@example.com",
-    link_wa: "https://wa.me/628123456789",
-    belum: "3",
-    sudah: "5",
-  },
-  {
-    id: 2,
-    nama: "Siti Rahma",
-    username: "siti_r",
-    no_telp: 628987654321,
-    email: "siti@example.com",
-    link_wa: "https://wa.me/628987654321",
-    belum: "1",
-    sudah: "4",
-  },
-  {
-    id: 3,
-    nama: "Agus Kurnia",
-    username: "agus_k",
-    no_telp: 628555666777,
-    email: "agus@example.com",
-    link_wa: "https://wa.me/628555666777",
-    belum: "0",
-    sudah: "7",
-  },
-];
-
 export const columnsAsesor: Column<DataAsesor>[] = [
   {
-    id: "nama",
-    label: "Nama Peserta",
+    id: "name",
+    label: "Nama Asesor",
     minWidth: 180,
     format: (value) => {
       const nama = String(value);
@@ -61,11 +28,11 @@ export const columnsAsesor: Column<DataAsesor>[] = [
     align: "center",
   },
   {
-    id: "no_telp",
+    id: "no_telepon",
     label: "No. Telepon",
     minWidth: 150,
     align: "center",
-    format: (value) => `+${value}`,
+    format: (value) => `+${String(value)}`,
   },
   {
     id: "email",
@@ -73,7 +40,7 @@ export const columnsAsesor: Column<DataAsesor>[] = [
     minWidth: 200,
   },
   {
-    id: "link_wa",
+    id: "link_grup_wa",
     label: "WA",
     minWidth: 150,
     align: "center",
@@ -90,14 +57,14 @@ export const columnsAsesor: Column<DataAsesor>[] = [
     ),
   },
   {
-    id: "belum",
-    label: "Belum",
+    id: "total_peserta_belum_asesmen",
+    label: "Total Beserta Belum Asesmen",
     minWidth: 80,
     align: "center",
   },
   {
-    id: "sudah",
-    label: "Sudah",
+    id: "total_peserta_selesai_asesmen",
+    label: "Total Peserta Selesai Asesmen",
     minWidth: 80,
     align: "center",
   },

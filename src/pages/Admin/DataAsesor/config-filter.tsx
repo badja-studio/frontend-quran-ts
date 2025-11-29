@@ -3,10 +3,10 @@ import { DataAsesor } from "./type";
 
 export const filterConfigs: FilterConfig<DataAsesor>[] = [
   {
-    key: "nama",
-    label: "Nama",
+    key: "name",
+    label: "Nama Asesor",
     type: "text",
-    operators: ["contains", "startsWith", "endsWith"],
+    operators: ["contains", "startsWith", "endsWith", "equals",],
   },
   {
     key: "username",
@@ -15,7 +15,7 @@ export const filterConfigs: FilterConfig<DataAsesor>[] = [
     operators: ["equals", "contains", "startsWith"],
   },
   {
-    key: "no_telp",
+    key: "no_telepon",
     label: "No. Telepon",
     type: "text",
     operators: ["contains", "startsWith", "equals"],
@@ -27,20 +27,20 @@ export const filterConfigs: FilterConfig<DataAsesor>[] = [
     operators: ["contains", "startsWith", "endsWith"],
   },
   {
-    key: "link_wa",
+    key: "link_grup_wa",
     label: "Link WhatsApp",
     type: "text",
     operators: ["contains"],
   },
   {
-    key: "belum",
-    label: "Belum Dinilai",
+    key: "total_peserta_selesai_asesmen",
+    label: "Total Peserta Selesai Asesmen",
     type: "text",
     operators: ["equals"],
   },
   {
-    key: "sudah",
-    label: "Sudah Dinilai",
+    key: "total_peserta_belum_asesmen",
+    label: "Total Beserta Belum Asesmen",
     type: "text",
     operators: ["equals"],
   },
