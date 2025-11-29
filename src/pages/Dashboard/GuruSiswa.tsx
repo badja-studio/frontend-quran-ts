@@ -3,11 +3,11 @@ import { Box, Typography, Chip, Avatar } from "@mui/material";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import DataTable, {
   Column,
-  formatStatus,
   FilterConfig,
   FilterItem,
   ExportType,
 } from "../../components/Table/DataTable";
+import { formatStatus } from "../../components/Table/tableFormatters";
 import * as XLSX from "xlsx";
 
 // Interface untuk data siswa
