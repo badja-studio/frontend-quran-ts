@@ -613,7 +613,7 @@ export default function InputPesertaPage() {
                       fullWidth
                       label="Jadwal"
                       required
-                      type="datetime-local"
+                      type="date"
                       error={!!errors.jadwal}
                       helperText={errors.jadwal?.message}
                       InputLabelProps={{ shrink: true }}
@@ -646,7 +646,7 @@ export default function InputPesertaPage() {
                           // when scrolled to bottom, try to fetch next page
                           if (
                             listboxNode.scrollTop + listboxNode.clientHeight >=
-                              listboxNode.scrollHeight - 1 &&
+                            listboxNode.scrollHeight - 1 &&
                             hasNextPage &&
                             !isFetchingNextPage
                           ) {

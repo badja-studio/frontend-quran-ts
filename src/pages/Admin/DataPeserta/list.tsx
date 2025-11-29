@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -13,6 +13,7 @@ import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
 import { DataPerseta, GetUsersResponse } from "./type";
 import apiClient, { handleApiError } from "../../../services/api.config";
+import useUserStore from "../../../store/user.store";
 
 export default function ListPagesDataPeserta() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,6 +23,7 @@ export default function ListPagesDataPeserta() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
+  const { user, fetchUser } = useUserStore();
 
   // Fetch data with React Query
   const {
@@ -30,7 +32,7 @@ export default function ListPagesDataPeserta() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["users", page, limit, searchQuery, sortBy, sortOrder, filters],
+    queryKey: ["peserta-all", page, limit, searchQuery, sortBy, sortOrder, filters],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -132,12 +134,16 @@ export default function ListPagesDataPeserta() {
     setPage(1); // Reset to page 1 on sort change
   };
 
+  useEffect(() => {
+    fetchUser();
+  }, [user, fetchUser]);
+
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {
     return (
       <DashboardLayout
         userRole="admin"
-        userName="Ustadz Ahmad"
+        userName={`${user?.name}`}
         userEmail="ahmad@quran.app"
       >
         <Box
@@ -155,7 +161,7 @@ export default function ListPagesDataPeserta() {
   return (
     <DashboardLayout
       userRole="admin"
-      userName="Ustadz Ahmad"
+      userName={`${user?.name}`}
       userEmail="ahmad@quran.app"
     >
       <Box>

@@ -282,7 +282,7 @@ export default function DataTableFilter<T extends Record<string, unknown>>({
         sx={{
           display: 'flex',
           alignItems: 'center',
-          gap: 2,
+          gap: { xs: 1, sm: 2 },
           mb: 2,
           flexWrap: 'wrap',
         }}
@@ -293,19 +293,28 @@ export default function DataTableFilter<T extends Record<string, unknown>>({
           startIcon={<FilterListIcon />}
           onClick={() => setShowFilters(!showFilters)}
           color={filters.length > 0 ? 'primary' : 'inherit'}
+          size="small"
+          sx={{
+            minWidth: { xs: 'auto', sm: 'auto' },
+          }}
         >
           Filter {filters.length > 0 && `(${filters.length})`}
         </Button>
 
         {filters.length > 0 && (
           <>
-            <Button variant="contained" onClick={applyFilters}>
-              Terapkan Filter
+            <Button
+              variant="contained"
+              onClick={applyFilters}
+              size="small"
+            >
+              Terapkan
             </Button>
             <Button
               variant="outlined"
               onClick={clearFilters}
               color="error"
+              size="small"
               sx={{
                 borderWidth: 2,
                 '&:hover': {
@@ -315,19 +324,33 @@ export default function DataTableFilter<T extends Record<string, unknown>>({
                 },
               }}
             >
-              Hapus Semua
+              Hapus
             </Button>
           </>
         )}
       </Box>
 
       {showFilters && (
-        <Paper sx={{ p: 2 }}>
+        <Paper sx={{ p: { xs: 1.5, sm: 2 } }}>
           <Stack spacing={2}>
             {filters.map((filter) => (
-              <Box key={filter.id} sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+              <Box
+                key={filter.id}
+                sx={{
+                  display: 'flex',
+                  gap: { xs: 1, sm: 2 },
+                  alignItems: 'flex-start',
+                  flexDirection: { xs: 'column', md: 'row' },
+                }}
+              >
                 {/* Column selector */}
-                <FormControl size="small" sx={{ minWidth: 180 }}>
+                <FormControl
+                  size="small"
+                  sx={{
+                    minWidth: { xs: '100%', md: 180 },
+                    width: { xs: '100%', md: 'auto' },
+                  }}
+                >
                   <InputLabel>Kolom</InputLabel>
                   <Select
                     value={filter.key}
@@ -343,7 +366,13 @@ export default function DataTableFilter<T extends Record<string, unknown>>({
                 </FormControl>
 
                 {/* Operator selector */}
-                <FormControl size="small" sx={{ minWidth: 200 }}>
+                <FormControl
+                  size="small"
+                  sx={{
+                    minWidth: { xs: '100%', md: 200 },
+                    width: { xs: '100%', md: 'auto' },
+                  }}
+                >
                   <InputLabel>Operator</InputLabel>
                   <Select
                     value={filter.operator}
@@ -361,17 +390,36 @@ export default function DataTableFilter<T extends Record<string, unknown>>({
                 </FormControl>
 
                 {/* Value input */}
-                <Box sx={{ flex: 1 }}>{renderValueInput(filter)}</Box>
+                <Box sx={{
+                  flex: 1,
+                  width: { xs: '100%', md: 'auto' },
+                  minWidth: { xs: '100%', md: 0 },
+                }}>
+                  {renderValueInput(filter)}
+                </Box>
 
                 {/* Delete button */}
-                <IconButton onClick={() => removeFilter(filter.id)} color="error" size="small">
+                <IconButton
+                  onClick={() => removeFilter(filter.id)}
+                  color="error"
+                  size="small"
+                  sx={{
+                    alignSelf: { xs: 'flex-end', md: 'center' },
+                  }}
+                >
                   <DeleteIcon />
                 </IconButton>
               </Box>
             ))}
 
             <Box>
-              <Button startIcon={<AddIcon />} onClick={addFilter} variant="outlined" size="small">
+              <Button
+                startIcon={<AddIcon />}
+                onClick={addFilter}
+                variant="outlined"
+                size="small"
+                fullWidth={false}
+              >
                 Tambah Filter
               </Button>
             </Box>
@@ -383,75 +431,75 @@ export default function DataTableFilter<T extends Record<string, unknown>>({
 }
 
 // Utility function to apply filters to data
-export function applyFilters<T extends Record<string, unknown>>(
-  data: T[],
-  filters: FilterItem[]
-): T[] {
-  if (filters.length === 0) return data;
+// export function applyFilters<T extends Record<string, unknown>>(
+//   data: T[],
+//   filters: FilterItem[]
+// ): T[] {
+//   if (filters.length === 0) return data;
 
-  return data.filter((row) => {
-    return filters.every((filter) => {
-      const value = row[filter.key];
-      const filterValue = filter.value;
+//   return data.filter((row) => {
+//     return filters.every((filter) => {
+//       const value = row[filter.key];
+//       const filterValue = filter.value;
 
-      // Handle null/undefined
-      if (value === null || value === undefined) return false;
+//       // Handle null/undefined
+//       if (value === null || value === undefined) return false;
 
-      const stringValue = String(value).toLowerCase();
-      const stringFilterValue = String(filterValue).toLowerCase();
+//       const stringValue = String(value).toLowerCase();
+//       const stringFilterValue = String(filterValue).toLowerCase();
 
-      switch (filter.operator) {
-        case 'equals':
-          return stringValue === stringFilterValue;
+//       switch (filter.operator) {
+//         case 'equals':
+//           return stringValue === stringFilterValue;
 
-        case 'notEquals':
-          return stringValue !== stringFilterValue;
+//         case 'notEquals':
+//           return stringValue !== stringFilterValue;
 
-        case 'contains':
-          return stringValue.includes(stringFilterValue);
+//         case 'contains':
+//           return stringValue.includes(stringFilterValue);
 
-        case 'notContains':
-          return !stringValue.includes(stringFilterValue);
+//         case 'notContains':
+//           return !stringValue.includes(stringFilterValue);
 
-        case 'startsWith':
-          return stringValue.startsWith(stringFilterValue);
+//         case 'startsWith':
+//           return stringValue.startsWith(stringFilterValue);
 
-        case 'endsWith':
-          return stringValue.endsWith(stringFilterValue);
+//         case 'endsWith':
+//           return stringValue.endsWith(stringFilterValue);
 
-        case 'greaterThan':
-          if (typeof value === 'number' && typeof filterValue === 'number') {
-            return value > filterValue;
-          }
-          return false;
+//         case 'greaterThan':
+//           if (typeof value === 'number' && typeof filterValue === 'number') {
+//             return value > filterValue;
+//           }
+//           return false;
 
-        case 'lessThan':
-          if (typeof value === 'number' && typeof filterValue === 'number') {
-            return value < filterValue;
-          }
-          return false;
+//         case 'lessThan':
+//           if (typeof value === 'number' && typeof filterValue === 'number') {
+//             return value < filterValue;
+//           }
+//           return false;
 
-        case 'greaterThanOrEqual':
-          if (typeof value === 'number' && typeof filterValue === 'number') {
-            return value >= filterValue;
-          }
-          return false;
+//         case 'greaterThanOrEqual':
+//           if (typeof value === 'number' && typeof filterValue === 'number') {
+//             return value >= filterValue;
+//           }
+//           return false;
 
-        case 'lessThanOrEqual':
-          if (typeof value === 'number' && typeof filterValue === 'number') {
-            return value <= filterValue;
-          }
-          return false;
+//         case 'lessThanOrEqual':
+//           if (typeof value === 'number' && typeof filterValue === 'number') {
+//             return value <= filterValue;
+//           }
+//           return false;
 
-        case 'in':
-          if (Array.isArray(filterValue)) {
-            return filterValue.some(fv => String(value).toLowerCase() === String(fv).toLowerCase());
-          }
-          return false;
+//         case 'in':
+//           if (Array.isArray(filterValue)) {
+//             return filterValue.some(fv => String(value).toLowerCase() === String(fv).toLowerCase());
+//           }
+//           return false;
 
-        default:
-          return true;
-      }
-    });
-  });
-}
+//         default:
+//           return true;
+//       }
+//     });
+//   });
+// }
