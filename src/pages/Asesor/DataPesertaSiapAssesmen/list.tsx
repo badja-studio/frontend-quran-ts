@@ -59,6 +59,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
       if (isInitialLoad) {
         setIsInitialLoad(false);
       }
+
       return result.data;
     },
     retry: 1,

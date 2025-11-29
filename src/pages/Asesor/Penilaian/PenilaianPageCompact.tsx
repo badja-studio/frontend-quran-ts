@@ -30,8 +30,8 @@ interface Peserta {
 }
 
 const PenilaianPageCompact: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const pesertaId = Number(id);
+  const { id: participantId } = useParams<{ id: string }>();
+  console.log("Peserta ID:", participantId);
   const { user } = useUserStore();
 
   const {
@@ -39,12 +39,16 @@ const PenilaianPageCompact: React.FC = () => {
     isLoading,
     error,
   } = useQuery<Peserta>({
-    queryKey: ["peserta", pesertaId],
+    queryKey: ["peserta", participantId],
     queryFn: async () => {
-      const res = await apiClient.get(`/peserta/${pesertaId}`);
+      console.log("Fetching peserta dengan ID:", participantId); // log ID yang dicari
+      const res = await apiClient.get(
+        `/api/assessments/participant/${participantId}`
+      );
+      console.log("Response API:", res.data);
       return res.data.data;
     },
-    enabled: !!pesertaId,
+    enabled: !!participantId,
   });
 
   const [mistakes, setMistakes] = useState<MistakesState>(() => {
@@ -180,8 +184,17 @@ const PenilaianPageCompact: React.FC = () => {
   };
 
   if (isLoading) return <Typography>Loading peserta...</Typography>;
-  if (error) return <Typography>Error load peserta</Typography>;
-  if (!peserta) return <Typography>Peserta tidak ditemukan</Typography>;
+  // Tambahkan console.log sebelum return
+  if (error)
+    return (
+      <Typography>
+        Peserta tidak ditemukan! {JSON.stringify({ participantId, error })}
+      </Typography>
+    );
+
+  if (!peserta) {
+    return <Typography>Peserta tidak ditemukan</Typography>;
+  }
 
   return (
     <Box sx={{ width: "100%", minHeight: "100vh", bgcolor: "grey.50", py: 2 }}>
