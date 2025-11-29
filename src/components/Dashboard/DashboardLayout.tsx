@@ -46,13 +46,13 @@ interface MenuItem {
 }
 
 interface MenuConfig {
-  guru: MenuItem[];
+  assessor: MenuItem[];
   admin: MenuItem[];
 }
 
 // Menu configuration untuk setiap role
 const menuConfig: MenuConfig = {
-  guru: [
+  assessor: [
     {
       text: "Peserta yang siap asesmen",
       icon: <RecentActorsIcon />,
@@ -141,7 +141,7 @@ const menuConfig: MenuConfig = {
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  userRole: "guru" | "admin"; // Hardcoded role type
+  userRole: "assessor" | "admin"; // Hardcoded role type
   userName?: string;
   userEmail?: string;
 }
@@ -332,7 +332,7 @@ export default function DashboardLayout({
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Dashboard {userRole === "guru" ? "Guru" : "Admin"}
+            Dashboard {userRole === "assessor" ? "Assessor" : "Admin"}
           </Typography>
           <IconButton
             size="large"

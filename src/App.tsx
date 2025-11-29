@@ -14,7 +14,6 @@ import ListPagesDataPesertaHasilAsesmen from "./pages/Admin/DataHasilAsesmen/lis
 import ListAsesorPagesDataPesertaSiapAssement from "./pages/Asesor/DataPesertaSiapAssesmen/list";
 import ListAsesorPagesDataPesertaBelomAsesmen from "./pages/Asesor/DataBelumAsesmen/list";
 import ListAsesorPagesDataPesertaHasilAsesmen from "./pages/Asesor/DataHasilAsesmen/list";
-import ListAsesorPagesDataPesertaSedangAssement from "./pages/Asesor/DataPesertaSedangAssesmen/list";
 import ListPagesDataAsesor from "./pages/Admin/DataAsesor/list";
 import AsesmenForm from "./pages/Asesor/KelolaDataPengguna/FormPengguna";
 import AdminForm from "./pages/Admin/KelolaDataPengguna/FormPengguna";
@@ -81,11 +80,7 @@ function App() {
             element={<ListAsesorPagesDataPesertaHasilAsesmen />}
           />
           <Route
-            path="/dashboard/asesor/sedang-asesmen"
-            element={<ListAsesorPagesDataPesertaSedangAssement />}
-          />
-          <Route
-            path="/dashboard/asesor/penilaian"
+            path="/dashboard/asesor/penilaian/:id"
             element={<PenilaianPageCompact />}
           />
           <Route

@@ -127,16 +127,16 @@ function Login() {
       const response = await authService.login(credentials);
 
       if (response.success && response.data) {
-
         // Success - redirect based on role
         const role = response.data.user.role.toLowerCase();
+        console.log("Login successful, user role:", role);
 
         // Navigate to appropriate dashboard
         if (role === "admin") {
           navigate("/dashboard/admin");
         } else if (role === "assessor" || role === "guru") {
           navigate("/dashboard/asesor/siap-asesmen");
-        } else if (role === "assessee" || role === "siswa") {
+        } else if (role === "participant" || role === "siswa") {
           navigate("/peserta");
         } else {
           navigate("/dashboard");
@@ -146,9 +146,10 @@ function Login() {
         setLoginError(response.message || "Login gagal. Silakan coba lagi.");
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : "Terjadi kesalahan. Silakan coba lagi.";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan. Silakan coba lagi.";
       setLoginError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -235,8 +236,8 @@ function Login() {
                       loginType === "email"
                         ? "contoh@email.com"
                         : loginType === "username"
-                          ? "username123"
-                          : "12345678"
+                        ? "username123"
+                        : "12345678"
                     }
                   />
                 )}

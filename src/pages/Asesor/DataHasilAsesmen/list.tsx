@@ -159,7 +159,7 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
 
   return (
     <DashboardLayout
-      userRole="guru"
+      userRole="assessor"
       userName="Ustadz Ahmad"
       userEmail="ahmad@quran.app"
     >
