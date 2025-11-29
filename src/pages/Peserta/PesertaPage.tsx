@@ -155,11 +155,6 @@ const PesertaPage: React.FC = () => {
     setModalVisible(true);
   };
 
-  const handleClose = () => {
-    setModalVisible(false);
-    setSelectedAsesmen(null);
-  };
-
   return (
     <Box
       sx={{

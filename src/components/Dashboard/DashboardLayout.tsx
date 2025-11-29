@@ -58,11 +58,11 @@ const menuConfig: MenuConfig = {
       icon: <RecentActorsIcon />,
       path: "/dashboard/asesor/siap-asesmen",
     },
-    {
-      text: "Sedang melaksanakan",
-      icon: <RecentActorsIcon />,
-      path: "/dashboard/asesor/sedang-asesmen",
-    },
+    // {
+    //   text: "Sedang melaksanakan",
+    //   icon: <RecentActorsIcon />,
+    //   path: "/dashboard/asesor/sedang-asesmen",
+    // },
     {
       text: "Belum asesmen",
       icon: <RecentActorsIcon />,

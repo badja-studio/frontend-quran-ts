@@ -34,18 +34,7 @@ type RuleSet = {
   madB: Rule;
 };
 
-const ruleSet: RuleSet = {
-  makhraj: { first: 2, next: 0.5 },
-  sifat: { first: 0.5, next: 0.25 },
-  ahkam: { first: 0.5, next: 0.25 },
-  madA: { first: 2, next: 0.5 },
-  madB: { first: 1, next: 0.5 },
-  gharib: { first: 1, next: 0.5 },
-};
-
 const PenilaianPageCompact: React.FC = () => {
-  const navigate = useNavigate();
-
   const [mistakes, setMistakes] = useState<MistakesState>(() => {
     const mk = makhraj.map((h) => (typeof h === "string" ? h : h.simbol));
     return {

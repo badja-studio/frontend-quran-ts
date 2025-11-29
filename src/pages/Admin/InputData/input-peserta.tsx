@@ -13,8 +13,27 @@ import {
 
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 
+interface FormState {
+  no_akun: string;
+  nip: string;
+  nama: string;
+  jk: string;
+  tl: string;
+  pegawai: string;
+  jenjang: string;
+  level: string;
+  provinsi: string;
+  kab_kota: string;
+  sekolah: string;
+  pendidikan: string;
+  program_studi: string;
+  perguruan_tinggi: string;
+  jenis_pt: string;
+  tahun_lulus: string;
+}
+
 export default function InputPesertaPage() {
-  const emptyForm = {
+  const emptyForm: FormState = {
     no_akun: "",
     nip: "",
     nama: "",
@@ -30,15 +49,15 @@ export default function InputPesertaPage() {
     program_studi: "",
     perguruan_tinggi: "",
     jenis_pt: "",
-    tahun_lusus: "",
+    tahun_lulus: "",
   };
 
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState<FormState>(emptyForm);
 
-  const handleChange = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleSubmit = () => {
     console.log("Data Peserta Tersimpan:", form);
   };

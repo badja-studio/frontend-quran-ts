@@ -14,6 +14,10 @@ export interface MakharijItem {
   total: number;
 }
 
+interface ProcessedItem extends MakharijItem {
+  percent: string;
+}
+
 interface MetrixGridTableProps {
   title: string;
   data: MakharijItem[];
@@ -33,19 +37,19 @@ const MetrixGridTable: React.FC<MetrixGridTableProps> = ({
   }, [data]);
 
   // Tambah persentase
-  const processedData = data.map((item) => ({
+  const processedData: ProcessedItem[] = data.map((item) => ({
     ...item,
     percent: ((item.total / totalKesalahan) * 100).toFixed(2),
   }));
 
-  // Pecah data jadi beberapa baris, tapi setiap item = 2 kolom (name + percent)
-  const chunk = (arr: any[], size: number) => {
-    return arr.reduce((rows: any[][], item, index) => {
+  // Pecah data jadi beberapa baris
+  const chunk = <T,>(arr: T[], size: number): T[][] => {
+    return arr.reduce((rows: T[][], item, index) => {
       const rowIndex = Math.floor(index / size);
       rows[rowIndex] = rows[rowIndex] || [];
       rows[rowIndex].push(item);
       return rows;
-    }, []);
+    }, [] as T[][]);
   };
 
   const rows = chunk(processedData, itemsPerRow);
@@ -61,7 +65,6 @@ const MetrixGridTable: React.FC<MetrixGridTableProps> = ({
             >
               {title}
             </TableCell>
-
             <TableCell
               sx={{ color: "white", fontWeight: "bold", fontSize: 18 }}
               align="right"

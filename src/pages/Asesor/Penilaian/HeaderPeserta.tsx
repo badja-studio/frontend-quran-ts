@@ -2,7 +2,14 @@ import React from "react";
 import { Card, Box, Paper, Typography } from "@mui/material";
 
 interface Props {
-  peserta: any;
+  peserta: {
+    akun: string;
+    nama: string;
+    level: string;
+    jenjang: string;
+    status: string;
+    sekolah: string;
+  };
   totalAverage: string;
 }
 

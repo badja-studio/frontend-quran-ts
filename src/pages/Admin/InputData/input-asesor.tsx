@@ -12,10 +12,18 @@ import {
 } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 
+interface FormState {
+  nama: string;
+  username: string;
+  no_telp: string;
+  email: string;
+  link_wa: string;
+}
+
 export default function InputAsesorPage() {
   const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormState>({
     nama: "",
     username: "",
     no_telp: "",
@@ -23,8 +31,9 @@ export default function InputAsesorPage() {
     link_wa: "",
   });
 
-  const handleChange = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = () => {
