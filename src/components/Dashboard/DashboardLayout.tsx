@@ -141,7 +141,7 @@ const menuConfig: MenuConfig = {
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  userRole: "assessor" | "admin"; // Hardcoded role type
+  userRole: "admin" | "asesor" | "guru" | "participant";
   userName?: string;
   userEmail?: string;
 }

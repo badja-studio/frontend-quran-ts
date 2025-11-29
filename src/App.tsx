@@ -20,6 +20,8 @@ import AdminForm from "./pages/Admin/KelolaDataPengguna/FormPengguna";
 import InputAsesorPage from "./pages/Admin/InputData/input-asesor";
 import InputPesertaPage from "./pages/Admin/InputData/input-peserta";
 import PenilaianPageCompact from "./pages/Asesor/Penilaian/PenilaianPageCompact";
+import ProtectedRoute from "./components/ProtectedRoute";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -27,69 +29,30 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="" element={<Login />} />
+          {/* Login - Halaman publik (tidak perlu login) */}
+          <Route path="/" element={<Login />} />
 
-          {/* ADMIN */}
-          <Route
-            path="/dashboard/admin/kelola-data-pengguna"
-            element={<AdminForm />}
-          />
-          <Route
-            path="/dashboard/admin/input-asesor"
-            element={<InputAsesorPage />}
-          />
-          <Route
-            path="/dashboard/admin/input-peserta"
-            element={<InputPesertaPage />}
-          />
-          <Route
-            path="/dashboard/data-peserta"
-            element={<ListPagesDataPeserta />}
-          />
-          <Route
-            path="/dashboard/data-asesor"
-            element={<ListPagesDataAsesor />}
-          />
-          <Route
-            path="/dashboard/siap-asesmen"
-            element={<ListPagesDataPesertaSiapAssement />}
-          />
-          <Route
-            path="/dashboard/belum-asesmen"
-            element={<ListPagesDataPesertaBelomAsesmen />}
-          />
-          <Route
-            path="/dashboard/hasil-asesmen"
-            element={<ListPagesDataPesertaHasilAsesmen />}
-          />
-          <Route path="/dashboard/admin" element={<AdminDashboard />} />
+          {/* Semua halaman lain HARUS login dulu */}
+          <Route path="/dashboard/admin/kelola-data-pengguna" element={<ProtectedRoute><AdminForm /></ProtectedRoute>} />
+          <Route path="/dashboard/admin/input-asesor" element={<ProtectedRoute><InputAsesorPage /></ProtectedRoute>} />
+          <Route path="/dashboard/admin/input-peserta" element={<ProtectedRoute><InputPesertaPage /></ProtectedRoute>} />
+          <Route path="/dashboard/data-peserta" element={<ProtectedRoute><ListPagesDataPeserta /></ProtectedRoute>} />
+          <Route path="/dashboard/data-asesor" element={<ProtectedRoute><ListPagesDataAsesor /></ProtectedRoute>} />
+          <Route path="/dashboard/siap-asesmen" element={<ProtectedRoute><ListPagesDataPesertaSiapAssement /></ProtectedRoute>} />
+          <Route path="/dashboard/belum-asesmen" element={<ProtectedRoute><ListPagesDataPesertaBelomAsesmen /></ProtectedRoute>} />
+          <Route path="/dashboard/hasil-asesmen" element={<ProtectedRoute><ListPagesDataPesertaHasilAsesmen /></ProtectedRoute>} />
+          <Route path="/dashboard/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/dashboard/siswa" element={<ProtectedRoute><GuruSiswa /></ProtectedRoute>} />
+          <Route path="/dashboard/guru" element={<ProtectedRoute><GuruDashboard /></ProtectedRoute>} />
+          <Route path="/dashboard/asesor/siap-asesmen" element={<ProtectedRoute><ListAsesorPagesDataPesertaSiapAssement /></ProtectedRoute>} />
+          <Route path="/dashboard/asesor/belum-asesmen" element={<ProtectedRoute><ListAsesorPagesDataPesertaBelomAsesmen /></ProtectedRoute>} />
+          <Route path="/dashboard/asesor/hasil-asesmen" element={<ProtectedRoute><ListAsesorPagesDataPesertaHasilAsesmen /></ProtectedRoute>} />
+          <Route path="/dashboard/asesor/penilaian/:id" element={<ProtectedRoute><PenilaianPageCompact /></ProtectedRoute>} />
+          <Route path="/dashboard/asesor/kelola-data-pengguna" element={<ProtectedRoute><AsesmenForm /></ProtectedRoute>} />
+          <Route path="/peserta" element={<ProtectedRoute><PesertaPage /></ProtectedRoute>} />
 
-          {/* ASESOR atau GURU */}
-          <Route path="/dashboard/siswa" element={<GuruSiswa />} />
-          <Route path="dashboard/guru" element={<GuruDashboard />} />
-          <Route
-            path="/dashboard/asesor/siap-asesmen"
-            element={<ListAsesorPagesDataPesertaSiapAssement />}
-          />
-          <Route
-            path="/dashboard/asesor/belum-asesmen"
-            element={<ListAsesorPagesDataPesertaBelomAsesmen />}
-          />
-          <Route
-            path="/dashboard/asesor/hasil-asesmen"
-            element={<ListAsesorPagesDataPesertaHasilAsesmen />}
-          />
-          <Route
-            path="/dashboard/asesor/penilaian/:id"
-            element={<PenilaianPageCompact />}
-          />
-          <Route
-            path="/dashboard/asesor/kelola-data-pengguna"
-            element={<AsesmenForm />}
-          />
-
-          {/* USER */}
-          <Route path="/peserta" element={<PesertaPage />} />
+          {/* 404 Not Found - Catch all routes yang tidak ada */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </ThemeProvider>

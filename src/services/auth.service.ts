@@ -95,10 +95,44 @@ class AuthService {
   }
 
   /**
+   * Check if token is expired
+   */
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+
+    try {
+      // Decode JWT token (format: header.payload.signature)
+      const payload = JSON.parse(atob(token.split('.')[1]));
+
+      // Check if token has expiration time
+      if (!payload.exp) return false; // Jika tidak ada exp, anggap tidak expired
+
+      // exp dalam detik, Date.now() dalam milliseconds
+      const isExpired = payload.exp * 1000 < Date.now();
+
+      return isExpired;
+    } catch (error) {
+      // Jika error decode token, anggap expired
+      console.error('Error decoding token:', error);
+      return true;
+    }
+  }
+
+  /**
    * Check if user is authenticated
    */
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const hasToken = !!this.getToken();
+    const notExpired = !this.isTokenExpired();
+
+    // Jika token expired, hapus semua data
+    if (hasToken && !notExpired) {
+      this.logout();
+      return false;
+    }
+
+    return hasToken && notExpired;
   }
 
   /**
