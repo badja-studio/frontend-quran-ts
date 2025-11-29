@@ -28,7 +28,7 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="" element={<Login />} />
 
           {/* ADMIN */}
           <Route
