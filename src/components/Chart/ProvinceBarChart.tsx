@@ -25,7 +25,6 @@ export default function ProvinceBarChart({
   data,
   barColor1 = "#8884d8",
   barColor2 = "#82ca9d",
-  maxWidth = "900px",
 }: ProvinceBarChartProps) {
   return (
     <BarChart
@@ -46,7 +45,7 @@ export default function ProvinceBarChart({
       <XAxis
         dataKey="name"
         interval={0}
-        tick={{ fontSize: 11 }}
+        tick={{ fontSize: 8 }}
         angle={-45}
         textAnchor="end"
         height={70}

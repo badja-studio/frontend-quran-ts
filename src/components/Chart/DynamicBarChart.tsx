@@ -56,7 +56,7 @@ const DynamicBarChart: React.FC<DynamicBarChartProps> = ({
           <XAxis
             dataKey="name"
             tick={{ fontSize: 10 }}
-            angle={-45}
+            angle={-35}
             textAnchor="end"
             interval={0}
           />

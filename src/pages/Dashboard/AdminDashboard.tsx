@@ -1,5 +1,15 @@
-import { Grid, Typography, Box, CircularProgress, Alert, Button } from "@mui/material";
-import { People as PeopleIcon, Refresh as RefreshIcon } from "@mui/icons-material";
+import {
+  Grid,
+  Typography,
+  Box,
+  CircularProgress,
+  Alert,
+  Button,
+} from "@mui/material";
+import {
+  People as PeopleIcon,
+  Refresh as RefreshIcon,
+} from "@mui/icons-material";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import ParticipationGroup from "../../components/Chart/ParticipationGroup";
@@ -10,39 +20,52 @@ import DynamicBarChart from "../../components/Chart/DynamicBarChart";
 import ReusableKesalahanBarChart from "../../components/Chart/TinyBarChart";
 import MetrixGridTable from "../../components/Chart/MetrixGridTable";
 import { useDashboard } from "../../hooks/useDashboard";
-import { AverageScoreData, ParticipationByLevel } from "../../services/dashboard.service";
+import {
+  AverageScoreData,
+  ParticipationByLevel,
+} from "../../services/dashboard.service";
 
 export default function AdminDashboard() {
   const { data, loading, error, refetch } = useDashboard();
 
   // Transform average scores data to match the expected format
-  const transformAverageScores = (scores: AverageScoreData[]): AverageScoreData[] => {
+  const transformAverageScores = (
+    scores: AverageScoreData[]
+  ): AverageScoreData[] => {
     return scores.map((score, index) => ({
       ...score,
-      color: index === 0 ? "#1B5E20" :
-        score.label.includes('PAUD') ? "#FFC107" :
-          score.label.includes('SD') ? "#D32F2F" :
-            score.label.includes('SMP') ? "#1565C0" :
-              score.label.includes('SMA') ? "#546E7A" :
-                "#E64A19", // Default for Pengawas
-      icon: <PeopleIcon />
+      color:
+        index === 0
+          ? "#1B5E20"
+          : score.label.includes("PAUD")
+          ? "#FFC107"
+          : score.label.includes("SD")
+          ? "#D32F2F"
+          : score.label.includes("SMP")
+          ? "#1565C0"
+          : score.label.includes("SMA")
+          ? "#546E7A"
+          : "#E64A19", // Default for Pengawas
+      icon: <PeopleIcon />,
     }));
   };
 
   // Transform participation data with colors
-  const transformParticipationData = (participation: ParticipationByLevel[]) => {
+  const transformParticipationData = (
+    participation: ParticipationByLevel[]
+  ) => {
     const colorMap: { [key: string]: string } = {
-      "Partisipan": "#1E3A24",
+      Partisipan: "#1E3A24",
       "PAUD/TK": "#548B54",
       "SD/Sederajat": "#2E8B57",
       "SMP/Sederajat": "#3CB371",
       "SMA/Umum": "#6B8E23",
-      "Pengawas": "#2E8B57"
+      Pengawas: "#2E8B57",
     };
 
-    return participation.map(item => ({
+    return participation.map((item) => ({
       ...item,
-      color: colorMap[item.title] || "#2E8B57"
+      color: colorMap[item.title] || "#2E8B57",
     })) as Array<ParticipationByLevel & { color: string }>;
   };
 
@@ -125,7 +148,12 @@ export default function AdminDashboard() {
       userEmail="admin@quran.app"
     >
       <Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={4}
+        >
           <Box>
             <Typography variant="h4" gutterBottom fontWeight="bold">
               Dashboard Admin
@@ -150,7 +178,9 @@ export default function AdminDashboard() {
           spacing={3}
           sx={{ mb: 4, px: 2, justifyContent: "center", alignItems: "center" }}
         >
-          <ParticipationGroup items={transformParticipationData(overview.participationByLevel)} />
+          <ParticipationGroup
+            items={transformParticipationData(overview.participationByLevel)}
+          />
         </Grid>
 
         {/* Province Participation Chart */}
@@ -185,16 +215,25 @@ export default function AdminDashboard() {
             <PieChartWithInfo data={overview.demographics.gender} size={260} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <PieChartWithInfo data={overview.demographics.employeeStatus} size={260} />
+            <PieChartWithInfo
+              data={overview.demographics.employeeStatus}
+              size={260}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <PieChartWithInfo data={overview.participationByLevel.map(item => ({
-              name: item.title,
-              value: item.total
-            }))} size={260} />
+            <PieChartWithInfo
+              data={overview.participationByLevel.map((item) => ({
+                name: item.title,
+                value: item.total,
+              }))}
+              size={260}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <PieChartWithInfo data={overview.demographics.institutionType} size={260} />
+            <PieChartWithInfo
+              data={overview.demographics.institutionType}
+              size={260}
+            />
           </Grid>
         </Grid>
 
@@ -211,7 +250,9 @@ export default function AdminDashboard() {
             gap: 2,
           }}
         >
-          <StatCardGroup items={transformAverageScores(overview.averageScores)} />
+          <StatCardGroup
+            items={transformAverageScores(overview.averageScores)}
+          />
         </Grid>
 
         {/* Performance Charts */}
@@ -220,9 +261,9 @@ export default function AdminDashboard() {
           <Grid item xs={12} md={6}>
             <DynamicBarChart
               title="Capaian Nilai Ujian Peserta per Provinsi"
-              data={performance.provinceAchievement.map(item => ({
+              data={performance.provinceAchievement.map((item) => ({
                 ...item,
-                [item.name]: item.name // Add index signature requirement
+                [item.name]: item.name, // Add index signature requirement
               }))}
               keys={["terendah", "tertinggi", "rata"]}
             />
@@ -232,9 +273,9 @@ export default function AdminDashboard() {
           <Grid item xs={12} md={6}>
             <DynamicBarChart
               title="Persentase Tingkat Kelancaran Al-Quran per Provinsi"
-              data={performance.fluencyLevels.map(item => ({
+              data={performance.fluencyLevels.map((item) => ({
                 ...item,
-                [item.name]: item.name // Add index signature requirement
+                [item.name]: item.name, // Add index signature requirement
               }))}
               keys={["kurang_lancar", "lancar", "mahir"]}
             />

@@ -1,4 +1,4 @@
-export interface DataPerseta extends Record<string, unknown> {
+export interface DataPersetaHasil extends Record<string, unknown> {
   id: number;
   no_akun: string;
   nip: string;
