@@ -16,12 +16,12 @@ export const filterConfigs: FilterConfig<DataPesertaBelomAsesment>[] = [
     },
     {
         key: 'nama',
-        label: 'Nama',
+        label: 'Nama Peserta',
         type: 'text',
         operators: ['contains', 'startsWith', 'endsWith'],
     },
     {
-        key: 'jk',
+        key: 'jenis_kelamin',
         label: 'Jenis Kelamin',
         type: 'select',
         options: [

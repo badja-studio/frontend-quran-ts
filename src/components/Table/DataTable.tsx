@@ -66,6 +66,10 @@ interface DataTableProps<T> {
   rowsPerPage?: number; // Rows per page from parent
   onPageChange?: (page: number) => void; // Callback when page changes
   onRowsPerPageChange?: (rowsPerPage: number) => void; // Callback when rows per page changes
+  // Server-side sorting props
+  sortBy?: string; // Current sort column from parent
+  sortOrder?: 'ASC' | 'DESC'; // Current sort order from parent
+  onSortChange?: (columnId: string) => void; // Callback when sort changes
 }
 
 type Order = 'asc' | 'desc';
@@ -93,6 +97,9 @@ export default function DataTable<T extends Record<string, unknown>>({
   rowsPerPage: externalRowsPerPage,
   onPageChange,
   onRowsPerPageChange,
+  sortBy: externalSortBy,
+  sortOrder: externalSortOrder,
+  onSortChange,
 }: DataTableProps<T>) {
   // Internal state (used only if not server-side)
   const [internalPage, setInternalPage] = useState(0);
@@ -106,6 +113,8 @@ export default function DataTable<T extends Record<string, unknown>>({
   // Use external or internal state
   const currentPage = serverSide && externalPage !== undefined ? externalPage : internalPage;
   const currentRowsPerPage = serverSide && externalRowsPerPage !== undefined ? externalRowsPerPage : internalRowsPerPage;
+  const currentOrderBy = serverSide && externalSortBy !== undefined ? externalSortBy : orderBy;
+  const currentOrder = serverSide && externalSortOrder !== undefined ? externalSortOrder.toLowerCase() as Order : order;
 
   // Apply filters first (only for client-side)
   const filteredData = serverSide ? data : applyFilters(data, filters);
@@ -173,9 +182,15 @@ export default function DataTable<T extends Record<string, unknown>>({
   };
 
   const handleRequestSort = (property: keyof T | string) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
+    if (serverSide && onSortChange) {
+      // Server-side sorting
+      onSortChange(property as string);
+    } else {
+      // Client-side sorting
+      const isAsc = orderBy === property && order === 'asc';
+      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderBy(property);
+    }
   };
 
   const handleFilterChange = (newFilters: FilterItem[]) => {
@@ -350,8 +365,8 @@ export default function DataTable<T extends Record<string, unknown>>({
                 >
                   {column.sortable !== false ? (
                     <TableSortLabel
-                      active={orderBy === column.id}
-                      direction={orderBy === column.id ? order : 'asc'}
+                      active={currentOrderBy === column.id}
+                      direction={currentOrderBy === column.id ? currentOrder : 'asc'}
                       onClick={() => handleRequestSort(column.id)}
                       sx={{
                         '&.MuiTableSortLabel-root': {

@@ -16,12 +16,12 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
     },
     {
         key: 'nama',
-        label: 'Nama',
+        label: 'Nama Peseerta',
         type: 'text',
         operators: ['contains', 'startsWith', 'endsWith'],
     },
     {
-        key: 'jk',
+        key: 'jenis_kelamin',
         label: 'Jenis Kelamin',
         type: 'select',
         options: [
@@ -30,17 +30,17 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
         ],
     },
     {
-        key: 'tl',
+        key: 'tempat_lahir',
         label: 'Tempat Lahir',
         type: 'text',
         operators: ['contains', 'startsWith', 'endsWith'],
     },
     {
-        key: 'pegawai',
+        key: 'jabatan',
         label: 'Jabatan',
         type: 'select',
         options: [
-            { label: 'Guru', value: 'Guru' },
+            { label: 'Guru Agama Islam', value: 'Guru Agama Islam' },
             { label: 'Staf TU', value: 'Staf TU' },
             { label: 'Staf IT', value: 'Staf IT' },
         ],
@@ -60,9 +60,9 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
         label: 'Level',
         type: 'select',
         options: [
-            { label: 'Junior', value: 'Junior' },
-            { label: 'Middle', value: 'Middle' },
-            { label: 'Senior', value: 'Senior' },
+            { label: 'Pemula', value: 'Pemula' },
+            { label: 'Menengah', value: 'Menengah' },
+            { label: 'Lanjut', value: 'Lanjut' },
         ],
     },
     {
@@ -94,7 +94,7 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
         ],
     },
     {
-        key: 'program_studi',
+        key: 'prodi',
         label: 'Program Studi',
         type: 'text',
         operators: ['contains', 'startsWith', 'endsWith'],
@@ -117,8 +117,8 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
     {
         key: 'tahun_lulus',
         label: 'Tahun Lulus',
-        type: 'text',
-        operators: ['equals', 'contains'],
+        type: 'number',
+        operators: ['equals', 'greaterThan', 'lessThan', 'greaterThanOrEqual', 'lessThanOrEqual'],
     },
     {
         key: 'jadwal',

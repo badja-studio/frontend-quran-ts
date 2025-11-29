@@ -163,6 +163,14 @@ export default function DataTableFilter<T extends Record<string, unknown>>({
   const clearFilters = () => {
     setFilters([]);
     onFilterChange([]);
+
+    // Callback to parent to clear filters (for API calls)
+    if (onFiltersApplied) {
+      onFiltersApplied([]);
+    }
+
+    // Auto-close filter panel
+    setShowFilters(false);
   };
 
   const getConfig = (key: string): FilterConfig<T> | undefined => {

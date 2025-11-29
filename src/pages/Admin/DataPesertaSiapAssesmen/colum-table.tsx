@@ -2,79 +2,6 @@ import { DataPersetaSiapAssesmen } from "./type";
 import { Column } from "../../../components/Table/DataTable";
 import { Box, Typography, Chip, Avatar } from "@mui/material";
 
-export const dummyDataPeserta: DataPersetaSiapAssesmen[] = [
-    {
-        id: 1,
-        status: "Siap",
-        no_akun: "A001",
-        nama: "Budi Santoso",
-        jk: "L",
-        usia: "35",
-        pegawai: "Guru",
-        jenjang: "SMA",
-        level: "Senior",
-        provinsi: "DKI Jakarta",
-        kab_kota: "Jakarta Selatan",
-        sekolah: "SMA Negeri 8",
-    },
-    {
-        id: 2,
-        status: "Siap",
-        no_akun: "A002",
-        nama: "Siti Rahma",
-        jk: "P",
-        usia: "32",
-        pegawai: "Staf TU",
-        jenjang: "SMP",
-        level: "Junior",
-        provinsi: "Jawa Barat",
-        kab_kota: "Bandung",
-        sekolah: "SMP Negeri 3",
-    },
-    {
-        id: 3,
-        status: "Siap",
-        no_akun: "A003",
-        nama: "Agus Kurniawan",
-        jk: "L",
-        usia: "38",
-        pegawai: "Guru",
-        jenjang: "SD",
-        level: "Middle",
-        provinsi: "Jawa Timur",
-        kab_kota: "Surabaya",
-        sekolah: "SDN 01 Ketintang",
-    },
-    {
-        id: 4,
-        status: "Siap",
-        no_akun: "A004",
-        nama: "Nur Aisyah",
-        jk: "P",
-        usia: "29",
-        pegawai: "Guru",
-        jenjang: "SMA",
-        level: "Junior",
-        provinsi: "Sumatera Utara",
-        kab_kota: "Medan",
-        sekolah: "SMA Negeri 5",
-    },
-    {
-        id: 5,
-        status: "Siap",
-        no_akun: "A005",
-        nama: "Rizky Pratama",
-        jk: "L",
-        usia: "30",
-        pegawai: "Staf IT",
-        jenjang: "SMP",
-        level: "Middle",
-        provinsi: "DI Yogyakarta",
-        kab_kota: "Yogyakarta",
-        sekolah: "SMP Muhammadiyah 4",
-    },
-];
-
 export const columnsPeserta: Column<DataPersetaSiapAssesmen>[] = [
     {
         id: "status",
@@ -117,7 +44,7 @@ export const columnsPeserta: Column<DataPersetaSiapAssesmen>[] = [
         },
     },
     {
-        id: "jk",
+        id: "jenis_kelamin",
         label: "Jenis Kelamin",
         minWidth: 120,
         align: "center",
@@ -200,5 +127,3 @@ export const columnsPeserta: Column<DataPersetaSiapAssesmen>[] = [
         minWidth: 200,
     },
 ];
-
-export default dummyDataPeserta;
