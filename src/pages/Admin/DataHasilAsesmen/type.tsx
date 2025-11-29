@@ -18,12 +18,11 @@ export interface DataPesertaHasilAssesment extends Record<string, unknown> {
     tahun_lulus: string;
     asesor: string;
     waktu: string;
-    nilai_1: number;
-    nilai_2: number;
-    nilai_3: number;
-    nilai_4: number;
-    m_1: number;
-    m_2: number;
+    makhraj: number;
+    sifat: number;
+    ahkam: number;
+    mad: number;
+    gharib: number;
 }
 
 // User interface untuk response API
