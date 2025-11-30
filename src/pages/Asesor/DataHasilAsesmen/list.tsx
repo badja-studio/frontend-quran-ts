@@ -148,7 +148,7 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["data-hasil-asesmen-admin", page, limit, searchQuery, sortBy, sortOrder, filters],
+    queryKey: ["data-hasil-asesmen-admin-asesor", page, limit, searchQuery, sortBy, sortOrder, filters],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -181,6 +181,11 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
             field: "status",
             op: "eq",
             value: "SUDAH",
+          },
+          {
+            field: "asesor_id",
+            op: "eq",
+            value: user?.id || "",
           },
         ];
 

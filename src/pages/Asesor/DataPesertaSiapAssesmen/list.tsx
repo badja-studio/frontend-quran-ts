@@ -33,7 +33,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["peserta-siap-asesmen", page, limit, searchQuery, sortBy, sortOrder, filters],
+    queryKey: ["peserta-siap-asesmen-asesor", page, limit, searchQuery, sortBy, sortOrder, filters],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -67,6 +67,11 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
             field: "jadwal",
             op: "eq",
             value: currentDate,
+          },
+          {
+            field: "asesor_id",
+            op: "eq",
+            value: user?.id || "",
           },
         ];
 
