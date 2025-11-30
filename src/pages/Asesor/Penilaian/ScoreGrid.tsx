@@ -1,11 +1,16 @@
 import React from "react";
 import { Grid, Paper, Typography, Box, Button } from "@mui/material";
+import { CategoryType } from "../../../utils/utils";
 
 interface Props {
-  category: string;
+  category: CategoryType;
   list: string[];
-  mistakes: { [key: string]: { [key: string]: number } };
-  handleScore: (category: string, key: string, type: string) => void;
+  mistakes: { [key in CategoryType]?: { [key: string]: number } };
+  handleScore: (
+    category: CategoryType,
+    key: string,
+    type: "plus" | "minus"
+  ) => void;
 }
 
 const ScoreGrid: React.FC<Props> = ({
@@ -47,7 +52,7 @@ const ScoreGrid: React.FC<Props> = ({
               fontWeight={600}
               sx={{ mt: 1 }}
             >
-              {mistakes[category][item]}
+              {mistakes[category]?.[item] ?? 0}
             </Typography>
 
             <Box mt={0.5} display="flex" justifyContent="center" gap={0.5}>
