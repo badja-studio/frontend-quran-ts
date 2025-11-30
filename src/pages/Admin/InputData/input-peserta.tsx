@@ -4,6 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import {
   useMutation,
   useInfiniteQuery,
+  useQuery,
   InfiniteData,
   QueryFunctionContext,
 } from "@tanstack/react-query";
@@ -19,6 +20,7 @@ import {
   Alert,
   Autocomplete,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import apiClient from "../../../services/api.config";
@@ -29,9 +31,23 @@ interface Asesor {
   email: string;
 }
 
+interface Peserta {
+  id: string;
+  nama: string;
+  nip: string;
+  no_akun: string;
+}
+
 // Tambahkan tipe response halaman assessor
 type AssessorPage = {
   data: Asesor[];
+  page?: number;
+  totalPages?: number;
+  hasMore?: boolean;
+};
+
+type PesertaPage = {
+  data: Peserta[];
   page?: number;
   totalPages?: number;
   hasMore?: boolean;
@@ -55,7 +71,7 @@ interface PesertaFormData {
   jenis_pt: string;
   tahun_lulus: number;
   jadwal: string;
-  akun_id: number;
+  akun_id?: string | number;
   asesor_id?: string | null;
   usia?: number;
   pegawai: string;
@@ -64,22 +80,33 @@ interface PesertaFormData {
 const LIMIT = 10;
 
 export default function InputPesertaPage() {
+  const [mode, setMode] = useState<"create" | "edit">("create");
+  const [selectedPesertaId, setSelectedPesertaId] = useState<string | null>(null);
+
   const [showSuccessNotif, setShowSuccessNotif] = useState(false);
   const [showErrorNotif, setShowErrorNotif] = useState(false);
   const [asesorSearch, setAsesorSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [pesertaSearch, setPesertaSearch] = useState("");
+  const [debouncedPesertaSearch, setDebouncedPesertaSearch] = useState("");
 
-  // Debounce search query
+  // Debounce search query for asesor
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(asesorSearch);
-    }, 500); // 500ms debounce
-
+    }, 500);
     return () => clearTimeout(timer);
   }, [asesorSearch]);
 
-  // normalizing fetch function supaya aman terhadap berbagai format response
-  // terima context sebagai any agar cocok dengan signature queryFn react-query
+  // Debounce search query for peserta
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedPesertaSearch(pesertaSearch);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [pesertaSearch]);
+
+  // Fetch function for assessors
   const fetchAssesors = async (
     context: QueryFunctionContext<readonly unknown[], unknown>
   ): Promise<AssessorPage> => {
@@ -92,7 +119,6 @@ export default function InputPesertaPage() {
     const res = await apiClient.get(`/api/assessors?${params.toString()}`);
     const payload = res.data;
 
-    // jika backend langsung mengembalikan array
     if (Array.isArray(payload)) {
       return {
         data: payload,
@@ -101,7 +127,6 @@ export default function InputPesertaPage() {
       };
     }
 
-    // jika backend sudah mengembalikan objek paging
     return {
       data: payload.data ?? [],
       page: payload.page ?? pageParam,
@@ -111,7 +136,37 @@ export default function InputPesertaPage() {
     };
   };
 
-  // gunakan object-style overload agar cocok dengan versi @tanstack/react-query yang terpakai
+  // Fetch function for participants (peserta)
+  const fetchPesertas = async (
+    context: QueryFunctionContext<readonly unknown[], unknown>
+  ): Promise<PesertaPage> => {
+    const pageParam = (context.pageParam as number) ?? 1;
+    const params = new URLSearchParams();
+    params.append("page", String(pageParam));
+    params.append("limit", String(LIMIT));
+    if (debouncedPesertaSearch) params.append("search", debouncedPesertaSearch);
+
+    const res = await apiClient.get(`/api/participants?${params.toString()}`);
+    const payload = res.data;
+
+    if (Array.isArray(payload)) {
+      return {
+        data: payload,
+        page: pageParam,
+        hasMore: payload.length === LIMIT,
+      };
+    }
+
+    return {
+      data: payload.data ?? [],
+      page: payload.page ?? pageParam,
+      totalPages: payload.totalPages,
+      hasMore:
+        typeof payload.hasMore === "boolean" ? payload.hasMore : undefined,
+    };
+  };
+
+  // Infinite query for assessors
   const {
     data: asesorsPages,
     fetchNextPage,
@@ -122,7 +177,6 @@ export default function InputPesertaPage() {
     queryFn: fetchAssesors,
     initialPageParam: 1,
     getNextPageParam: (lastPage, pages) => {
-      // gunakan page dari lastPage atau jumlah pages sebagai fallback
       const current = lastPage.page ?? pages.length ?? 1;
 
       if (typeof lastPage.totalPages === "number") {
@@ -131,20 +185,68 @@ export default function InputPesertaPage() {
       if (typeof lastPage.hasMore === "boolean") {
         return lastPage.hasMore ? current + 1 : undefined;
       }
-      // fallback: jika jumlah item == LIMIT kemungkinan ada halaman berikutnya
       return (lastPage.data?.length ?? 0) === LIMIT ? current + 1 : undefined;
     },
+  });
+
+  // Infinite query for participants (peserta)
+  const {
+    data: pesertasPages,
+    fetchNextPage: fetchNextPesertaPage,
+    hasNextPage: hasNextPesertaPage,
+    isFetchingNextPage: isFetchingNextPesertaPage,
+    isLoading: isLoadingPesertaList,
+  } = useInfiniteQuery<PesertaPage, unknown, InfiniteData<PesertaPage>>({
+    queryKey: ["pesertas-dropdown-update", debouncedPesertaSearch],
+    queryFn: fetchPesertas,
+    initialPageParam: 1,
+    enabled: mode === "edit",
+    getNextPageParam: (lastPage, pages) => {
+      const current = lastPage.page ?? pages.length ?? 1;
+
+      if (typeof lastPage.totalPages === "number") {
+        return current < lastPage.totalPages ? current + 1 : undefined;
+      }
+      if (typeof lastPage.hasMore === "boolean") {
+        return lastPage.hasMore ? current + 1 : undefined;
+      }
+      return (lastPage.data?.length ?? 0) === LIMIT ? current + 1 : undefined;
+    },
+  });
+
+  // Fetch peserta detail by ID
+  const { data: pesertaDetail } = useQuery({
+    queryKey: ["peserta-detail-update", selectedPesertaId],
+    queryFn: async () => {
+      if (!selectedPesertaId) return null;
+      const res = await apiClient.get(`/api/participants/${selectedPesertaId}`);
+
+      // Handle different response structures
+      if (res.data?.data) {
+        return res.data.data;
+      }
+      return res.data;
+    },
+    enabled: !!selectedPesertaId && mode === "edit",
   });
 
   // Flatten pages -> single array of asesors
   const asesors: Asesor[] = useMemo(() => {
     if (!asesorsPages?.pages) return [];
-    // dedupe by id just in case
     const all = asesorsPages.pages.flatMap((p: AssessorPage) => p.data || []);
     const map = new Map<string, Asesor>();
     all.forEach((a: Asesor) => map.set(a.id, a));
     return Array.from(map.values());
   }, [asesorsPages]);
+
+  // Flatten pages -> single array of pesertas
+  const pesertas: Peserta[] = useMemo(() => {
+    if (!pesertasPages?.pages) return [];
+    const all = pesertasPages.pages.flatMap((p: PesertaPage) => p.data || []);
+    const map = new Map<string, Peserta>();
+    all.forEach((p: Peserta) => map.set(p.id, p));
+    return Array.from(map.values());
+  }, [pesertasPages]);
 
   const {
     control,
@@ -174,6 +276,37 @@ export default function InputPesertaPage() {
     },
   });
 
+  // Auto-fill form when peserta detail is fetched (prioritize pesertaDetail over selectedPeserta)
+  useEffect(() => {
+    if (mode === "edit" && pesertaDetail) {
+      const formData = {
+        no_akun: pesertaDetail.no_akun || "",
+        nip: pesertaDetail.nip || "",
+        nama: pesertaDetail.nama || "",
+        jenis_kelamin: (pesertaDetail.jenis_kelamin as "L" | "P") || "L",
+        tempat_lahir: pesertaDetail.tempat_lahir || "",
+        jabatan: pesertaDetail.jabatan || "",
+        jenjang: pesertaDetail.jenjang || "",
+        level: pesertaDetail.level || "",
+        provinsi: pesertaDetail.provinsi || "",
+        kab_kota: pesertaDetail.kab_kota || "",
+        sekolah: pesertaDetail.sekolah || "",
+        pendidikan: pesertaDetail.pendidikan || "",
+        prodi: pesertaDetail.prodi || "",
+        perguruan_tinggi: pesertaDetail.perguruan_tinggi || "",
+        jenis_pt: pesertaDetail.jenis_pt || "",
+        tahun_lulus: pesertaDetail.tahun_lulus || 0,
+        jadwal: pesertaDetail.jadwal || new Date().toISOString().split("T")[0],
+        asesor_id: pesertaDetail.asesor_id || null,
+        usia: pesertaDetail.usia || 0,
+        pegawai: pesertaDetail.pegawai || "",
+        akun_id: pesertaDetail.akun_id,
+      };
+
+      reset(formData);
+    }
+  }, [pesertaDetail, mode, reset]);
+
   const createPesertaMutation = useMutation({
     mutationFn: async (data: PesertaFormData) => {
       const response = await apiClient.post("/api/participants", data);
@@ -188,8 +321,29 @@ export default function InputPesertaPage() {
     },
   });
 
+  const updatePesertaMutation = useMutation({
+    mutationFn: async (data: PesertaFormData) => {
+      if (!selectedPesertaId) throw new Error("No peserta selected");
+      const response = await apiClient.put(
+        `/api/participants/${selectedPesertaId}`,
+        data
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      setShowSuccessNotif(true);
+    },
+    onError: () => {
+      setShowErrorNotif(true);
+    },
+  });
+
   const onSubmit = (data: PesertaFormData) => {
-    createPesertaMutation.mutate(data);
+    if (mode === "edit") {
+      updatePesertaMutation.mutate(data);
+    } else {
+      createPesertaMutation.mutate(data);
+    }
   };
 
   const handleCloseSuccessNotif = () => {
@@ -214,7 +368,7 @@ export default function InputPesertaPage() {
         }}
       >
         <Typography variant="h4" fontWeight="700" mb={3}>
-          Input Data Peserta
+          {mode === "create" ? "Input Data Peserta" : "Edit Data Peserta"}
         </Typography>
 
         <Card
@@ -224,6 +378,155 @@ export default function InputPesertaPage() {
             boxShadow: "0 8px 25px rgba(0,0,0,0.05)",
           }}
         >
+          {/* Mode Selector */}
+          <Box mb={3}>
+            <Typography variant="h6" fontWeight="bold" mb={2}>
+              Mode
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Button
+                  fullWidth
+                  variant={mode === "create" ? "contained" : "outlined"}
+                  onClick={() => {
+                    setMode("create");
+                    setSelectedPesertaId(null);
+                    reset({
+                      no_akun: "",
+                      nip: "",
+                      nama: "",
+                      jenis_kelamin: "L",
+                      tempat_lahir: "",
+                      jabatan: "",
+                      jenjang: "",
+                      level: "",
+                      provinsi: "",
+                      kab_kota: "",
+                      sekolah: "",
+                      pendidikan: "",
+                      prodi: "",
+                      perguruan_tinggi: "",
+                      jenis_pt: "",
+                      tahun_lulus: 0,
+                      jadwal: new Date().toISOString().split("T")[0],
+                      asesor_id: null,
+                      usia: 0,
+                      pegawai: "",
+                    });
+                  }}
+                  sx={{
+                    py: 1.5,
+                    textTransform: "none",
+                    fontWeight: 600,
+                  }}
+                >
+                  Create - Tambah Peserta Baru
+                </Button>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Button
+                  fullWidth
+                  variant={mode === "edit" ? "contained" : "outlined"}
+                  onClick={() => {
+                    setMode("edit");
+                    setSelectedPesertaId(null);
+                    reset({
+                      no_akun: "",
+                      nip: "",
+                      nama: "",
+                      jenis_kelamin: "L",
+                      tempat_lahir: "",
+                      jabatan: "",
+                      jenjang: "",
+                      level: "",
+                      provinsi: "",
+                      kab_kota: "",
+                      sekolah: "",
+                      pendidikan: "",
+                      prodi: "",
+                      perguruan_tinggi: "",
+                      jenis_pt: "",
+                      tahun_lulus: 0,
+                      jadwal: new Date().toISOString().split("T")[0],
+                      asesor_id: null,
+                      usia: 0,
+                      pegawai: "",
+                    });
+                  }}
+                  sx={{
+                    py: 1.5,
+                    textTransform: "none",
+                    fontWeight: 600,
+                  }}
+                >
+                  Edit - Update Data Peserta
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
+
+          <Divider sx={{ my: 3 }} />
+
+          {/* Dropdown Pilih Peserta (only in edit mode) */}
+          {mode === "edit" && (
+            <>
+              <Box mb={3}>
+                <Typography variant="h6" fontWeight="bold" mb={2}>
+                  Pilih Peserta
+                </Typography>
+                <Autocomplete
+                  options={pesertas}
+                  getOptionLabel={(option) => option.nama}
+                  value={
+                    pesertas.find((p) => p.id === selectedPesertaId) || null
+                  }
+                  onChange={(_, newValue) => {
+                    console.log("Selected peserta:", newValue);
+                    setSelectedPesertaId(newValue?.id || null);
+                  }}
+                  onInputChange={(_, newInputValue) => {
+                    setPesertaSearch(newInputValue);
+                  }}
+                  loading={isLoadingPesertaList}
+                  ListboxProps={{
+                    onScroll: (event: React.SyntheticEvent<HTMLUListElement>) => {
+                      const listboxNode = event.currentTarget as HTMLElement;
+                      if (
+                        listboxNode.scrollTop + listboxNode.clientHeight >=
+                        listboxNode.scrollHeight - 1 &&
+                        hasNextPesertaPage &&
+                        !isFetchingNextPesertaPage
+                      ) {
+                        fetchNextPesertaPage();
+                      }
+                    },
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Cari Peserta"
+                      placeholder="Ketik nama peserta..."
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <>
+                            {isLoadingPesertaList ? (
+                              <CircularProgress color="inherit" size={20} />
+                            ) : null}
+                            {params.InputProps.endAdornment}
+                          </>
+                        ),
+                      }}
+                    />
+                  )}
+                  noOptionsText="Tidak ada peserta ditemukan"
+                />
+              </Box>
+
+              <Divider sx={{ my: 3 }} />
+            </>
+          )}
+
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* Identitas Peserta */}
             <Typography variant="h6" fontWeight="bold" mb={2}>
@@ -304,6 +607,7 @@ export default function InputPesertaPage() {
                       type="number"
                       error={!!errors.usia}
                       helperText={errors.usia?.message}
+                      InputLabelProps={{ shrink: true }}
                     />
                   )}
                 />
@@ -395,6 +699,7 @@ export default function InputPesertaPage() {
                       required
                       error={!!errors.pegawai}
                       helperText={errors.pegawai?.message}
+                      InputLabelProps={{ shrink: true }}
                     />
                   )}
                 />
@@ -678,24 +983,46 @@ export default function InputPesertaPage() {
               <Button
                 type="submit"
                 variant="contained"
-                disabled={createPesertaMutation.isPending}
+                disabled={
+                  createPesertaMutation.isPending ||
+                  updatePesertaMutation.isPending ||
+                  (mode === "edit" && !selectedPesertaId)
+                }
                 sx={{
                   px: 5,
                   py: 1.2,
                   textTransform: "none",
                   fontWeight: 600,
                   borderRadius: 2,
-                  opacity: createPesertaMutation.isPending ? 0.7 : 1,
+                  opacity:
+                    createPesertaMutation.isPending ||
+                      updatePesertaMutation.isPending
+                      ? 0.7
+                      : 1,
                 }}
               >
-                {createPesertaMutation.isPending ? "Menyimpan..." : "Simpan"}
+                {mode === "create"
+                  ? createPesertaMutation.isPending
+                    ? "Menyimpan..."
+                    : "Simpan"
+                  : updatePesertaMutation.isPending
+                    ? "Mengupdate..."
+                    : "Update"}
               </Button>
 
               <Button
                 type="button"
                 variant="outlined"
-                onClick={() => reset()}
-                disabled={createPesertaMutation.isPending}
+                onClick={() => {
+                  reset();
+                  if (mode === "edit") {
+                    setSelectedPesertaId(null);
+                  }
+                }}
+                disabled={
+                  createPesertaMutation.isPending ||
+                  updatePesertaMutation.isPending
+                }
                 sx={{
                   px: 5,
                   py: 1.2,
@@ -723,7 +1050,9 @@ export default function InputPesertaPage() {
             variant="filled"
             sx={{ width: "100%" }}
           >
-            Data peserta berhasil disimpan!
+            {mode === "create"
+              ? "Data peserta berhasil disimpan!"
+              : "Data peserta berhasil diupdate!"}
           </Alert>
         </Snackbar>
 
@@ -740,9 +1069,13 @@ export default function InputPesertaPage() {
             variant="filled"
             sx={{ width: "100%" }}
           >
-            {createPesertaMutation.error instanceof Error
-              ? createPesertaMutation.error.message
-              : "Terjadi kesalahan saat menyimpan data"}
+            {mode === "create"
+              ? createPesertaMutation.error instanceof Error
+                ? createPesertaMutation.error.message
+                : "Terjadi kesalahan saat menyimpan data"
+              : updatePesertaMutation.error instanceof Error
+                ? updatePesertaMutation.error.message
+                : "Terjadi kesalahan saat mengupdate data"}
           </Alert>
         </Snackbar>
       </Box>

@@ -13,21 +13,14 @@ import {
   IconButton,
   Link,
   Alert,
-  Tabs,
-  Tab,
   CircularProgress,
 } from "@mui/material";
 import {
   MenuBook as MenuBookIcon,
   Visibility,
   VisibilityOff,
-  Email,
-  Person,
-  Badge,
 } from "@mui/icons-material";
 import authService from "../services/auth.service";
-
-type LoginType = "email" | "username" | "siaga";
 
 interface LoginFormInputs {
   identifier: string;
@@ -38,14 +31,12 @@ function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState<string>("");
-  const [loginType, setLoginType] = useState<LoginType>("email");
   const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<LoginFormInputs>({
     defaultValues: {
       identifier: "",
@@ -55,60 +46,6 @@ function Login() {
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
-  };
-
-  const handleLoginTypeChange = (
-    _event: React.SyntheticEvent,
-    newValue: LoginType
-  ) => {
-    setLoginType(newValue);
-    setLoginError("");
-    reset(); // Clear form when switching tabs
-  };
-
-  const getIdentifierLabel = () => {
-    switch (loginType) {
-      case "email":
-        return "Email";
-      case "username":
-        return "Username";
-      case "siaga":
-        return "Nomor Siaga";
-      default:
-        return "Email";
-    }
-  };
-
-  const getIdentifierValidation = () => {
-    const baseValidation = {
-      required: `${getIdentifierLabel()} wajib diisi`,
-    };
-
-    if (loginType === "email") {
-      return {
-        ...baseValidation,
-        pattern: {
-          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-          message: "Format email tidak valid",
-        },
-      };
-    } else if (loginType === "siaga") {
-      return {
-        ...baseValidation,
-        pattern: {
-          value: /^[0-9]+$/,
-          message: "Nomor siaga hanya boleh berisi angka",
-        },
-      };
-    }
-
-    return {
-      ...baseValidation,
-      minLength: {
-        value: 3,
-        message: "Minimal 3 karakter",
-      },
-    };
   };
 
   const onSubmit = async (data: LoginFormInputs) => {
@@ -129,7 +66,6 @@ function Login() {
       if (response.success && response.data) {
         // Success - redirect based on role
         const role = response.data.user.role.toLowerCase();
-        console.log("Login successful, user role:", role);
 
         // Navigate to appropriate dashboard
         if (role === "admin") {
@@ -186,59 +122,29 @@ function Login() {
               </Alert>
             )}
 
-            {/* Login Type Tabs */}
-            <Tabs
-              value={loginType}
-              onChange={handleLoginTypeChange}
-              variant="fullWidth"
-              sx={{ mb: 3, borderBottom: 1, borderColor: "divider" }}
-            >
-              <Tab
-                icon={<Email />}
-                iconPosition="start"
-                label="Email"
-                value="email"
-                sx={{ textTransform: "none" }}
-              />
-              <Tab
-                icon={<Person />}
-                iconPosition="start"
-                label="Username"
-                value="username"
-                sx={{ textTransform: "none" }}
-              />
-              <Tab
-                icon={<Badge />}
-                iconPosition="start"
-                label="Nomor Siaga"
-                value="siaga"
-                sx={{ textTransform: "none" }}
-              />
-            </Tabs>
-
             <form onSubmit={handleSubmit(onSubmit)}>
               <Controller
                 name="identifier"
                 control={control}
-                rules={getIdentifierValidation()}
+                rules={{
+                  required: "Username wajib diisi",
+                  minLength: {
+                    value: 3,
+                    message: "Minimal 3 karakter",
+                  },
+                }}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     fullWidth
-                    label={getIdentifierLabel()}
+                    label="Username"
                     margin="normal"
                     variant="outlined"
-                    autoComplete={loginType === "email" ? "email" : "username"}
+                    autoComplete="username"
                     autoFocus
                     error={!!errors.identifier}
                     helperText={errors.identifier?.message}
-                    placeholder={
-                      loginType === "email"
-                        ? "contoh@email.com"
-                        : loginType === "username"
-                        ? "username123"
-                        : "12345678"
-                    }
+                    placeholder="username123"
                   />
                 )}
               />
