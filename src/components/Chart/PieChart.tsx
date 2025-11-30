@@ -3,7 +3,7 @@ import { Cell, Pie, PieChart, Tooltip, PieLabelRenderProps } from "recharts";
 export interface PieDataItem {
   name: string;
   value: number;
-  [key: string]: any;
+  [key: string]: string | number;
 }
 
 interface ReusablePieChartProps {
@@ -47,7 +47,6 @@ const ReusablePieChart: React.FC<ReusablePieChartProps> = ({
   data,
   colors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"],
   isAnimationActive = true,
-  size = "500px",
 }) => {
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
