@@ -48,6 +48,8 @@ interface MenuItem {
 interface MenuConfig {
   assessor: MenuItem[];
   admin: MenuItem[];
+  guru?: MenuItem[];
+  participant?: MenuItem[];
 }
 
 // Menu configuration untuk setiap role
@@ -141,7 +143,7 @@ const menuConfig: MenuConfig = {
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  userRole: "admin" | "asesor" | "guru" | "participant";
+  userRole: "admin" | "assessor" | "guru" | "participant";
   userName?: string;
   userEmail?: string;
 }
@@ -196,7 +198,7 @@ export default function DashboardLayout({
   };
 
   // Ambil menu items berdasarkan role
-  const menuItems = menuConfig[userRole];
+  const menuItems: MenuItem[] = menuConfig[userRole] ?? [];
 
   const drawer = (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>

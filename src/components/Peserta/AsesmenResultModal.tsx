@@ -47,6 +47,24 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
   nilaiAkhir,
   sections,
 }) => {
+  // Hitung rata-rata nilai keseluruhan dari sections
+  const nilaiRataRata =
+    sections.length > 0
+      ? sections.reduce((accSec, sec) => {
+          const totalSec = sec.list.reduce(
+            (acc, item) => acc + (item.nilai || 0),
+            0
+          );
+          const avgSec = sec.list.length > 0 ? totalSec / sec.list.length : 0;
+          return accSec + avgSec;
+        }, 0) / sections.length
+      : 0;
+
+  // Tentukan predikat berdasarkan rata-rata
+  let predikat = "Kurang Lancar";
+  if (nilaiRataRata >= 85) predikat = "Lancar";
+  else if (nilaiRataRata >= 70) predikat = "Cukup Mahir";
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={modalStyle}>
@@ -82,10 +100,10 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
 
         <Grid container justifyContent="space-between" alignItems="center">
           <Typography variant="h6" color="success.main" fontWeight="bold">
-            Nilai Akhir: {nilaiAkhir.toFixed(1)}
+            Nilai Akhir: {nilaiAkhir.toFixed(2)}
           </Typography>
           <Typography variant="h6" fontWeight="bold">
-            <strong>Predikat:</strong> Lancar
+            <strong>Predikat:</strong> {predikat}
           </Typography>
         </Grid>
 
@@ -109,7 +127,14 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
                       color: "green",
                     }}
                   >
-                    100.00
+                    {sec.list.length > 0
+                      ? (
+                          sec.list.reduce(
+                            (acc, item) => acc + (item.nilai || 0),
+                            0
+                          ) / sec.list.length
+                        ).toFixed(2)
+                      : "0.00"}
                   </Typography>
                 </Grid>
 
@@ -157,7 +182,9 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
                               fontWeight: "bold",
                             }}
                           >
-                            0
+                            {typeof item.nilai === "number"
+                              ? item.nilai.toFixed(1)
+                              : "0"}
                           </Typography>
                         </Card>
                       </Grid>

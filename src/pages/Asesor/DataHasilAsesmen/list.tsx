@@ -1,167 +1,204 @@
-import { useState } from "react";
-import { Box, Typography } from "@mui/material";
+// ListAsesorPagesDataPesertaHasilAsesmen.tsx
+import { useEffect, useState } from "react";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
-import AsesmenResultModal from "../../../components/Peserta/AsesmenResultModal";
 import { filterConfigs } from "./config-filter";
-import dummyDataPeserta, { columnsPeserta } from "./colum-table";
+import { columnsPeserta } from "./colum-table";
+import useUserStore from "../../../store/user.store";
+import { useQuery } from "@tanstack/react-query";
+import apiClient from "../../../services/api.config";
+import { DataPesertaHasilAssesment, GetUsersResponse, User } from "./type";
+import AsesmenResultModal from "../../../components/Peserta/AsesmenResultModal";
+import { dummyAssessments } from "./dummy";
 
-const dataQuiz = {
-  makharij: [
-    "د",
-    "خ",
-    "ح",
-    "ج",
-    "ث",
-    "ت",
-    "ب",
-    "ا",
-    "ط",
-    "ض",
-    "ص",
-    "ش",
-    "س",
-    "ز",
-    "ر",
-    "ذ",
-    "م",
-    "ل",
-    "ك",
-    "ق",
-    "ف",
-    "غ",
-    "ع",
-    "ظ",
-    { simbol: "ــُ", arti: "Dlammah" },
-    { simbol: "ــِـ", arti: "Kasrah" },
-    { simbol: "ــَـ", arti: "Fathah" },
-    "ي",
-    "ء",
-    "هـ",
-    "و",
-    "ن",
-    { simbol: "ــّـ", arti: "Tasydid" },
-    { simbol: "ــٌـ", arti: "Dlammatain" },
-    { simbol: "ــٍـ", arti: "Kasratain" },
-    { simbol: "ــًـ", arti: "Fathatain" },
-    { simbol: "ــْـ", arti: "Sukun" },
-  ],
-  shifat: [
-    "د",
-    "خ",
-    "ح",
-    "ج",
-    "ث",
-    "ت",
-    "ب",
-    "ا",
-    "ط",
-    "ض",
-    "ص",
-    "ش",
-    "س",
-    "ز",
-    "ر",
-    "ذ",
-    "م",
-    "ل",
-    "ك",
-    "ق",
-    "ف",
-    "غ",
-    "ع",
-    "ظ",
-    "ي",
-    "ء",
-    "هـ",
-    "و",
-    "ن",
-  ],
-  ahkamHuruf: [
-    "Izhhar",
-    "Izhhar Syafawi",
-    "Idzgham Bighunnah",
-    "Ikhfa’ Syafawi",
-    "Idzgham Bilaghunnah",
-    "Idzgham Mimi",
-    "Ikhfa’",
-    "Idzgham Mutajannisain",
-    "Iqlab",
-    "Idzgham Mutaqarribain",
-  ],
-  ahkamMad: [
-    "Mad Thabi’i",
-    "Mad Lazim Kilmi Mutsaqqal",
-    "Mad Wajib Muttashil",
-    "Mad Lazim Kilmi Mukhaffaf",
-    "Mad Jaiz Munfashil",
-    "Mad Lazim Harfi Mutsaqqal",
-    "Mad Iwadz",
-    "Mad Lazim Harfi Mukhaffaf",
-    "Mad Lin",
-    "Mad Badal",
-    "Mad Aridlissukun",
-    "Mad Shilah Qashirah",
-    "Mad Tamkin",
-    "Mad Shilah Thawilah",
-    "Mad Farq",
-  ],
-  gharib: [
-    "Iysmam",
-    "Imalah",
-    "Saktah",
-    "Tashil",
-    "Naql",
-    "Badal",
-    "Mad dan Qashr",
-  ],
-};
 interface AsesmenItem {
-  asesor: string;
-  waktu: string;
-  status: string;
+  nama: string;
+  nip?: string;
+  asesmen?: any[];
+  asesor?: string;
+  waktu?: string;
+  status?: string;
   linkWa?: string;
 }
+
 export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 0,
-  });
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
+  const { user, fetchUser } = useUserStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAsesmen, setSelectedAsesmen] = useState<AsesmenItem | null>(
     null
   );
 
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
+  const pesertaData = [
+    {
+      id: 1,
+      nama: "Ahmad Zaki",
+      nip: "123456",
+      asesmen: dummyAssessments,
+      onDetailClick: (row: any) => {
+        setSelectedAsesmen(row);
+        setModalVisible(true);
+      },
+    },
+    {
+      id: 2,
+      nama: "Siti Aminah",
+      nip: "654321",
+      asesmen: dummyAssessments,
+      onDetailClick: (row: any) => {
+        setSelectedAsesmen(row);
+        setModalVisible(true);
+      },
+    },
+  ];
+
+  const {
+    data: response,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: [
+      "data-hasil-asesmen-admin",
+      page,
+      limit,
+      searchQuery,
+      sortBy,
+      sortOrder,
+      filters,
+    ],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
+      if (searchQuery) params.append("search", searchQuery);
+      params.append("sortBy", sortBy);
+      params.append("sortOrder", sortOrder);
+
+      const operatorMap: Record<string, string> = {
+        equals: "eq",
+        contains: "contains",
+        startsWith: "startsWith",
+        endsWith: "endsWith",
+        greaterThan: "gt",
+        lessThan: "lt",
+        greaterThanOrEqual: "gte",
+        lessThanOrEqual: "lte",
+        between: "between",
+        in: "in",
+      };
+
+      const formattedFilters: Array<{
+        field: string;
+        op: string;
+        value: string | number | Date | string[];
+      }> = [{ field: "status", op: "eq", value: "SUDAH" }];
+
+      if (filters.length > 0) {
+        const userFilters = filters.map((filter) => ({
+          field: filter.key,
+          op: operatorMap[filter.operator] || filter.operator,
+          value: filter.value,
+        }));
+        formattedFilters.push(...userFilters);
+      }
+
+      params.append("filters", JSON.stringify(formattedFilters));
+
+      const result = await apiClient.get<GetUsersResponse>(
+        `/api/participants?${params.toString()}`
+      );
+
+      if (isInitialLoad) setIsInitialLoad(false);
+
+      return result.data;
+    },
+    retry: 1,
+    staleTime: 30000,
+  });
+
+  const transformedData: DataPesertaHasilAssesment[] =
+    response?.data?.map(
+      (user: User): DataPesertaHasilAssesment => ({
+        id: parseInt(user.id),
+        no_akun: user.no_akun || "-",
+        nip: user.nip || "-",
+        nama: user.nama,
+        jk: user.jenis_kelamin === "L" ? "L" : "P",
+        usia: user.usia,
+        pegawai: user.pegawai,
+        jenjang: user.jenjang || "-",
+        level: user.level || "-",
+        provinsi: user.provinsi || "-",
+        kab_kota: user.kab_kota || "-",
+        sekolah: user.sekolah || "-",
+        pendidikan: user.pendidikan || "-",
+        program_studi: user.prodi || "-",
+        perguruan_tinggi: user.perguruan_tinggi || "-",
+        jenis_pt: user.jenis_pt || "-",
+        tahun_lulus: user.tahun_lulus?.toString() || "-",
+        asesor: user.assessor?.name || "-",
+        waktu: user.jadwal || "-",
+        makhraj: 0,
+        sifat: 0,
+        ahkam: 0,
+        mad: 0,
+        gharib: 0,
+      })
+    ) || [];
+
+  const pagination = response?.pagination || {
+    current_page: 1,
+    per_page: 10,
+    total: 0,
+    total_pages: 0,
   };
 
-  const handleFiltersApplied = (appliedFilters: FilterItem[]) => {
-    setFilters(appliedFilters);
-  };
+  useEffect(() => {
+    fetchUser();
+  }, [user, fetchUser]);
 
   const handleDetailClick = (row: any) => {
     setSelectedAsesmen(row);
     setModalVisible(true);
   };
 
-  // 🔥 Inject handler
-  const dataWithHandlers = dummyDataPeserta.map((item) => ({
+  const dataWithHandlers = transformedData.map((item) => ({
     ...item,
     onDetailClick: handleDetailClick,
   }));
 
+  if (isInitialLoad && isLoading) {
+    return (
+      <DashboardLayout
+        userRole="assessor"
+        userName={`${user?.name}`}
+        userEmail={`${user?.email}`}
+      >
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="400px"
+        >
+          <CircularProgress />
+        </Box>
+      </DashboardLayout>
+    );
+  }
+
+  // ======= RENDER =======
   return (
     <DashboardLayout
       userRole="assessor"
-      userName="Ustadz Ahmad"
-      userEmail="ahmad@quran.app"
+      userName={`${user?.name}`}
+      userEmail={`${user?.email}`}
     >
       <Box>
         <Typography variant="h4" gutterBottom fontWeight="bold">
@@ -174,33 +211,93 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
         <DataTable
           columns={columnsPeserta}
           data={dataWithHandlers}
-          initialRowsPerPage={10}
           rowsPerPageOptions={[5, 10, 25]}
-          emptyMessage="Belum ada data peserta"
+          emptyMessage={
+            isFetching
+              ? "Memuat data..."
+              : "Belum ada peserta dengan hasil asesmen"
+          }
           enableFilter={true}
           filterConfigs={filterConfigs}
-          onFiltersApplied={handleFiltersApplied}
+          onFiltersApplied={(f) => {
+            setFilters(f);
+            setPage(1);
+          }}
           enableSearch={true}
           searchValue={searchQuery}
-          onSearchChange={handleSearchChange}
-          searchPlaceholder="Cari peserta..."
+          onSearchChange={(v) => {
+            setSearchQuery(v);
+            setPage(1);
+          }}
           enableExport={true}
+          serverSide={true}
+          totalCount={pagination.total}
+          page={page - 1}
+          rowsPerPage={limit}
+          onPageChange={(newPage) => setPage(newPage + 1)}
+          onRowsPerPageChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={(col) => {
+            if (sortBy === col)
+              setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
+            else {
+              setSortBy(col);
+              setSortOrder("DESC");
+            }
+            setPage(1);
+          }}
         />
 
         {selectedAsesmen && (
           <AsesmenResultModal
             open={modalVisible}
             onClose={() => setModalVisible(false)}
-            pesertaName="Ahmad Zaki"
-            asesorName="Ustadz Fauzan"
-            waktuPelaksanaan="26 Nov 2025"
-            nilaiAkhir={97.5}
+            pesertaName={selectedAsesmen.nama}
+            asesorName={selectedAsesmen.asesor || "Ustadz Fauzan"}
+            waktuPelaksanaan={selectedAsesmen.waktu || "26 Nov 2025"}
+            nilaiAkhir={(() => {
+              const semuaNilai = (selectedAsesmen.asesmen || []).map(
+                (a) => a.nilai || 0
+              );
+              return semuaNilai.length
+                ? semuaNilai.reduce((acc, n) => acc + n, 0) / semuaNilai.length
+                : 0;
+            })()}
             sections={[
-              { title: "Makharijul Huruf", list: dataQuiz.makharij },
-              { title: "Shifatul Huruf", list: dataQuiz.shifat },
-              { title: "Ahkam Al-Huruf", list: dataQuiz.ahkamHuruf },
-              { title: "Ahkam Al-Mad wa Qashr", list: dataQuiz.ahkamMad },
-              { title: "Gharib", list: dataQuiz.gharib },
+              {
+                title: "Makharijul Huruf",
+                list: (selectedAsesmen.asesmen || [])
+                  .filter((a) => a.kategori === "makhraj")
+                  .map((a) => ({ simbol: a.huruf, nilai: a.nilai })),
+              },
+              {
+                title: "Shifatul Huruf",
+                list: (selectedAsesmen.asesmen || [])
+                  .filter((a) => a.kategori === "sifat")
+                  .map((a) => ({ simbol: a.huruf, nilai: a.nilai })),
+              },
+              {
+                title: "Ahkam Al-Huruf",
+                list: (selectedAsesmen.asesmen || [])
+                  .filter((a) => a.kategori === "ahkam")
+                  .map((a) => ({ simbol: a.huruf, nilai: a.nilai })),
+              },
+              {
+                title: "Ahkam Al-Mad wa Qashr",
+                list: (selectedAsesmen.asesmen || [])
+                  .filter((a) => a.kategori === "mad")
+                  .map((a) => ({ simbol: a.huruf, nilai: a.nilai })),
+              },
+              {
+                title: "Gharib",
+                list: (selectedAsesmen.asesmen || [])
+                  .filter((a) => a.kategori === "gharib")
+                  .map((a) => ({ simbol: a.huruf, nilai: a.nilai })),
+              },
             ]}
           />
         )}

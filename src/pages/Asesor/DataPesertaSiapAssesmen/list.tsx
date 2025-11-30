@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import {
-  Box,
-  Typography,
-  CircularProgress,
   Alert,
+  Box,
+  CircularProgress,
   LinearProgress,
+  Typography,
 } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import { filterConfigs } from "./config-filter";
@@ -16,17 +16,17 @@ import apiClient, { handleApiError } from "../../../services/api.config";
 import useUserStore from "../../../store/user.store";
 
 export default function ListAsesorPagesDataPesertaSiapAssement() {
-  const { user, fetchUser } = useUserStore();
   const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<FilterItem[]>([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [filters, setFilters] = useState<FilterItem[]>([]);
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
+  const { user, fetchUser } = useUserStore();
 
   useEffect(() => {
-    fetchUser()
-      .then(() => console.log("User fetched successfully"))
-      .catch((err) => console.error("Error fetching user:", err));
+    fetchUser();
   }, [fetchUser]);
   const endpoint =
     user?.role === "admin"
@@ -41,15 +41,64 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["users", page, limit, searchQuery, endpoint],
+    queryKey: [
+      "peserta-siap-asesmen",
+      page,
+      limit,
+      searchQuery,
+      sortBy,
+      sortOrder,
+      filters,
+      endpoint,
+    ],
     queryFn: async () => {
       if (!endpoint) return { data: [] };
       const params = new URLSearchParams();
       params.append("page", page.toString());
       params.append("limit", limit.toString());
       if (searchQuery) params.append("search", searchQuery);
-      params.append("sortBy", "createdAt");
-      params.append("sortOrder", "DESC");
+      params.append("sortBy", sortBy);
+      params.append("sortOrder", sortOrder);
+
+      // Map operator names to backend format
+      const operatorMap: Record<string, string> = {
+        equals: "eq",
+        contains: "contains",
+        startsWith: "startsWith",
+        endsWith: "endsWith",
+        greaterThan: "gt",
+        lessThan: "lt",
+        greaterThanOrEqual: "gte",
+        lessThanOrEqual: "lte",
+        between: "between",
+        in: "in",
+      };
+
+      // Inject default filter untuk jadwal (tanggal hari ini)
+      const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+      const formattedFilters: Array<{
+        field: string;
+        op: string;
+        value: string | number | Date | string[];
+      }> = [
+        {
+          field: "jadwal",
+          op: "eq",
+          value: currentDate,
+        },
+      ];
+
+      // Gabungkan dengan user filters
+      if (filters.length > 0) {
+        const userFilters = filters.map((filter) => ({
+          field: filter.key,
+          op: operatorMap[filter.operator] || filter.operator,
+          value: filter.value,
+        }));
+        formattedFilters.push(...userFilters);
+      }
+
+      params.append("filters", JSON.stringify(formattedFilters));
 
       const result = await apiClient.get<GetUsersResponse>(
         `/api/participants?${params.toString()}`
@@ -87,7 +136,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
       tahun_lulus: user.tahun_lulus || "-",
       jadwal: user.jadwal || "-",
       asesor: user.assessor?.name || "-",
-      status: user.status || "-",
+      status: "SIAP_ASSESMEN" as const,
     })) || [];
 
   const pagination =
@@ -107,13 +156,26 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
 
   const handleFiltersApplied = (appliedFilters: FilterItem[]) => {
     setFilters(appliedFilters);
+    setPage(1); // Reset to page 1 when filters change
+  };
+
+  const handleSortChange = (columnId: string) => {
+    if (sortBy === columnId) {
+      // Toggle sort order if same column
+      setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
+    } else {
+      // New column, default to DESC
+      setSortBy(columnId);
+      setSortOrder("DESC");
+    }
+    setPage(1); // Reset to page 1 on sort change
   };
 
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {
     return (
       <DashboardLayout
-        userRole={user?.role === "admin" ? "admin" : "assessor"}
+        userRole={user?.role || "assessor"}
         userName={user?.name || "Ustadz Ahmad"}
         userEmail={user?.email || "ahmad@quran.app"}
       >
@@ -131,7 +193,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
 
   return (
     <DashboardLayout
-      userRole={user?.role === "admin" ? "admin" : "assessor"}
+      userRole={user?.role || "assessor"}
       userName={user?.name || "Ustadz Ahmad"}
       userEmail={user?.email || "ahmad@quran.app"}
     >
@@ -180,6 +242,9 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
             setLimit(newLimit);
             setPage(1); // Reset to page 1
           }}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={handleSortChange}
         />
       </Box>
     </DashboardLayout>
