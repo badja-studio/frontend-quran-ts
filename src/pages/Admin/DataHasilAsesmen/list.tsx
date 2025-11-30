@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
+import ExportButton from "../../../components/Export/ExportButton";
 import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
 import useUserStore from "../../../store/user.store";
@@ -174,12 +175,21 @@ export default function ListPagesDataPesertaHasilAsesmen() {
     return (
         <DashboardLayout userRole="admin" userName={`${user?.name}`} userEmail="ahmad@quran.app">
             <Box>
-                <Typography variant="h4" gutterBottom fontWeight="bold">
-                    Data Peserta Hasil Asesmen
-                </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                    Lihat hasil dan status peserta yang telah menyelesaikan asesmen
-                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Box>
+                        <Typography variant="h4" gutterBottom fontWeight="bold">
+                            Data Peserta Hasil Asesmen
+                        </Typography>
+                        <Typography variant="body1" color="text.secondary">
+                            Lihat hasil dan status peserta yang telah menyelesaikan asesmen
+                        </Typography>
+                    </Box>
+                    <ExportButton 
+                        exportType="assessments" 
+                        filters={filters}
+                        searchQuery={searchQuery}
+                    />
+                </Box>
 
                 <DataTable
                     columns={columnsPeserta}

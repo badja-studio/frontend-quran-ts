@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
+import ExportButton from "../../../components/Export/ExportButton";
 import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
 import { DataPesertaBelomAsesment, GetUsersResponse } from "./type";
@@ -174,13 +175,22 @@ export default function ListPagesDataPesertaBelomAsesmen() {
       userEmail="ahmad@quran.app"
     >
       <Box>
-        <Typography variant="h4" gutterBottom fontWeight="bold">
-          Data Peserta Belum Asesmen
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Kelola pendaftaran dan verifikasi data peserta yang belum mengikuti
-          asesmen
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Box>
+            <Typography variant="h4" gutterBottom fontWeight="bold">
+              Data Peserta Belum Asesmen
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Kelola pendaftaran dan verifikasi data peserta yang belum mengikuti
+              asesmen
+            </Typography>
+          </Box>
+          <ExportButton 
+            exportType="participants-not-assessed" 
+            filters={filters}
+            searchQuery={searchQuery}
+          />
+        </Box>
 
         {/* Loading indicator untuk search/filter/pagination */}
         {isFetching && !isInitialLoad && (
