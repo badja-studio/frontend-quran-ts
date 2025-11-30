@@ -1,8 +1,18 @@
 
+export interface FilterValue {
+  key: string;
+  operator: string;
+  value: string | number | boolean | string[] | number[] | Date;
+}
+
+export interface ExportFilters {
+  searchQuery?: string;
+  filters?: FilterValue[];
+}
 
 export interface ExportOptions {
   format: 'excel' | 'pdf';
-  filters?: Record<string, any>;
+  filters?: ExportFilters;
   filename?: string;
 }
 
@@ -39,13 +49,13 @@ class ExportService {
     }
   }
 
-  private buildQueryString(filters: Record<string, any> = {}): string {
+  private buildQueryString(filters: ExportFilters = {}): string {
     const params = new URLSearchParams();
-    
+
     if (filters.searchQuery) {
       params.append('search', filters.searchQuery);
     }
-    
+
     if (filters.filters && Array.isArray(filters.filters) && filters.filters.length > 0) {
       // Map operator names to backend format
       const operatorMap: Record<string, string> = {
@@ -61,15 +71,15 @@ class ExportService {
         'in': 'in',
       };
 
-      const formattedFilters = filters.filters.map((filter: any) => ({
+      const formattedFilters = filters.filters.map((filter: FilterValue) => ({
         field: filter.key,
         op: operatorMap[filter.operator] || filter.operator,
         value: filter.value
       }));
-      
+
       params.append('filters', JSON.stringify(formattedFilters));
     }
-    
+
     return params.toString();
   }  // Participants exports
   async exportParticipants(options: ExportOptions): Promise<void> {

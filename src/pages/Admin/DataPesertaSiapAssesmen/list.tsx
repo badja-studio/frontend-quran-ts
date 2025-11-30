@@ -153,7 +153,7 @@ export default function ListPagesDataPesertaSiapAssement() {
       <DashboardLayout
         userRole="admin"
         userName={`${user?.name}`}
-        userEmail="ahmad@quran.app"
+        userEmail={`${user?.email}`}
       >
         <Box
           display="flex"
@@ -171,7 +171,7 @@ export default function ListPagesDataPesertaSiapAssement() {
     <DashboardLayout
       userRole="admin"
       userName={`${user?.name}`}
-      userEmail="ahmad@quran.app"
+      userEmail={`${user?.email}`}
     >
       <Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -183,8 +183,8 @@ export default function ListPagesDataPesertaSiapAssement() {
               Peserta yang telah siap untuk mengikuti asesmen kompetensi
             </Typography>
           </Box>
-          <ExportButton 
-            exportType="participants-ready-to-assess" 
+          <ExportButton
+            exportType="participants-ready-to-assess"
             filters={filters}
             searchQuery={searchQuery}
           />

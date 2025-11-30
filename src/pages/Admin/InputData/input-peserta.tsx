@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import apiClient from "../../../services/api.config";
+import useUserStore from "../../../store/user.store";
 
 interface Asesor {
   id: string;
@@ -89,6 +90,7 @@ export default function InputPesertaPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [pesertaSearch, setPesertaSearch] = useState("");
   const [debouncedPesertaSearch, setDebouncedPesertaSearch] = useState("");
+  const { user, fetchUser } = useUserStore();
 
   // Debounce search query for asesor
   useEffect(() => {
@@ -354,11 +356,15 @@ export default function InputPesertaPage() {
     setShowErrorNotif(false);
   };
 
+  useEffect(() => {
+    fetchUser();
+  }, [user, fetchUser]);
+
   return (
     <DashboardLayout
       userRole="admin"
-      userName="Ustadz Ahmad"
-      userEmail="ahmad@quran.app"
+      userName={`${user?.name}`}
+      userEmail={`${user?.email}`}
     >
       <Box
         p={4}
