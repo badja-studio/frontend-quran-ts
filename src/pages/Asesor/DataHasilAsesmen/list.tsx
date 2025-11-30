@@ -3,12 +3,7 @@ import { useEffect, useState } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
-import { filterConfigs } from "./config-filter";
-import { columnsPeserta } from "./colum-table";
-import useUserStore from "../../../store/user.store";
-import { useQuery } from "@tanstack/react-query";
-import apiClient from "../../../services/api.config";
-import { DataPesertaHasilAssesment, GetUsersResponse, User } from "./type";
+import ExportButton from "../../../components/Export/ExportButton";
 import AsesmenResultModal from "../../../components/Peserta/AsesmenResultModal";
 import { dummyAssessments } from "./dummy";
 
@@ -196,17 +191,33 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   // ======= RENDER =======
   return (
     <DashboardLayout
-      userRole="assessor"
-      userName={`${user?.name}`}
-      userEmail={`${user?.email}`}
+      userRole="asesor"
+      userName="Ustadz Ahmad"
+      userEmail="ahmad@quran.app"
     >
       <Box>
-        <Typography variant="h4" gutterBottom fontWeight="bold">
-          Data Peserta Selesai Asesmen
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Lihat hasil dan status peserta yang telah menyelesaikan asesmen
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Box>
+            <Typography variant="h4" gutterBottom fontWeight="bold">
+              Data Peserta Selesai Asesmen
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Lihat hasil dan status peserta yang telah menyelesaikan asesmen
+            </Typography>
+          </Box>
+          <ExportButton
+            exportType="assessments"
+            filters={filters}
+            searchQuery={searchQuery}
+          />
+        </Box>
 
         <DataTable
           columns={columnsPeserta}

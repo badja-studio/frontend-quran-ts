@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
+import ExportButton from "../../../components/Export/ExportButton";
 import { filterConfigs } from "./config-filter";
 import { columnsAsesor } from "./colum-table";
 import useUserStore from "../../../store/user.store";
@@ -148,12 +149,21 @@ export default function ListPagesDataAsesor() {
       userEmail="ahmad@quran.app"
     >
       <Box>
-        <Typography variant="h4" gutterBottom fontWeight="bold">
-          Daftar Rekap Asesor
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Pantau dan kelola rekap data asesor serta jumlah peserta yang ditangani
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Box>
+            <Typography variant="h4" gutterBottom fontWeight="bold">
+              Daftar Rekap Asesor
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Pantau dan kelola rekap data asesor serta jumlah peserta yang ditangani
+            </Typography>
+          </Box>
+          <ExportButton 
+            exportType="assessors" 
+            filters={filters}
+            searchQuery={searchQuery}
+          />
+        </Box>
 
         {error && (
           <Alert severity="error" sx={{ mb: 3 }}>

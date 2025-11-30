@@ -9,6 +9,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
+import ExportButton from "../../../components/Export/ExportButton";
 import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
 import { DataPersetaSiap, GetUsersResponse } from "./type";
@@ -175,7 +176,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
   if (isInitialLoad && isLoading) {
     return (
       <DashboardLayout
-        userRole={user?.role || "assessor"}
+        userRole={user?.role === "admin" ? "admin" : "asesor"}
         userName={user?.name || "Ustadz Ahmad"}
         userEmail={user?.email || "ahmad@quran.app"}
       >
@@ -193,17 +194,33 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
 
   return (
     <DashboardLayout
-      userRole={user?.role || "assessor"}
+      userRole={user?.role === "admin" ? "admin" : "asesor"}
       userName={user?.name || "Ustadz Ahmad"}
       userEmail={user?.email || "ahmad@quran.app"}
     >
       <Box>
-        <Typography variant="h4" gutterBottom fontWeight="bold">
-          Data Peserta Siap Asesmen
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Peserta yang telah siap untuk mengikuti asesmen kompetensi
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Box>
+            <Typography variant="h4" gutterBottom fontWeight="bold">
+              Data Peserta Siap Asesmen
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Peserta yang telah siap untuk mengikuti asesmen kompetensi
+            </Typography>
+          </Box>
+          <ExportButton
+            exportType="participants-ready-to-assess"
+            filters={filters}
+            searchQuery={searchQuery}
+          />
+        </Box>
 
         {/* Loading indicator untuk search/filter/pagination */}
         {isFetching && !isInitialLoad && (
