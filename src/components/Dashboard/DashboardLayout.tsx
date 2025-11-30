@@ -28,12 +28,10 @@ import {
   ExitToApp,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
-  EditAttributes,
   UploadFile,
-  Delete,
-  Edit,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import authService from "../../services/auth.service";
 
 const drawerWidth = 260;
 const drawerWidthCollapsed = 65;
@@ -47,7 +45,10 @@ interface MenuItem {
 
 interface MenuConfig {
   assessor: MenuItem[];
+  asesor: MenuItem[];
+  guru: MenuItem[];
   admin: MenuItem[];
+  participant: MenuItem[];
 }
 
 // Menu configuration untuk setiap role
@@ -79,6 +80,51 @@ const menuConfig: MenuConfig = {
       path: "/dashboard/asesor/kelola-data-pengguna",
     },
   ],
+  asesor: [
+    {
+      text: "Peserta yang siap asesmen",
+      icon: <RecentActorsIcon />,
+      path: "/dashboard/asesor/siap-asesmen",
+    },
+    {
+      text: "Belum asesmen",
+      icon: <RecentActorsIcon />,
+      path: "/dashboard/asesor/belum-asesmen",
+    },
+    {
+      text: "Hasil Asesmen",
+      icon: <AssignmentIcon />,
+      path: "/dashboard/asesor/hasil-asesmen",
+    },
+    {
+      text: "Data Pengguna",
+      icon: <SettingsIcon />,
+      path: "/dashboard/asesor/kelola-data-pengguna",
+    },
+  ],
+  guru: [
+    {
+      text: "Peserta yang siap asesmen",
+      icon: <RecentActorsIcon />,
+      path: "/dashboard/asesor/siap-asesmen",
+    },
+    {
+      text: "Belum asesmen",
+      icon: <RecentActorsIcon />,
+      path: "/dashboard/asesor/belum-asesmen",
+    },
+    {
+      text: "Hasil Asesmen",
+      icon: <AssignmentIcon />,
+      path: "/dashboard/asesor/hasil-asesmen",
+    },
+    {
+      text: "Data Pengguna",
+      icon: <SettingsIcon />,
+      path: "/dashboard/asesor/kelola-data-pengguna",
+    },
+  ],
+  participant: [],
   admin: [
     { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard/admin" },
     {
@@ -176,7 +222,8 @@ export default function DashboardLayout({
   };
 
   const handleLogout = () => {
-    // TODO: Implement logout logic
+    // Clear all data from localStorage
+    authService.logout();
     handleMenuClose();
     navigate("/");
   };
@@ -313,9 +360,8 @@ export default function DashboardLayout({
         position="fixed"
         sx={{
           width: {
-            sm: `calc(100% - ${
-              drawerOpen ? drawerWidth : drawerWidthCollapsed
-            }px)`,
+            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
+              }px)`,
           },
           ml: { sm: `${drawerOpen ? drawerWidth : drawerWidthCollapsed}px` },
           transition: "all 0.3s",
@@ -332,7 +378,7 @@ export default function DashboardLayout({
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Dashboard {userRole === "assessor" ? "Assessor" : "Admin"}
+            Dashboard {userRole === "asesor" || userRole === "guru" ? "Asesor" : userRole === "admin" ? "Admin" : "Participant"}
           </Typography>
           <IconButton
             size="large"
@@ -431,9 +477,8 @@ export default function DashboardLayout({
           flexGrow: 1,
           p: 3,
           width: {
-            sm: `calc(100% - ${
-              drawerOpen ? drawerWidth : drawerWidthCollapsed
-            }px)`,
+            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
+              }px)`,
           },
           minHeight: "100vh",
           bgcolor: "grey.50",

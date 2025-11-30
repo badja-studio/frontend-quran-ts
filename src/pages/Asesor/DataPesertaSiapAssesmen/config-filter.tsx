@@ -21,7 +21,7 @@ export const filterConfigs: FilterConfig<DataPersetaSiap>[] = [
     operators: ["contains", "startsWith", "endsWith"],
   },
   {
-    key: "jk",
+    key: "jenis_kelamin",
     label: "Jenis Kelamin",
     type: "select",
     options: [
@@ -30,7 +30,7 @@ export const filterConfigs: FilterConfig<DataPersetaSiap>[] = [
     ],
   },
   {
-    key: "tl",
+    key: "tempat_lahir",
     label: "Tempat Lahir",
     type: "text",
     operators: ["contains", "startsWith", "endsWith"],
@@ -94,7 +94,7 @@ export const filterConfigs: FilterConfig<DataPersetaSiap>[] = [
     ],
   },
   {
-    key: "program_studi",
+    key: "prodi",
     label: "Program Studi",
     type: "text",
     operators: ["contains", "startsWith", "endsWith"],

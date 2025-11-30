@@ -29,9 +29,10 @@ const useUserStore = create<UserStore>((set) => ({
     set({ loading: true, error: null });
     try {
       const role = localStorage.getItem("userRole") as UserProfile["role"];
+      const userId = localStorage.getItem("userId");
 
       let endpoint = "/api/participants/profile";
-      if (role === "admin") endpoint = "/api/admin/profile";
+      if (role === "admin") endpoint = `/api/admins/${userId}`;
       else if (role === "assessor") endpoint = "/api/assessors/profile";
 
       const response = await api.get<UserProfile>(endpoint);

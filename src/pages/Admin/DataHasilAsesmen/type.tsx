@@ -3,7 +3,7 @@ export interface DataPesertaHasilAssesment extends Record<string, unknown> {
     no_akun: string;
     nip: string;
     nama: string;
-    jk: string;
+    jenis_kelamin: string;
     usia: number;
     pegawai: string;
     jenjang: string;
@@ -23,6 +23,45 @@ export interface DataPesertaHasilAssesment extends Record<string, unknown> {
     ahkam: number;
     mad: number;
     gharib: number;
+}
+
+// Category Breakdown interface
+export interface CategoryBreakdown {
+    category: string;
+    initialScore: number;
+    errorCount: number;
+    totalDeduction: number;
+    finalScore: number;
+}
+
+// Scoring Details interface
+export interface ScoringDetails {
+    categoryBreakdown: {
+        MAKHRAJ: CategoryBreakdown;
+        SIFAT: CategoryBreakdown;
+        AHKAM: CategoryBreakdown;
+        MAD: CategoryBreakdown;
+        GHARIB: CategoryBreakdown;
+    };
+    totalDeduction: number;
+    assessmentCount: number;
+    calculatedAt: string;
+}
+
+// Scores interface
+export interface Scores {
+    makhraj: number;
+    sifat: number;
+    ahkam: number;
+    mad: number;
+    gharib: number;
+    overall: number;
+}
+
+// Scoring interface
+export interface Scoring {
+    scores: Scores;
+    details: ScoringDetails;
 }
 
 // User interface untuk response API
@@ -62,6 +101,7 @@ export interface User {
         id: string;
         username: string;
     };
+    scoring?: Scoring;
 }
 
 export interface GetUsersResponse {

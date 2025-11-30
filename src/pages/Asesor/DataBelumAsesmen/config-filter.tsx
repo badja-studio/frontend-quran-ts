@@ -1,7 +1,7 @@
 import { FilterConfig } from "../../../components/Table/DataTableFilter";
-import { DataPerseta } from "./type";
+import { DataPersetaBelum } from "./type";
 
-export const filterConfigs: FilterConfig<DataPerseta>[] = [
+export const filterConfigs: FilterConfig<DataPersetaBelum>[] = [
     {
         key: 'no_akun',
         label: 'No Akun',
@@ -21,7 +21,7 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
         operators: ['contains', 'startsWith', 'endsWith'],
     },
     {
-        key: 'jk',
+        key: 'jenis_kelamin',
         label: 'Jenis Kelamin',
         type: 'select',
         options: [
@@ -30,7 +30,7 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
         ],
     },
     {
-        key: 'tl',
+        key: 'tempat_lahir',
         label: 'Tempat Lahir',
         type: 'text',
         operators: ['contains', 'startsWith', 'endsWith'],
@@ -94,7 +94,7 @@ export const filterConfigs: FilterConfig<DataPerseta>[] = [
         ],
     },
     {
-        key: 'program_studi',
+        key: 'prodi',
         label: 'Program Studi',
         type: 'text',
         operators: ['contains', 'startsWith', 'endsWith'],
