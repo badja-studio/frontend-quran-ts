@@ -11,7 +11,7 @@ import {
 import { Close } from "@mui/icons-material";
 
 const modalStyle = {
-  position: "absolute" as "absolute",
+  position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -23,9 +23,14 @@ const modalStyle = {
   maxHeight: "90vh",
   overflowY: "auto",
 };
+interface SectionListItem {
+  simbol: string;
+  nilai: number;
+}
+
 interface SectionItem {
   title: string;
-  list: any[];
+  list: (string | SectionListItem)[];
 }
 
 interface AsesmenResultModalProps {
@@ -157,7 +162,7 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
                               fontWeight: "bold",
                             }}
                           >
-                            0
+                            {typeof item === "string" ? 0 : item.nilai}
                           </Typography>
                         </Card>
                       </Grid>

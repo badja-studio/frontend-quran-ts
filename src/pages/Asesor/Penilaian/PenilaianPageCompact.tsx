@@ -135,10 +135,17 @@ const PenilaianPageCompact: React.FC = () => {
     return Math.max(0, score);
   };
 
+  const kategoriTotals = {
+    makhraj: totalScore("makhraj"),
+    sifat: totalScore("sifat"),
+    ahkam: totalScore("ahkam"),
+    mad: totalScore("mad"),
+    gharib: totalScore("gharib"),
+  };
   const totalAverage = (): number => {
     if (penguranganValue === "Tidak Bisa Membaca") return 0;
 
-    let avg =
+    const avg =
       [
         totalScore("makhraj"),
         totalScore("sifat"),
@@ -147,7 +154,6 @@ const PenilaianPageCompact: React.FC = () => {
         totalScore("gharib"),
       ].reduce((a, b) => a + b, 0) / 5;
 
-    if (penguranganValue === "Kelebihan Waktu") avg = Math.max(0, avg - 25);
     return Number(avg.toFixed(2));
   };
 
@@ -166,10 +172,13 @@ const PenilaianPageCompact: React.FC = () => {
     );
 
     console.log("Assessments yang akan dikirim:", assessmentsHuruf);
+    console.log("Total kategori:", kategoriTotals);
 
     try {
       const res = await apiClient.post("/api/assessments/bulk", {
         assessments: assessmentsHuruf,
+        totals: kategoriTotals,
+        avg: totalAverage(),
       });
       console.log("Response dari server:", res.data);
       alert("Penilaian berhasil dikirim!");

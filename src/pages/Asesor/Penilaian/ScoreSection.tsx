@@ -36,7 +36,6 @@ const ScoreSection: React.FC<Props> = ({
   selectedValue,
   onSelect,
 }) => {
-  // -------- MODE SELECT ----------
   if (isSelect) {
     return (
       <Card
@@ -71,7 +70,6 @@ const ScoreSection: React.FC<Props> = ({
     );
   }
 
-  // -------- MODE COUNTER ----------
   return (
     <Card
       sx={{
