@@ -154,7 +154,7 @@ export default function ListPagesDataPesertaBelomAsesmen() {
       <DashboardLayout
         userRole="admin"
         userName={`${user?.name}`}
-        userEmail="ahmad@quran.app"
+        userEmail={`${user?.email}`}
       >
         <Box
           display="flex"
@@ -172,7 +172,7 @@ export default function ListPagesDataPesertaBelomAsesmen() {
     <DashboardLayout
       userRole="admin"
       userName={`${user?.name}`}
-      userEmail="ahmad@quran.app"
+      userEmail={`${user?.email}`}
     >
       <Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -185,8 +185,8 @@ export default function ListPagesDataPesertaBelomAsesmen() {
               asesmen
             </Typography>
           </Box>
-          <ExportButton 
-            exportType="participants-not-assessed" 
+          <ExportButton
+            exportType="participants-not-assessed"
             filters={filters}
             searchQuery={searchQuery}
           />

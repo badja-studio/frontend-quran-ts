@@ -12,28 +12,36 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, FieldValues, SubmitHandler } from "react-hook-form";
+
+type FieldValue = string | number;
+
+interface SelectOption {
+  label: string;
+  value: FieldValue;
+}
 
 interface FieldConfig {
   name: string;
   label: string;
   type: string;
   required?: boolean;
-  options?: { label: string; value: any }[];
+  options?: SelectOption[];
   component?: React.ReactElement;
 }
 
-interface Props {
+interface DynamicProfileFormProps {
   title: string;
   role: string;
   status: string;
   avatar?: string;
   fields: FieldConfig[];
-  defaultValues: Record<string, any>;
-  onSubmit: (values: any) => void;
+  defaultValues: FieldValues;
+  onSubmit: SubmitHandler<FieldValues>;
+  onCancel?: () => void;
 }
 
-const DynamicProfileForm: React.FC<Props> = ({
+const DynamicProfileForm: React.FC<DynamicProfileFormProps> = ({
   title,
   role,
   status,
@@ -41,66 +49,32 @@ const DynamicProfileForm: React.FC<Props> = ({
   fields,
   defaultValues,
   onSubmit,
+  onCancel,
 }) => {
-  const { control, handleSubmit } = useForm({ defaultValues });
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues,
+  });
 
-  const renderField = (field: FieldConfig, ctrl: any): React.ReactElement => {
-    if (field.component) return field.component;
-
-    const baseStyle = {
-      "& .MuiOutlinedInput-root": {
-        borderRadius: 2,
-        background: "#fafafa",
-      },
-      "& .MuiOutlinedInput-root.Mui-focused": {
-        background: "#fff",
-      },
-    };
-
-    switch (field.type) {
-      case "select":
-        return (
-          <TextField
-            {...ctrl}
-            label={field.label}
-            select
-            fullWidth
-            required={field.required}
-            sx={baseStyle}
-          >
-            {field.options?.map((opt) => (
-              <MenuItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </MenuItem>
-            ))}
-          </TextField>
-        );
-
-      case "textarea":
-        return (
-          <TextField
-            {...ctrl}
-            label={field.label}
-            fullWidth
-            multiline
-            minRows={3}
-            required={field.required}
-            sx={baseStyle}
-          />
-        );
-
-      default:
-        return (
-          <TextField
-            {...ctrl}
-            label={field.label}
-            type={field.type}
-            fullWidth
-            required={field.required}
-            sx={baseStyle}
-          />
-        );
+  const handleCancel = () => {
+    reset();
+    if (onCancel) {
+      onCancel();
     }
+  };
+
+  const baseStyle = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: 2,
+      background: "#fafafa",
+    },
+    "& .MuiOutlinedInput-root.Mui-focused": {
+      background: "#fff",
+    },
   };
 
   return (
@@ -159,7 +133,64 @@ const DynamicProfileForm: React.FC<Props> = ({
             <Controller
               name={field.name}
               control={control}
-              render={({ field: ctrl }) => renderField(field, ctrl)}
+              rules={{ required: field.required }}
+              render={({ field: ctrl }) => {
+                if (field.component) return field.component;
+
+                const hasError = !!errors[field.name];
+                const errorMessage = errors[field.name]?.message as string | undefined;
+
+                switch (field.type) {
+                  case "select":
+                    return (
+                      <TextField
+                        {...ctrl}
+                        label={field.label}
+                        select
+                        fullWidth
+                        required={field.required}
+                        error={hasError}
+                        helperText={errorMessage}
+                        sx={baseStyle}
+                      >
+                        {field.options?.map((opt) => (
+                          <MenuItem key={String(opt.value)} value={String(opt.value)}>
+                            {opt.label}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    );
+
+                  case "textarea":
+                    return (
+                      <TextField
+                        {...ctrl}
+                        label={field.label}
+                        fullWidth
+                        multiline
+                        minRows={3}
+                        required={field.required}
+                        error={hasError}
+                        helperText={errorMessage}
+                        sx={baseStyle}
+                      />
+                    );
+
+                  default:
+                    return (
+                      <TextField
+                        {...ctrl}
+                        label={field.label}
+                        type={field.type}
+                        fullWidth
+                        required={field.required}
+                        error={hasError}
+                        helperText={errorMessage}
+                        sx={baseStyle}
+                      />
+                    );
+                }
+              }}
             />
           </Grid>
         ))}
@@ -175,6 +206,7 @@ const DynamicProfileForm: React.FC<Props> = ({
       >
         <Button
           variant="outlined"
+          onClick={handleCancel}
           sx={{
             borderRadius: 2,
             px: 4,

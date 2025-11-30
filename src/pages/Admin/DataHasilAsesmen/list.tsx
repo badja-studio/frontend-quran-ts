@@ -159,7 +159,7 @@ export default function ListPagesDataPesertaHasilAsesmen() {
             <DashboardLayout
                 userRole="admin"
                 userName={`${user?.name}`}
-                userEmail="ahmad@quran.app"
+                userEmail={`${user?.email}`}
             >
                 <Box
                     display="flex"
@@ -174,7 +174,7 @@ export default function ListPagesDataPesertaHasilAsesmen() {
     }
 
     return (
-        <DashboardLayout userRole="admin" userName={`${user?.name}`} userEmail="ahmad@quran.app">
+        <DashboardLayout userRole="admin" userName={`${user?.name}`} userEmail={`${user?.email}`}>
             <Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Box>

@@ -127,7 +127,7 @@ export default function ListPagesDataAsesor() {
       <DashboardLayout
         userRole="admin"
         userName={`${user?.name}`}
-        userEmail="ahmad@quran.app"
+        userEmail={`${user?.email}`}
       >
         <Box
           display="flex"
@@ -146,7 +146,7 @@ export default function ListPagesDataAsesor() {
     <DashboardLayout
       userRole="admin"
       userName={`${user?.name}`}
-      userEmail="ahmad@quran.app"
+      userEmail={`${user?.email}`}
     >
       <Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
