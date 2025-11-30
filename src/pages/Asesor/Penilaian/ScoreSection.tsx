@@ -2,15 +2,21 @@ import React from "react";
 import { Card, Box, Typography, Paper, Divider, Button } from "@mui/material";
 import ScoreGrid from "./ScoreGrid";
 
+import { CategoryType } from "../../../utils/utils";
+
 interface Props {
   title: string;
-  category: string;
+  category: CategoryType;
   list: string[];
 
   // MODE COUNTER
-  mistakes?: { [key: string]: { [key: string]: number } };
-  totalScore?: (cat: string) => number;
-  handleScore?: (category: string, key: string, type: string) => void;
+  mistakes?: { [key in CategoryType]?: { [key: string]: number } };
+  totalScore?: (cat: CategoryType) => number;
+  handleScore?: (
+    category: CategoryType,
+    key: string,
+    type: "plus" | "minus"
+  ) => void;
 
   // MODE SELECT
   isSelect?: boolean;

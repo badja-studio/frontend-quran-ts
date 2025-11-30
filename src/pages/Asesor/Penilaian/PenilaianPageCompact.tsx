@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Box, Container, Grid, Paper, Typography, Button } from "@mui/material";
-import { useParams } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-
+import { useParams, useLocation } from "react-router-dom";
 import {
   makhraj,
   shifat,
@@ -17,20 +15,29 @@ import HeaderPeserta from "./HeaderPeserta";
 import useUserStore from "../../../store/user.store";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../../services/api.config";
+import { CategoryType } from "../../../utils/utils";
 
-type Category = "makhraj" | "sifat" | "ahkam" | "mad" | "gharib";
 type ScoreAction = "plus" | "minus";
 type MistakeMap = Record<string, number>;
-type MistakesState = {
-  makhraj: MistakeMap;
-  sifat: MistakeMap;
-  ahkam: MistakeMap;
-  mad: MistakeMap;
-  gharib: MistakeMap;
-};
+type MistakesState = Record<CategoryType, MistakeMap>;
 
-interface Peserta {
-  id: number;
+interface PesertaFromTable {
+  id: string;
+  no_akun: string;
+  nip: string;
+  nama: string;
+  level: string;
+  jenjang: string;
+  status: string;
+  sekolah: string;
+}
+
+interface LocationState {
+  peserta?: PesertaFromTable;
+}
+
+interface PesertaFromApi {
+  id: string;
   akun: string;
   nama: string;
   level: string;
@@ -38,21 +45,14 @@ interface Peserta {
   status: string;
   sekolah: string;
 }
-interface LocationState {
-  peserta?: any;
-}
 
 const PenilaianPageCompact: React.FC = () => {
   const { id: participantId } = useParams<{ id: string }>();
   const { user } = useUserStore();
-  const location = useLocation() as unknown as { state: LocationState };
-  const pesertaFromTable = location.state?.peserta;
+  const location = useLocation();
+  const pesertaFromTable = (location.state as LocationState)?.peserta;
 
-  const {
-    data: peserta,
-    isLoading,
-    error,
-  } = useQuery<Peserta>({
+  const { isLoading, error } = useQuery<PesertaFromApi>({
     queryKey: ["peserta", participantId],
     queryFn: async () => {
       const res = await apiClient.get(
@@ -71,6 +71,14 @@ const PenilaianPageCompact: React.FC = () => {
       ahkam: ahkamHuruf.reduce((a, b) => ({ ...a, [b]: 0 }), {} as MistakeMap),
       mad: madList.reduce((a, b) => ({ ...a, [b]: 0 }), {} as MistakeMap),
       gharib: gharibList.reduce((a, b) => ({ ...a, [b]: 0 }), {} as MistakeMap),
+      kelancaran: kelancaran.reduce(
+        (a, b) => ({ ...a, [b]: 0 }),
+        {} as MistakeMap
+      ),
+      pengurangan: PenguranganNilai.reduce(
+        (a, b) => ({ ...a, [b]: 0 }),
+        {} as MistakeMap
+      ),
     };
   });
 
@@ -78,30 +86,19 @@ const PenilaianPageCompact: React.FC = () => {
   const [penguranganValue, setPenguranganValue] = useState<string | null>(null);
 
   const handleScore = (
-    category: string,
+    category: CategoryType,
     key: string,
-    type: ScoreAction | string
+    type: ScoreAction
   ) => {
-    const cat = category as Category;
-    const action: ScoreAction = type === "minus" ? "minus" : "plus";
-
     setMistakes((prev) => {
-      const current = prev[cat][key] ?? 0;
-      const newVal =
-        action === "minus" ? current + 1 : Math.max(0, current - 1);
-
-      return {
-        ...prev,
-        [cat]: {
-          ...prev[cat],
-          [key]: newVal,
-        },
-      };
+      const current = prev[category][key] ?? 0;
+      const newVal = type === "minus" ? current + 1 : Math.max(0, current - 1);
+      return { ...prev, [category]: { ...prev[category], [key]: newVal } };
     });
   };
 
   const getPenalty = (
-    category: Category,
+    category: CategoryType,
     countBefore: number,
     item: string
   ) => {
@@ -109,7 +106,6 @@ const PenilaianPageCompact: React.FC = () => {
       case "makhraj":
         return countBefore === 0 ? 2 : 0.5;
       case "sifat":
-        return countBefore === 0 ? 0.5 : 0.25;
       case "ahkam":
         return countBefore === 0 ? 0.5 : 0.25;
       case "gharib":
@@ -123,18 +119,15 @@ const PenilaianPageCompact: React.FC = () => {
     }
   };
 
-  const totalScore = (category: string): number => {
-    const cat = category as Category;
+  const totalScore = (category: CategoryType): number => {
     let score = 100;
-    const fields = mistakes[cat];
     let totalMistakesInCategory = 0;
+    const fields = mistakes[category];
 
     Object.keys(fields).forEach((item) => {
       const count = fields[item];
-      if (!count) return;
       for (let i = 0; i < count; i++) {
-        const penalty = getPenalty(cat, totalMistakesInCategory, item);
-        score -= penalty;
+        score -= getPenalty(category, totalMistakesInCategory, item);
         totalMistakesInCategory++;
       }
     });
@@ -143,31 +136,24 @@ const PenilaianPageCompact: React.FC = () => {
   };
 
   const totalAverage = (): number => {
-    // Jika tidak bisa membaca, skor langsung 0
     if (penguranganValue === "Tidak Bisa Membaca") return 0;
 
-    const list = [
-      totalScore("makhraj"),
-      totalScore("sifat"),
-      totalScore("ahkam"),
-      totalScore("mad"),
-      totalScore("gharib"),
-    ];
+    let avg =
+      [
+        totalScore("makhraj"),
+        totalScore("sifat"),
+        totalScore("ahkam"),
+        totalScore("mad"),
+        totalScore("gharib"),
+      ].reduce((a, b) => a + b, 0) / 5;
 
-    let avg = list.reduce((a, b) => a + b, 0) / list.length;
-
-    if (penguranganValue === "Kelebihan Waktu") {
-      avg = Math.max(0, avg - 25);
-    }
-
-    // Kelancaran tidak mempengaruhi skor
+    if (penguranganValue === "Kelebihan Waktu") avg = Math.max(0, avg - 25);
     return Number(avg.toFixed(2));
   };
 
   const handleSubmit = async () => {
     if (!pesertaFromTable || !user) return;
 
-    // Huruf-huruf: nilai = 1 jika ada kesalahan, 0 jika tidak
     const assessmentsHuruf = Object.entries(mistakes).flatMap(
       ([kategori, obj]) =>
         Object.entries(obj).map(([huruf, count]) => ({
@@ -175,47 +161,15 @@ const PenilaianPageCompact: React.FC = () => {
           asesor_id: user.id,
           huruf,
           kategori,
-          nilai: count > 0 ? 1 : 0, // Hanya menandai kesalahan
+          nilai: count > 0 ? 1 : 0,
         }))
     );
 
-    // Tambahkan total skor per kategori sebagai huruf "total"
-    const assessmentsKategori = Object.keys(mistakes).map((kategori) => ({
-      peserta_id: pesertaFromTable.id,
-      asesor_id: user.id,
-      huruf: "total",
-      kategori,
-      nilai: totalScore(kategori), // skor asli
-    }));
-
-    // Tambahkan kelancaran & pengurangan sebagai huruf khusus
-    const extra = [];
-    if (kelancaranValue) {
-      extra.push({
-        peserta_id: pesertaFromTable.id,
-        asesor_id: user.id,
-        huruf: "kelancaran",
-        kategori: "kelancaran",
-        nilai: 0,
-      });
-    }
-    if (penguranganValue) {
-      extra.push({
-        peserta_id: pesertaFromTable.id,
-        asesor_id: user.id,
-        huruf: "pengurangan",
-        kategori: "pengurangan",
-        nilai: penguranganValue === "Tidak Bisa Membaca" ? -100 : -25,
-      });
-    }
-
-    const assessments = [...assessmentsHuruf, ...assessmentsKategori, ...extra];
-
-    console.log("Assessments yang akan dikirim:", assessments);
+    console.log("Assessments yang akan dikirim:", assessmentsHuruf);
 
     try {
       const res = await apiClient.post("/api/assessments/bulk", {
-        assessments,
+        assessments: assessmentsHuruf,
       });
       console.log("Response dari server:", res.data);
       alert("Penilaian berhasil dikirim!");
@@ -226,12 +180,7 @@ const PenilaianPageCompact: React.FC = () => {
   };
 
   if (isLoading) return <Typography>Loading peserta...</Typography>;
-  if (error)
-    return (
-      <Typography>
-        Peserta tidak ditemukan! {JSON.stringify({ participantId, error })}
-      </Typography>
-    );
+  if (error) return <Typography>Peserta tidak ditemukan!</Typography>;
   if (!pesertaFromTable)
     return <Typography>Peserta tidak ditemukan</Typography>;
 
@@ -239,7 +188,10 @@ const PenilaianPageCompact: React.FC = () => {
     <Box sx={{ width: "100%", minHeight: "100vh", bgcolor: "grey.50", py: 2 }}>
       <Container maxWidth="lg">
         <HeaderPeserta
-          peserta={pesertaFromTable}
+          peserta={{
+            ...pesertaFromTable,
+            akun: pesertaFromTable.no_akun,
+          }}
           totalAverage={totalAverage().toLocaleString()}
         />
 
@@ -253,7 +205,6 @@ const PenilaianPageCompact: React.FC = () => {
               handleScore={handleScore}
               totalScore={totalScore}
             />
-
             <ScoreSection
               title="Ahkamul Huruf"
               category="ahkam"
@@ -273,7 +224,6 @@ const PenilaianPageCompact: React.FC = () => {
               handleScore={handleScore}
               totalScore={totalScore}
             />
-
             <ScoreSection
               title="Ahkamul Mad"
               category="mad"
@@ -282,7 +232,6 @@ const PenilaianPageCompact: React.FC = () => {
               handleScore={handleScore}
               totalScore={totalScore}
             />
-
             <ScoreSection
               title="Gharib"
               category="gharib"
@@ -291,8 +240,6 @@ const PenilaianPageCompact: React.FC = () => {
               handleScore={handleScore}
               totalScore={totalScore}
             />
-
-            {/* Kelancaran */}
             <ScoreSection
               title="Kelancaran Saat Membaca"
               category="kelancaran"
@@ -301,8 +248,6 @@ const PenilaianPageCompact: React.FC = () => {
               selectedValue={kelancaranValue}
               onSelect={setKelancaranValue}
             />
-
-            {/* Pengurangan Nilai */}
             <ScoreSection
               title="Pengurangan Nilai Peserta"
               category="pengurangan"

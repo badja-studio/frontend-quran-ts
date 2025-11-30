@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { Alert, Box, CircularProgress, LinearProgress, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  LinearProgress,
+  Typography,
+} from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import ExportButton from "../../../components/Export/ExportButton";
@@ -27,7 +33,15 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["peserta-belum-asesmen-asesor", page, limit, searchQuery, sortBy, sortOrder, filters],
+    queryKey: [
+      "peserta-belum-asesmen-asesor",
+      page,
+      limit,
+      searchQuery,
+      sortBy,
+      sortOrder,
+      filters,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -56,17 +70,17 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-          {
-            field: "status",
-            op: "eq",
-            value: "BELUM",
-          },
-          {
-            field: "asesor_id",
-            op: "eq",
-            value: user?.id || "",
-          },
-        ];
+        {
+          field: "status",
+          op: "eq",
+          value: "BELUM",
+        },
+        {
+          field: "asesor_id",
+          op: "eq",
+          value: user?.id || "",
+        },
+      ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -156,9 +170,9 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
   if (isInitialLoad && isLoading) {
     return (
       <DashboardLayout
-        userRole="admin"
+        userRole="assessor"
         userName={`${user?.name}`}
-        userEmail="ahmad@quran.app"
+        userEmail={`${user?.email}`}
       >
         <Box
           display="flex"
@@ -174,19 +188,26 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
 
   return (
     <DashboardLayout
-      userRole="guru"
+      userRole="assessor"
       userName={`${user?.name}`}
-      userEmail="ahmad@quran.app"
+      userEmail={`${user?.email}`}
     >
       <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Box>
             <Typography variant="h4" gutterBottom fontWeight="bold">
               Data Peserta Belum Asesmen
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Kelola pendaftaran dan verifikasi data peserta yang belum mengikuti
-              asesmen
+              Kelola pendaftaran dan verifikasi data peserta yang belum
+              mengikuti asesmen
             </Typography>
           </Box>
           <ExportButton

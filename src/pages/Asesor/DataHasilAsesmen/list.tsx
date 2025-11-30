@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { Alert, Box, CircularProgress, LinearProgress, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  LinearProgress,
+  Typography,
+} from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import ExportButton from "../../../components/Export/ExportButton";
@@ -132,9 +138,8 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
   const { user, fetchUser } = useUserStore();
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedAsesmen, setSelectedAsesmen] = useState<DataPersetaHasil | null>(
-    null
-  );
+  const [selectedAsesmen, setSelectedAsesmen] =
+    useState<DataPersetaHasil | null>(null);
 
   const handleDetailClick = (row: DataPersetaHasil) => {
     setSelectedAsesmen(row);
@@ -148,7 +153,15 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["data-hasil-asesmen-admin-asesor", page, limit, searchQuery, sortBy, sortOrder, filters],
+    queryKey: [
+      "data-hasil-asesmen-admin-asesor",
+      page,
+      limit,
+      searchQuery,
+      sortBy,
+      sortOrder,
+      filters,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -177,17 +190,17 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-          {
-            field: "status",
-            op: "eq",
-            value: "SUDAH",
-          },
-          {
-            field: "asesor_id",
-            op: "eq",
-            value: user?.id || "",
-          },
-        ];
+        {
+          field: "status",
+          op: "eq",
+          value: "SUDAH",
+        },
+        {
+          field: "asesor_id",
+          op: "eq",
+          value: user?.id || "",
+        },
+      ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -217,34 +230,35 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   });
 
   // 🔥 Inject handler
-  const transformedData = response?.data.map((item) => ({
-    id: item.id,
-    no_akun: item.no_akun || "",
-    nip: item.nip || "",
-    nama: item.nama,
-    jenis_kelamin: item.jenis_kelamin || "",
-    tempat_lahir: item.tempat_lahir || "",
-    pegawai: item.pegawai,
-    jenjang: item.jenjang || "",
-    level: item.level || "",
-    provinsi: item.provinsi || "",
-    kab_kota: item.kab_kota || "",
-    sekolah: item.sekolah || "",
-    pendidikan: item.pendidikan || "",
-    prodi: item.prodi || "",
-    perguruan_tinggi: item.perguruan_tinggi || "",
-    jenis_pt: item.jenis_pt || "",
-    tahun_lulus: item.tahun_lulus || 0,
-    jadwal: item.jadwal || "",
-    asesor: item.assessor?.name || "",
-    makhraj: item.scoring?.scores.makhraj || 0,
-    sifat: item.scoring?.scores.sifat || 0,
-    ahkam: item.scoring?.scores.ahkam || 0,
-    mad: item.scoring?.scores.mad || 0,
-    gharib: item.scoring?.scores.gharib || 0,
-    total: item.scoring?.scores.overall || 0,
-    onDetailClick: handleDetailClick,
-  })) || [];
+  const transformedData =
+    response?.data.map((item) => ({
+      id: item.id,
+      no_akun: item.no_akun || "",
+      nip: item.nip || "",
+      nama: item.nama,
+      jenis_kelamin: item.jenis_kelamin || "",
+      tempat_lahir: item.tempat_lahir || "",
+      pegawai: item.pegawai,
+      jenjang: item.jenjang || "",
+      level: item.level || "",
+      provinsi: item.provinsi || "",
+      kab_kota: item.kab_kota || "",
+      sekolah: item.sekolah || "",
+      pendidikan: item.pendidikan || "",
+      prodi: item.prodi || "",
+      perguruan_tinggi: item.perguruan_tinggi || "",
+      jenis_pt: item.jenis_pt || "",
+      tahun_lulus: item.tahun_lulus || 0,
+      jadwal: item.jadwal || "",
+      asesor: item.assessor?.name || "",
+      makhraj: item.scoring?.scores.makhraj || 0,
+      sifat: item.scoring?.scores.sifat || 0,
+      ahkam: item.scoring?.scores.ahkam || 0,
+      mad: item.scoring?.scores.mad || 0,
+      gharib: item.scoring?.scores.gharib || 0,
+      total: item.scoring?.scores.overall || 0,
+      onDetailClick: handleDetailClick,
+    })) || [];
 
   const pagination = response?.pagination || {
     current_page: 1,
@@ -278,14 +292,14 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   useEffect(() => {
     fetchUser();
   }, [user, fetchUser]);
-
+  console.log(fetchUser);
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {
     return (
       <DashboardLayout
-        userRole="admin"
+        userRole="assessor"
         userName={`${user?.name}`}
-        userEmail="ahmad@quran.app"
+        userEmail={`${user?.email}`}
       >
         <Box
           display="flex"
@@ -301,12 +315,19 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
 
   return (
     <DashboardLayout
-      userRole="asesor"
+      userRole="assessor"
       userName={`${user?.name}`}
-      userEmail="ahmad@quran.app"
+      userEmail={`${user?.email}`}
     >
       <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Box>
             <Typography variant="h4" gutterBottom fontWeight="bold">
               Data Peserta Selesai Asesmen
@@ -340,7 +361,9 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
           data={transformedData}
           rowsPerPageOptions={[5, 10, 25]}
           emptyMessage={
-            isFetching ? "Memuat data..." : "Belum ada peserta dengan hasil asesmen"
+            isFetching
+              ? "Memuat data..."
+              : "Belum ada peserta dengan hasil asesmen"
           }
           enableFilter={true}
           filterConfigs={filterConfigs}

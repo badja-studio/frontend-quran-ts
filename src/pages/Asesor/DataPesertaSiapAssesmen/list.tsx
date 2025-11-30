@@ -33,7 +33,15 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["peserta-siap-asesmen-asesor", page, limit, searchQuery, sortBy, sortOrder, filters],
+    queryKey: [
+      "peserta-siap-asesmen-asesor",
+      page,
+      limit,
+      searchQuery,
+      sortBy,
+      sortOrder,
+      filters,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -63,17 +71,17 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-          {
-            field: "jadwal",
-            op: "eq",
-            value: currentDate,
-          },
-          {
-            field: "asesor_id",
-            op: "eq",
-            value: user?.id || "",
-          },
-        ];
+        {
+          field: "jadwal",
+          op: "eq",
+          value: currentDate,
+        },
+        {
+          field: "asesor_id",
+          op: "eq",
+          value: user?.id || "",
+        },
+      ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -163,7 +171,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
   if (isInitialLoad && isLoading) {
     return (
       <DashboardLayout
-        userRole={user?.role === "admin" ? "admin" : "asesor"}
+        userRole="assessor"
         userName={user?.name || "Ustadz Ahmad"}
         userEmail={user?.email || "ahmad@quran.app"}
       >
@@ -181,12 +189,19 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
 
   return (
     <DashboardLayout
-      userRole={user?.role === "admin" ? "admin" : "asesor"}
+      userRole="assessor"
       userName={user?.name || "Ustadz Ahmad"}
       userEmail={user?.email || "ahmad@quran.app"}
     >
       <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Box>
             <Typography variant="h4" gutterBottom fontWeight="bold">
               Data Peserta Siap Asesmen
