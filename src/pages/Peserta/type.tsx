@@ -1,3 +1,6 @@
+import { CategoryType } from "../../utils/utils";
+
+// Tipe asesor
 export interface Asesor {
   id: string;
   name: string;
@@ -5,6 +8,7 @@ export interface Asesor {
   link_wa?: string;
 }
 
+// Tipe peserta
 export interface DataPeserta {
   id: string;
   no_akun?: string;
@@ -29,7 +33,7 @@ export interface DataPeserta {
   link_wa?: string;
 }
 
-// Tipe API
+// API response peserta
 export interface ApiAssessor {
   id: string;
   name: string;
@@ -61,7 +65,35 @@ export interface ApiParticipant {
   link_wa?: string;
 }
 
+// Tipe item asesmen
+export interface ApiAssessmentItem {
+  id: string;
+  peserta_id: string;
+  asesor_id: string;
+  huruf: string;
+  nilai: string; // biasanya "0.00" atau "1.00"
+  kategori: CategoryType;
+  createdAt: string;
+  updatedAt: string;
+  peserta?: ApiParticipant;
+  assessor?: ApiAssessor;
+}
+
+// Tipe response API asesmen
+export interface ApiAssessmentResponse {
+  success: boolean;
+  message: string;
+  data: ApiAssessmentItem[];
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total: number;
+    total_pages: number;
+  };
+}
+
+// Tipe section untuk modal
 export interface QuizSection {
   title: string;
-  list: (string | { simbol: string; arti: string })[];
+  list: (string | { simbol: string; nilai: number })[];
 }

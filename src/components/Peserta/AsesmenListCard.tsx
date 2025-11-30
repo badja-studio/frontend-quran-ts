@@ -1,15 +1,16 @@
 import { Card, CardContent, Typography, Box, Button } from "@mui/material";
 import { AccessTime, Visibility, WhatsApp } from "@mui/icons-material";
+import { DataPeserta } from "../../pages/Peserta/type";
 
 interface Props {
-  asesmen: any[];
-  onOpen: (item: any) => void;
+  asesmen: DataPeserta[];
+  onOpen: (item: DataPeserta) => void;
 }
 
 const AsesmenListCard: React.FC<Props> = ({ asesmen, onOpen }) => {
-  const isDone = (status: string) => status?.toLowerCase().includes("selesai");
-
-  const isNotDone = (status: string) => status?.toLowerCase().includes("belum");
+  const isDone = (status?: string) => (status || "").toLowerCase() === "sudah";
+  const isNotDone = (status?: string) =>
+    (status || "").toLowerCase() === "belum";
 
   return (
     <Card

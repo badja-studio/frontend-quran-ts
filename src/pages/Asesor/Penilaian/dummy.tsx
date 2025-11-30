@@ -113,4 +113,4 @@ export const gharibList = [
 
 export const kelancaran = ["Mahir", "Cukup", "Kurang"];
 
-export const PenguranganNilai = ["Kelebihan Waktu", "Tidak Bisa Membaca"];
+export const PenguranganNilai = ["Tidak Bisa Membaca"];

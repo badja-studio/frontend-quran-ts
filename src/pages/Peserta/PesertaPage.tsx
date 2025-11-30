@@ -7,8 +7,14 @@ import PesertaInfoCard from "../../components/Peserta/PesertaInfoCard";
 import AsesmenListCard from "../../components/Peserta/AsesmenListCard";
 import apiClient from "../../services/api.config";
 import useUserStore from "../../store/user.store";
-import { DataPeserta, ApiParticipant, QuizSection } from "./type";
+import {
+  DataPeserta,
+  ApiParticipant,
+  QuizSection,
+  ApiAssessmentItem,
+} from "./type";
 
+// Data quiz default
 const dataQuiz: Record<string, QuizSection["list"]> = {
   makharij: [
     "د",
@@ -35,21 +41,13 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "غ",
     "ع",
     "ظ",
-    { simbol: "ــُ", arti: "Dlammah" },
-    { simbol: "ــِـ", arti: "Kasrah" },
-    { simbol: "ــَـ", arti: "Fathah" },
     "ي",
     "ء",
     "هـ",
     "و",
     "ن",
-    { simbol: "ــّـ", arti: "Tasydid" },
-    { simbol: "ــٌـ", arti: "Dlammatain" },
-    { simbol: "ــٍـ", arti: "Kasratain" },
-    { simbol: "ــًـ", arti: "Fathatain" },
-    { simbol: "ــْـ", arti: "Sukun" },
   ],
-  shifat: [
+  sifat: [
     "د",
     "خ",
     "ح",
@@ -80,7 +78,7 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "و",
     "ن",
   ],
-  ahkamHuruf: [
+  ahkam: [
     "Izhhar",
     "Izhhar Syafawi",
     "Idzgham Bighunnah",
@@ -92,7 +90,7 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "Iqlab",
     "Idzgham Mutaqarribain",
   ],
-  ahkamMad: [
+  mad: [
     "Mad Thabi’i",
     "Mad Lazim Kilmi Mutsaqqal",
     "Mad Wajib Muttashil",
@@ -108,16 +106,10 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "Mad Tamkin",
     "Mad Shilah Thawilah",
     "Mad Farq",
+    "Tanaffus",
+    "Qashr",
   ],
-  gharib: [
-    "Iysmam",
-    "Imalah",
-    "Saktah",
-    "Tashil",
-    "Naql",
-    "Badal",
-    "Mad dan Qashr",
-  ],
+  gharib: ["Iysmam", "Imalah", "Saktah", "Tashil", "Naql", "Badal"],
 };
 
 const PesertaPage: React.FC = () => {
@@ -126,35 +118,35 @@ const PesertaPage: React.FC = () => {
   const [selectedAsesmen, setSelectedAsesmen] = useState<DataPeserta | null>(
     null
   );
+
   useEffect(() => {
-    console.log("Fetching user profile...");
-    fetchUser()
-      .then(() => console.log("User fetched successfully"))
-      .catch((err) => console.error("Error fetching user:", err));
+    fetchUser();
   }, [fetchUser]);
 
-  // Pilih endpoint berdasarkan role user
   const endpoint =
     user?.role === "admin"
       ? "/api/admin/profile"
       : user?.role === "assessor"
-        ? "/api/assessors/profile"
-        : "/api/participants/profile";
-  console.log("Selected API endpoint based on role:", endpoint);
-  const { data: response, isLoading: queryLoading, error: queryError } = useQuery<{
-    data: ApiParticipant | ApiParticipant[];
-  }>({
+      ? "/api/assessors/profile"
+      : "/api/participants/profile";
+
+  // Query daftar peserta
+  const {
+    data: response,
+    isLoading: queryLoading,
+    error: queryError,
+  } = useQuery<{ data: ApiParticipant | ApiParticipant[] }>({
     queryKey: ["participants", endpoint],
     queryFn: async () => {
       if (!endpoint) return { data: [] };
-      const result = await apiClient.get(endpoint);
-      return result.data;
+      const res = await apiClient.get(endpoint);
+      return res.data;
     },
     staleTime: 30000,
     enabled: !!user,
   });
 
-  // transform API data ke DataPeserta
+  // Transform API ke DataPeserta
   const transformUser = (user: ApiParticipant): DataPeserta => ({
     id: user.id,
     no_akun: user.no_akun || "-",
@@ -176,11 +168,11 @@ const PesertaPage: React.FC = () => {
     jadwal: user.jadwal || "-",
     asesor: user.assessor
       ? {
-        id: user.assessor.id,
-        name: user.assessor.name,
-        email: user.assessor.email,
-        link_wa: user.assessor.link_wa,
-      }
+          id: user.assessor.id,
+          name: user.assessor.name,
+          email: user.assessor.email,
+          link_wa: user.assessor.link_wa,
+        }
       : null,
     status: user.status || "-",
     link_wa: user.link_wa || "-",
@@ -192,11 +184,88 @@ const PesertaPage: React.FC = () => {
       : [transformUser(response.data)]
     : [];
 
-  console.log("Transformed asesmenList:", asesmenList);
+  // Query detail asesmen peserta
+  const { data: asesmenDetail, refetch: fetchDetail } = useQuery({
+    queryKey: ["asesmen", selectedAsesmen?.id ?? "no-id"],
+    queryFn: async () => {
+      if (!selectedAsesmen?.id) return null;
+
+      let allData: ApiAssessmentItem[] = [];
+      let page = 1;
+      let totalPages = 1;
+
+      do {
+        const res = await apiClient.get(
+          `/api/assessments/participant/${selectedAsesmen.id}?page=${page}&per_page=10`
+        );
+
+        console.log(" data asesmen:", res.data);
+        if (!res.data?.data) break;
+
+        allData = allData.concat(res.data.data);
+
+        totalPages = res.data.pagination?.total_pages ?? 1;
+        page++;
+      } while (page <= totalPages);
+
+      console.log("Semua data asesmen:", allData);
+
+      return { data: allData };
+    },
+    enabled: false,
+    staleTime: 30000,
+  });
+
+  // Transform detail API ke sections
+  const mapDetailToSections = (detail: any) => {
+    const defaultSections = [
+      { title: "Makharijul Huruf", list: dataQuiz.makharij },
+      { title: "Shifatul Huruf", list: dataQuiz.sifat },
+      { title: "Ahkam Al-Huruf", list: dataQuiz.ahkam },
+      { title: "Ahkam Al-Mad wa Qashr", list: dataQuiz.mad },
+      { title: "Gharib", list: dataQuiz.gharib },
+    ];
+
+    if (!detail?.data) return defaultSections;
+
+    const grouped: Record<string, any[]> = {};
+    detail.data.forEach((item: any) => {
+      if (!grouped[item.kategori]) grouped[item.kategori] = [];
+      grouped[item.kategori].push({
+        simbol: item.huruf,
+        nilai: parseFloat(item.nilai),
+      });
+    });
+
+    return defaultSections.map((sec) => {
+      const key = sec.title.toLowerCase().includes("makharij")
+        ? "makhraj"
+        : sec.title.toLowerCase().includes("shifat")
+        ? "sifat"
+        : sec.title.toLowerCase().includes("ahkam al-huruf")
+        ? "ahkam"
+        : sec.title.toLowerCase().includes("mad")
+        ? "mad"
+        : sec.title.toLowerCase().includes("gharib")
+        ? "gharib"
+        : "";
+
+      if (!key || !grouped[key]) return sec;
+
+      const list = sec.list.map((item: any) => {
+        const simbol = typeof item === "string" ? item : item.simbol;
+        const found = grouped[key].find((i) => i.simbol === simbol);
+        return { simbol, nilai: found?.nilai ?? 0 };
+      });
+
+      return { ...sec, list };
+    });
+  };
 
   const handleOpen = (asesmen: DataPeserta) => {
     setSelectedAsesmen(asesmen);
     setModalVisible(true);
+    fetchDetail();
   };
 
   return (
@@ -220,7 +289,6 @@ const PesertaPage: React.FC = () => {
         }}
       >
         <Person sx={{ fontSize: { xs: 20, sm: 26, md: 32 } }} />
-
         <Typography
           variant="h4"
           fontWeight="bold"
@@ -234,7 +302,7 @@ const PesertaPage: React.FC = () => {
         </Typography>
       </Box>
 
-      {/* Loading State */}
+      {/* Loading */}
       {(loading || queryLoading) && (
         <Box
           sx={{
@@ -253,7 +321,7 @@ const PesertaPage: React.FC = () => {
         </Box>
       )}
 
-      {/* Error State - User Store */}
+      {/* Error */}
       {error && !loading && (
         <Alert
           severity="error"
@@ -264,16 +332,9 @@ const PesertaPage: React.FC = () => {
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           }}
         >
-          <Typography variant="body1" fontWeight="bold">
-            Gagal memuat profil pengguna
-          </Typography>
-          <Typography variant="body2">
-            {error || "Terjadi kesalahan saat mengambil data. Silakan coba lagi."}
-          </Typography>
+          Gagal memuat profil pengguna
         </Alert>
       )}
-
-      {/* Error State - Query */}
       {queryError && !queryLoading && (
         <Alert
           severity="error"
@@ -284,18 +345,11 @@ const PesertaPage: React.FC = () => {
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           }}
         >
-          <Typography variant="body1" fontWeight="bold">
-            Gagal memuat data peserta
-          </Typography>
-          <Typography variant="body2">
-            {queryError instanceof Error
-              ? queryError.message
-              : "Terjadi kesalahan saat mengambil data. Silakan coba lagi."}
-          </Typography>
+          Gagal memuat data peserta
         </Alert>
       )}
 
-      {/* Content - Only show when not loading and no errors */}
+      {/* Content */}
       {!loading && !queryLoading && !error && !queryError && (
         <Grid container spacing={4}>
           <Grid item xs={12} lg={8}>
@@ -317,13 +371,13 @@ const PesertaPage: React.FC = () => {
               </Box>
             )}
           </Grid>
-
           <Grid item xs={12} lg={4}>
             <AsesmenListCard asesmen={asesmenList} onOpen={handleOpen} />
           </Grid>
         </Grid>
       )}
 
+      {/* Modal */}
       {selectedAsesmen && (
         <AsesmenResultModal
           open={modalVisible}
@@ -331,14 +385,13 @@ const PesertaPage: React.FC = () => {
           pesertaName={selectedAsesmen.nama || "Peserta"}
           asesorName={selectedAsesmen.asesor?.name || "Ustadz/ah"}
           waktuPelaksanaan={selectedAsesmen.jadwal || "26 Nov 2025"}
-          nilaiAkhir={97.5}
-          sections={[
-            { title: "Makharijul Huruf", list: dataQuiz.makharij },
-            { title: "Shifatul Huruf", list: dataQuiz.shifat },
-            { title: "Ahkam Al-Huruf", list: dataQuiz.ahkamHuruf },
-            { title: "Ahkam Al-Mad wa Qashr", list: dataQuiz.ahkamMad },
-            { title: "Gharib", list: dataQuiz.gharib },
-          ]}
+          nilaiAkhir={
+            asesmenDetail?.data?.reduce(
+              (sum: number, i: any) => sum + parseFloat(i.nilai),
+              0
+            ) || 0
+          }
+          sections={mapDetailToSections(asesmenDetail)}
         />
       )}
     </Box>
