@@ -17,6 +17,14 @@ export interface AssessorResponse {
   pagination: Pagination;
 }
 
+export interface RealTimeCounts {
+  total_assigned: number;
+  assessed: number;
+  not_assessed: number;
+  assessment_progress: number;
+  updated_at: string;
+}
+
 export interface Assessor {
   id: number;
   name: string;
@@ -29,6 +37,7 @@ export interface Assessor {
   akun_id: number;
   user: AssessorUser;
   participants: Participant[];
+  realTimeCounts: RealTimeCounts;
 }
 
 export interface AssessorUser {

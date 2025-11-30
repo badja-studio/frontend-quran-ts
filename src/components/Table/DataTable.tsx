@@ -13,18 +13,9 @@ import {
   Box,
   TextField,
   InputAdornment,
-  Button,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  FileDownload as FileDownloadIcon,
-  PictureAsPdf as PictureAsPdfIcon,
-  TableChart as TableChartIcon,
-  Print as PrintIcon,
 } from '@mui/icons-material';
 import DataTableFilter, { FilterItem, FilterConfig } from './DataTableFilter';
 import { applyFilters } from './filterUtils';
@@ -89,8 +80,6 @@ export default function DataTable<T extends Record<string, unknown>>({
   searchValue = '',
   onSearchChange,
   searchPlaceholder = 'Cari data...',
-  enableExport = false,
-  onExport,
   serverSide = false,
   totalCount,
   page: externalPage,
@@ -107,8 +96,6 @@ export default function DataTable<T extends Record<string, unknown>>({
   const [orderBy, setOrderBy] = useState<keyof T | string>('');
   const [order, setOrder] = useState<Order>('asc');
   const [filters, setFilters] = useState<FilterItem[]>([]);
-  const [exportAnchorEl, setExportAnchorEl] = useState<null | HTMLElement>(null);
-  const exportMenuOpen = Boolean(exportAnchorEl);
 
   // Use external or internal state
   const currentPage = serverSide && externalPage !== undefined ? externalPage : internalPage;
@@ -202,21 +189,6 @@ export default function DataTable<T extends Record<string, unknown>>({
     }
   };
 
-  const handleExportMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setExportAnchorEl(event.currentTarget);
-  };
-
-  const handleExportMenuClose = () => {
-    setExportAnchorEl(null);
-  };
-
-  const handleExport = (type: ExportType) => {
-    if (onExport) {
-      onExport(type, sortedData);
-    }
-    handleExportMenuClose();
-  };
-
   // Get cell value
   const getCellValue = (row: T, column: Column<T>): React.ReactNode => {
     const value = row[column.id as keyof T];
@@ -296,62 +268,6 @@ export default function DataTable<T extends Record<string, unknown>>({
                 },
               }}
             />
-          </Box>
-        )}
-
-        {/* Right side - Export */}
-        {enableExport && (
-          <Box sx={{ flexShrink: 0 }}>
-            <Button
-              variant="contained"
-              onClick={handleExportMenuOpen}
-              size="small"
-              sx={{
-                minWidth: { xs: 40, sm: 'auto' },
-                px: { xs: 1, sm: 2 },
-                bgcolor: { xs: 'error.main', sm: 'primary.main' },
-                '&:hover': {
-                  bgcolor: { xs: 'error.dark', sm: 'primary.dark' },
-                },
-              }}
-            >
-              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                Export
-              </Box>
-              <FileDownloadIcon sx={{ display: { xs: 'block', sm: 'none' }, fontSize: 20 }} />
-            </Button>
-            <Menu
-              anchorEl={exportAnchorEl}
-              open={exportMenuOpen}
-              onClose={handleExportMenuClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              <MenuItem onClick={() => handleExport('excel')}>
-                <ListItemIcon>
-                  <TableChartIcon fontSize="small" color="success" />
-                </ListItemIcon>
-                <ListItemText>Export ke Excel</ListItemText>
-              </MenuItem>
-              <MenuItem onClick={() => handleExport('pdf')}>
-                <ListItemIcon>
-                  <PictureAsPdfIcon fontSize="small" color="error" />
-                </ListItemIcon>
-                <ListItemText>Export ke PDF</ListItemText>
-              </MenuItem>
-              <MenuItem onClick={() => handleExport('print')}>
-                <ListItemIcon>
-                  <PrintIcon fontSize="small" color="primary" />
-                </ListItemIcon>
-                <ListItemText>Cetak (Print)</ListItemText>
-              </MenuItem>
-            </Menu>
           </Box>
         )}
       </Box>

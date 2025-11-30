@@ -35,17 +35,17 @@ export const columnsPeserta: Column<DataPesertaHasilAssesment>[] = [
         },
     },
     {
-        id: "jk",
+        id: "jenis_kelamin",
         label: "Jenis Kelamin",
         minWidth: 120,
         align: "center",
         format: (value) => {
-            const jk = String(value);
+            const jenis_kelamin = String(value);
             return (
                 <Chip
-                    label={jk === "L" ? "Laki-laki" : "Perempuan"}
+                    label={jenis_kelamin === "L" ? "Laki-laki" : "Perempuan"}
                     size="small"
-                    color={jk === "L" ? "primary" : "secondary"}
+                    color={jenis_kelamin === "L" ? "primary" : "secondary"}
                 />
             );
         },

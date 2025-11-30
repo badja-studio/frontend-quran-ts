@@ -35,7 +35,7 @@ export const columnsPeserta: Column<DataPersetaSiap>[] = [
     },
   },
   {
-    id: "jk",
+    id: "jenis_kelamin",
     label: "Jenis Kelamin",
     minWidth: 120,
     align: "center",
@@ -51,7 +51,7 @@ export const columnsPeserta: Column<DataPersetaSiap>[] = [
     },
   },
   {
-    id: "tl",
+    id: "tempat_lahir",
     label: "Tempat Lahir",
     minWidth: 130,
     align: "center",
@@ -126,7 +126,7 @@ export const columnsPeserta: Column<DataPersetaSiap>[] = [
     },
   },
   {
-    id: "program_studi",
+    id: "prodi",
     label: "Program Studi",
     minWidth: 200,
   },

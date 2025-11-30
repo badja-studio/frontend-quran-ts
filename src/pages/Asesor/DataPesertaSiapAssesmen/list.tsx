@@ -17,40 +17,70 @@ import apiClient, { handleApiError } from "../../../services/api.config";
 import useUserStore from "../../../store/user.store";
 
 export default function ListAsesorPagesDataPesertaSiapAssement() {
-  const { user, fetchUser } = useUserStore();
   const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<FilterItem[]>([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [filters, setFilters] = useState<FilterItem[]>([]);
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
+  const { user, fetchUser } = useUserStore();
 
-  useEffect(() => {
-    fetchUser()
-      .then(() => console.log("User fetched successfully"))
-      .catch((err) => console.error("Error fetching user:", err));
-  }, [fetchUser]);
-  const endpoint =
-    user?.role === "admin"
-      ? "/api/admin/profile"
-      : user?.role === "assessor"
-      ? "/api/assessors/profile"
-      : "/api/participants/profile";
-
+  // Fetch data with React Query
   const {
     data: response,
     isLoading,
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["users", page, limit, searchQuery, endpoint],
+    queryKey: ["peserta-siap-asesmen", page, limit, searchQuery, sortBy, sortOrder, filters],
     queryFn: async () => {
-      if (!endpoint) return { data: [] };
       const params = new URLSearchParams();
       params.append("page", page.toString());
       params.append("limit", limit.toString());
       if (searchQuery) params.append("search", searchQuery);
-      params.append("sortBy", "createdAt");
-      params.append("sortOrder", "DESC");
+      params.append("sortBy", sortBy);
+      params.append("sortOrder", sortOrder);
+
+      // Map operator names to backend format
+      const operatorMap: Record<string, string> = {
+        equals: "eq",
+        contains: "contains",
+        startsWith: "startsWith",
+        endsWith: "endsWith",
+        greaterThan: "gt",
+        lessThan: "lt",
+        greaterThanOrEqual: "gte",
+        lessThanOrEqual: "lte",
+        between: "between",
+        in: "in",
+      };
+
+      // Inject default filter untuk jadwal (tanggal hari ini)
+      const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+      const formattedFilters: Array<{
+        field: string;
+        op: string;
+        value: string | number | Date | string[];
+      }> = [
+          {
+            field: "jadwal",
+            op: "eq",
+            value: currentDate,
+          },
+        ];
+
+      // Gabungkan dengan user filters
+      if (filters.length > 0) {
+        const userFilters = filters.map((filter) => ({
+          field: filter.key,
+          op: operatorMap[filter.operator] || filter.operator,
+          value: filter.value,
+        }));
+        formattedFilters.push(...userFilters);
+      }
+
+      params.append("filters", JSON.stringify(formattedFilters));
 
       const result = await apiClient.get<GetUsersResponse>(
         `/api/participants?${params.toString()}`
@@ -91,15 +121,12 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
       status: user.status || "-",
     })) || [];
 
-  const pagination =
-    response && "pagination" in response && response.pagination
-      ? response.pagination
-      : {
-          current_page: 1,
-          per_page: 10,
-          total: 0,
-          total_pages: 0,
-        };
+  const pagination = response?.pagination || {
+    current_page: 1,
+    per_page: 10,
+    total: 0,
+    total_pages: 0,
+  };
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -108,7 +135,24 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
 
   const handleFiltersApplied = (appliedFilters: FilterItem[]) => {
     setFilters(appliedFilters);
+    setPage(1); // Reset to page 1 when filters change
   };
+
+  const handleSortChange = (columnId: string) => {
+    if (sortBy === columnId) {
+      // Toggle sort order if same column
+      setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
+    } else {
+      // New column, default to DESC
+      setSortBy(columnId);
+      setSortOrder("DESC");
+    }
+    setPage(1); // Reset to page 1 on sort change
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [user, fetchUser]);
 
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {
@@ -146,8 +190,8 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
               Peserta yang telah siap untuk mengikuti asesmen kompetensi
             </Typography>
           </Box>
-          <ExportButton 
-            exportType="participants-ready-to-assess" 
+          <ExportButton
+            exportType="participants-ready-to-assess"
             filters={filters}
             searchQuery={searchQuery}
           />
@@ -165,6 +209,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
             {handleApiError(error).message}
           </Alert>
         )}
+
         <DataTable
           columns={columnsPeserta}
           data={transformedData}
@@ -190,6 +235,10 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
             setLimit(newLimit);
             setPage(1); // Reset to page 1
           }}
+          // Server-side sorting
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={handleSortChange}
         />
       </Box>
     </DashboardLayout>

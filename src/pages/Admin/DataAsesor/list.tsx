@@ -81,8 +81,8 @@ export default function ListPagesDataAsesor() {
       no_telepon: assessor.no_telepon,
       email: assessor.email,
       link_grup_wa: assessor.link_grup_wa,
-      total_peserta_belum_asesmen: assessor.total_peserta_belum_asesmen,
-      total_peserta_selesai_asesmen: assessor.total_peserta_selesai_asesmen,
+      total_peserta_belum_asesmen: assessor.realTimeCounts.not_assessed,
+      total_peserta_selesai_asesmen: assessor.realTimeCounts.assessed,
       akun_id: assessor.akun_id,
     })) || [];
 
@@ -158,8 +158,8 @@ export default function ListPagesDataAsesor() {
               Pantau dan kelola rekap data asesor serta jumlah peserta yang ditangani
             </Typography>
           </Box>
-          <ExportButton 
-            exportType="assessors" 
+          <ExportButton
+            exportType="assessors"
             filters={filters}
             searchQuery={searchQuery}
           />

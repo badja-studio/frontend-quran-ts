@@ -21,7 +21,7 @@ export const filterConfigs: FilterConfig<DataPesertaHasilAssesment>[] = [
         operators: ['contains', 'startsWith', 'endsWith'],
     },
     {
-        key: 'jk',
+        key: 'jenis_kelamin',
         label: 'Jenis Kelamin',
         type: 'select',
         options: [

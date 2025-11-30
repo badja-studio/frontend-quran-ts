@@ -12,15 +12,15 @@ import {
 } from '@mui/material';
 import {
   FileDownload as FileDownloadIcon,
-  PictureAsPdf as PdfIcon,
   TableChart as ExcelIcon,
   ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
 import { exportService, useExport, ExportOptions } from '../../services/export.service';
+import { FilterItem } from '../Table/DataTableFilter';
 
 export interface ExportButtonProps {
   exportType: 'participants' | 'participants-not-assessed' | 'participants-ready-to-assess' | 'assessors' | 'assessments';
-  filters?: any[];
+  filters?: FilterItem[];
   searchQuery?: string;
   filename?: string;
   variant?: 'contained' | 'outlined' | 'text';
@@ -67,7 +67,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({
 
   const handleExport = async (format: 'excel' | 'pdf') => {
     handleClose();
-    
+
     const options: ExportOptions = {
       format,
       filters: {
@@ -115,12 +115,6 @@ const ExportButton: React.FC<ExportButtonProps> = ({
             <ExcelIcon color="success" />
           </ListItemIcon>
           <ListItemText>Excel (.xlsx)</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={() => handleExport('pdf')} disabled={isExporting}>
-          <ListItemIcon>
-            <PdfIcon color="error" />
-          </ListItemIcon>
-          <ListItemText>PDF</ListItemText>
         </MenuItem>
       </Menu>
 

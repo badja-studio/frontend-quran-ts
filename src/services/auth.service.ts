@@ -38,6 +38,7 @@ class AuthService {
         // Store tokens and user info in localStorage
         localStorage.setItem('authToken', response.data.data.token);
         localStorage.setItem('refreshToken', response.data.data.token); // Use same token as refresh for now
+        localStorage.setItem('userId', response.data.data.user.id);
         localStorage.setItem('userName', response.data.data.user.username);
         localStorage.setItem('userRole', response.data.data.user.role);
       }
@@ -62,6 +63,7 @@ class AuthService {
   logout(): void {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userId');
     localStorage.removeItem('userName');
     localStorage.removeItem('userRole');
   }

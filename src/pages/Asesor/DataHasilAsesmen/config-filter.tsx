@@ -1,7 +1,7 @@
 import { FilterConfig } from "../../../components/Table/DataTableFilter";
-import { DataPerseta } from "./type";
+import { DataPersetaHasil } from "./type";
 
-export const filterConfigs: FilterConfig<DataPerseta>[] = [
+export const filterConfigs: FilterConfig<DataPersetaHasil>[] = [
   {
     key: "no_akun",
     label: "No Akun",

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Alert, Box, CircularProgress, LinearProgress, Typography } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import ExportButton from "../../../components/Export/ExportButton";
@@ -7,7 +7,7 @@ import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
 import useUserStore from "../../../store/user.store";
 import { useQuery } from "@tanstack/react-query";
-import apiClient from "../../../services/api.config";
+import apiClient, { handleApiError } from "../../../services/api.config";
 import { DataPesertaHasilAssesment, GetUsersResponse, User } from "./type";
 
 export default function ListPagesDataPesertaHasilAsesmen() {
@@ -25,6 +25,7 @@ export default function ListPagesDataPesertaHasilAsesmen() {
         data: response,
         isLoading,
         isFetching,
+        error,
     } = useQuery({
         queryKey: ["data-hasil-asesmen-admin", page, limit, searchQuery, sortBy, sortOrder, filters],
         queryFn: async () => {
@@ -96,7 +97,7 @@ export default function ListPagesDataPesertaHasilAsesmen() {
             no_akun: user.no_akun || "-",
             nip: user.nip || "-",
             nama: user.nama,
-            jk: user.jenis_kelamin === "L" ? "L" : "P",
+            jenis_kelamin: user.jenis_kelamin === "L" ? "L" : "P",
             usia: user.usia,
             pegawai: user.pegawai,
             jenjang: user.jenjang || "-",
@@ -112,11 +113,11 @@ export default function ListPagesDataPesertaHasilAsesmen() {
             asesor: user.assessor?.name || "-",
             waktu: user.jadwal || "-",
             // Note: Nilai asesmen perlu disesuaikan dengan struktur API sebenarnya
-            makhraj: 0,
-            sifat: 0,
-            ahkam: 0,
-            mad: 0,
-            gharib: 0,
+            makhraj: user.scoring?.scores.makhraj || 0,
+            sifat: user.scoring?.scores.sifat || 0,
+            ahkam: user.scoring?.scores.ahkam || 0,
+            mad: user.scoring?.scores.mad || 0,
+            gharib: user.scoring?.scores.gharib || 0,
         })) || [];
 
     const pagination = response?.pagination || {
@@ -184,12 +185,24 @@ export default function ListPagesDataPesertaHasilAsesmen() {
                             Lihat hasil dan status peserta yang telah menyelesaikan asesmen
                         </Typography>
                     </Box>
-                    <ExportButton 
-                        exportType="assessments" 
+                    <ExportButton
+                        exportType="assessments"
                         filters={filters}
                         searchQuery={searchQuery}
                     />
                 </Box>
+
+                {isFetching && !isInitialLoad && (
+                    <Box sx={{ width: "100%", mb: 2 }}>
+                        <LinearProgress />
+                    </Box>
+                )}
+
+                {error && (
+                    <Alert severity="error" sx={{ mb: 3 }}>
+                        {handleApiError(error).message}
+                    </Alert>
+                )}
 
                 <DataTable
                     columns={columnsPeserta}

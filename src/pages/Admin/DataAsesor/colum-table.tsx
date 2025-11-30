@@ -58,7 +58,7 @@ export const columnsAsesor: Column<DataAsesor>[] = [
   },
   {
     id: "total_peserta_belum_asesmen",
-    label: "Total Beserta Belum Asesmen",
+    label: "Total Peserta Belum Asesmen",
     minWidth: 80,
     align: "center",
   },
