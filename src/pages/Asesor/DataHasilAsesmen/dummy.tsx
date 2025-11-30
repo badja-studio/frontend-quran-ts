@@ -109,7 +109,7 @@ export const dataQuiz = {
   ],
 };
 
-const dummyAssessments = [
+export const dummyAssessments = [
   {
     peserta_id: "bd04451c-73f9-4362-9750-c077a7d1af65",
     asesor_id: "9a677071-a096-4ed3-940d-1def74413d42",

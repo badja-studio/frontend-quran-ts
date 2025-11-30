@@ -25,7 +25,7 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
   const { user, fetchUser } = useUserStore();
-
+  const assessorId = user?.role === "assessor" ? user.id : undefined;
   const {
     data: response,
     isLoading,
@@ -87,11 +87,11 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
       }
 
       params.append("filters", JSON.stringify(formattedFilters));
+      const url = assessorId
+        ? `/api/participants/${assessorId}?${params.toString()}`
+        : `/api/participants?${params.toString()}`;
 
-      const result = await apiClient.get<GetUsersResponse>(
-        `/api/participants?${params.toString()}`
-      );
-
+      const result = await apiClient.get<GetUsersResponse>(url);
       // Setelah load pertama selesai
       if (isInitialLoad) {
         setIsInitialLoad(false);
@@ -178,18 +178,25 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
       userEmail={`${user?.email}`}
     >
       <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Box>
             <Typography variant="h4" gutterBottom fontWeight="bold">
               Data Peserta Belum Asesmen
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Kelola pendaftaran dan verifikasi data peserta yang belum mengikuti
-              asesmen
+              Kelola pendaftaran dan verifikasi data peserta yang belum
+              mengikuti asesmen
             </Typography>
           </Box>
-          <ExportButton 
-            exportType="participants-not-assessed" 
+          <ExportButton
+            exportType="participants-not-assessed"
             filters={filters}
             searchQuery={searchQuery}
           />

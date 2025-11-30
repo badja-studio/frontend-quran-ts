@@ -1,4 +1,5 @@
-// ListAsesorPagesDataPesertaHasilAsesmen.tsx
+import { filterConfigs } from "./config-filter";
+import { columnsPeserta } from "./colum-table";
 import { useEffect, useState } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
@@ -6,6 +7,10 @@ import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import ExportButton from "../../../components/Export/ExportButton";
 import AsesmenResultModal from "../../../components/Peserta/AsesmenResultModal";
 import { dummyAssessments } from "./dummy";
+import useUserStore from "../../../store/user.store";
+import { useQuery } from "@tanstack/react-query";
+import { DataPesertaHasilAssesment, GetUsersResponse, User } from "./type";
+import apiClient from "../../../services/api.config";
 
 interface AsesmenItem {
   nama: string;
@@ -191,9 +196,9 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   // ======= RENDER =======
   return (
     <DashboardLayout
-      userRole="asesor"
-      userName="Ustadz Ahmad"
-      userEmail="ahmad@quran.app"
+      userRole="assessor"
+      userName={`${user?.name}`}
+      userEmail={`${user?.email}`}
     >
       <Box>
         <Box
@@ -270,14 +275,12 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
             pesertaName={selectedAsesmen.nama}
             asesorName={selectedAsesmen.asesor || "Ustadz Fauzan"}
             waktuPelaksanaan={selectedAsesmen.waktu || "26 Nov 2025"}
-            nilaiAkhir={(() => {
-              const semuaNilai = (selectedAsesmen.asesmen || []).map(
-                (a) => a.nilai || 0
-              );
-              return semuaNilai.length
-                ? semuaNilai.reduce((acc, n) => acc + n, 0) / semuaNilai.length
-                : 0;
-            })()}
+            nilaiAkhir={
+              (selectedAsesmen.asesmen || []).reduce(
+                (acc, a) => acc + (a.nilai || 0),
+                0
+              ) / ((selectedAsesmen.asesmen || []).length || 1)
+            }
             sections={[
               {
                 title: "Makharijul Huruf",

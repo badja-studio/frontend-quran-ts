@@ -29,6 +29,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+  const assessorId = user?.role === "assessor" ? user.id : undefined;
   const endpoint =
     user?.role === "admin"
       ? "/api/admin/profile"
@@ -101,9 +102,11 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
 
       params.append("filters", JSON.stringify(formattedFilters));
 
-      const result = await apiClient.get<GetUsersResponse>(
-        `/api/participants?${params.toString()}`
-      );
+      const url = assessorId
+        ? `/api/participants/${assessorId}?${params.toString()}`
+        : `/api/participants?${params.toString()}`;
+
+      const result = await apiClient.get<GetUsersResponse>(url);
 
       // Setelah load pertama selesai
       if (isInitialLoad) {
@@ -176,7 +179,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
   if (isInitialLoad && isLoading) {
     return (
       <DashboardLayout
-        userRole={user?.role === "admin" ? "admin" : "asesor"}
+        userRole={user?.role === "admin" ? "admin" : "assessor"}
         userName={user?.name || "Ustadz Ahmad"}
         userEmail={user?.email || "ahmad@quran.app"}
       >
@@ -194,7 +197,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
 
   return (
     <DashboardLayout
-      userRole={user?.role === "admin" ? "admin" : "asesor"}
+      userRole={user?.role === "admin" ? "admin" : "assessor"}
       userName={user?.name || "Ustadz Ahmad"}
       userEmail={user?.email || "ahmad@quran.app"}
     >
