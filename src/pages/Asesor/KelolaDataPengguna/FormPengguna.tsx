@@ -153,9 +153,9 @@ export default function AsesmenForm() {
 
   return (
     <DashboardLayout
-      userRole={user?.role === "admin" ? "admin" : "asesor"}
-      userName={user?.name || "Ustadz Ahmad"}
-      userEmail={user?.email || "ahmad@quran.app"}
+      userRole={user?.role === "admin" ? "admin" : "assessor"}
+      userName={user?.name || ""}
+      userEmail={user?.email || ""}
     >
       <Box>
         <Card

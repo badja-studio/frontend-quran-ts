@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Grid } from "@mui/material";
-import { Person } from "@mui/icons-material";
+import { Box, Typography, Grid, CircularProgress, Alert } from "@mui/material";
+import { Person, ErrorOutline } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 import AsesmenResultModal from "../../components/Peserta/AsesmenResultModal";
 import PesertaInfoCard from "../../components/Peserta/PesertaInfoCard";
 import AsesmenListCard from "../../components/Peserta/AsesmenListCard";
-import apiClient, { handleApiError } from "../../services/api.config";
+import apiClient from "../../services/api.config";
 import useUserStore from "../../store/user.store";
 import { DataPeserta, ApiParticipant, QuizSection } from "./type";
 
@@ -138,10 +138,10 @@ const PesertaPage: React.FC = () => {
     user?.role === "admin"
       ? "/api/admin/profile"
       : user?.role === "assessor"
-      ? "/api/assessors/profile"
-      : "/api/participants/profile";
+        ? "/api/assessors/profile"
+        : "/api/participants/profile";
   console.log("Selected API endpoint based on role:", endpoint);
-  const { data: response } = useQuery<{
+  const { data: response, isLoading: queryLoading, error: queryError } = useQuery<{
     data: ApiParticipant | ApiParticipant[];
   }>({
     queryKey: ["participants", endpoint],
@@ -176,11 +176,11 @@ const PesertaPage: React.FC = () => {
     jadwal: user.jadwal || "-",
     asesor: user.assessor
       ? {
-          id: user.assessor.id,
-          name: user.assessor.name,
-          email: user.assessor.email,
-          link_wa: user.assessor.link_wa,
-        }
+        id: user.assessor.id,
+        name: user.assessor.name,
+        email: user.assessor.email,
+        link_wa: user.assessor.link_wa,
+      }
       : null,
     status: user.status || "-",
     link_wa: user.link_wa || "-",
@@ -234,19 +234,95 @@ const PesertaPage: React.FC = () => {
         </Typography>
       </Box>
 
-      <Grid container spacing={4}>
-        <Grid item xs={12} lg={8}>
-          {asesmenList.length > 0 ? (
-            <PesertaInfoCard peserta={asesmenList[0]} />
-          ) : (
-            <Typography>Loading data peserta...</Typography>
-          )}
-        </Grid>
+      {/* Loading State */}
+      {(loading || queryLoading) && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "400px",
+            gap: 2,
+          }}
+        >
+          <CircularProgress size={60} sx={{ color: "#2E7D32" }} />
+          <Typography variant="h6" color="text.secondary">
+            Memuat data peserta...
+          </Typography>
+        </Box>
+      )}
 
-        <Grid item xs={12} lg={4}>
-          <AsesmenListCard asesmen={asesmenList} onOpen={handleOpen} />
+      {/* Error State - User Store */}
+      {error && !loading && (
+        <Alert
+          severity="error"
+          icon={<ErrorOutline />}
+          sx={{
+            mb: 3,
+            borderRadius: 2,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Typography variant="body1" fontWeight="bold">
+            Gagal memuat profil pengguna
+          </Typography>
+          <Typography variant="body2">
+            {error || "Terjadi kesalahan saat mengambil data. Silakan coba lagi."}
+          </Typography>
+        </Alert>
+      )}
+
+      {/* Error State - Query */}
+      {queryError && !queryLoading && (
+        <Alert
+          severity="error"
+          icon={<ErrorOutline />}
+          sx={{
+            mb: 3,
+            borderRadius: 2,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Typography variant="body1" fontWeight="bold">
+            Gagal memuat data peserta
+          </Typography>
+          <Typography variant="body2">
+            {queryError instanceof Error
+              ? queryError.message
+              : "Terjadi kesalahan saat mengambil data. Silakan coba lagi."}
+          </Typography>
+        </Alert>
+      )}
+
+      {/* Content - Only show when not loading and no errors */}
+      {!loading && !queryLoading && !error && !queryError && (
+        <Grid container spacing={4}>
+          <Grid item xs={12} lg={8}>
+            {asesmenList.length > 0 ? (
+              <PesertaInfoCard peserta={asesmenList[0]} />
+            ) : (
+              <Box
+                sx={{
+                  p: 4,
+                  textAlign: "center",
+                  backgroundColor: "white",
+                  borderRadius: 2,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                }}
+              >
+                <Typography variant="h6" color="text.secondary">
+                  Data peserta tidak ditemukan
+                </Typography>
+              </Box>
+            )}
+          </Grid>
+
+          <Grid item xs={12} lg={4}>
+            <AsesmenListCard asesmen={asesmenList} onOpen={handleOpen} />
+          </Grid>
         </Grid>
-      </Grid>
+      )}
 
       {selectedAsesmen && (
         <AsesmenResultModal
