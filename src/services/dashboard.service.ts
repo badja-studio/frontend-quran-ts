@@ -24,6 +24,7 @@ export interface ParticipationByProvince {
 export interface DemographicData {
   name: string;
   value: number;
+  [key: string]: string | number;
 }
 
 export interface AverageScoreData {
