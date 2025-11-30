@@ -187,7 +187,7 @@ const menuConfig: MenuConfig = {
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  userRole: "admin" | "asesor" | "guru" | "participant";
+  userRole: "admin" | "assessor" | "guru" | "participant";
   userName?: string;
   userEmail?: string;
 }
@@ -360,8 +360,9 @@ export default function DashboardLayout({
         position="fixed"
         sx={{
           width: {
-            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
-              }px)`,
+            sm: `calc(100% - ${
+              drawerOpen ? drawerWidth : drawerWidthCollapsed
+            }px)`,
           },
           ml: { sm: `${drawerOpen ? drawerWidth : drawerWidthCollapsed}px` },
           transition: "all 0.3s",
@@ -378,7 +379,12 @@ export default function DashboardLayout({
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Dashboard {userRole === "asesor" || userRole === "guru" ? "Asesor" : userRole === "admin" ? "Admin" : "Participant"}
+            Dashboard{" "}
+            {userRole === "assessor" || userRole === "guru"
+              ? "Assessor"
+              : userRole === "admin"
+              ? "Admin"
+              : "Participant"}
           </Typography>
           <IconButton
             size="large"
@@ -477,8 +483,9 @@ export default function DashboardLayout({
           flexGrow: 1,
           p: 3,
           width: {
-            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
-              }px)`,
+            sm: `calc(100% - ${
+              drawerOpen ? drawerWidth : drawerWidthCollapsed
+            }px)`,
           },
           minHeight: "100vh",
           bgcolor: "grey.50",
