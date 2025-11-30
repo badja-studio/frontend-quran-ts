@@ -145,7 +145,7 @@ export default function ListPagesDataPeserta() {
       <DashboardLayout
         userRole="admin"
         userName={`${user?.name}`}
-        userEmail="ahmad@quran.app"
+        userEmail={`${user?.email}`}
       >
         <Box
           display="flex"
@@ -163,7 +163,7 @@ export default function ListPagesDataPeserta() {
     <DashboardLayout
       userRole="admin"
       userName={`${user?.name}`}
-      userEmail="ahmad@quran.app"
+      userEmail={`${user?.email}`}
     >
       <Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -175,8 +175,8 @@ export default function ListPagesDataPeserta() {
               Kelola dan pantau data peserta
             </Typography>
           </Box>
-          <ExportButton 
-            exportType="participants" 
+          <ExportButton
+            exportType="participants"
             filters={filters}
             searchQuery={searchQuery}
           />
