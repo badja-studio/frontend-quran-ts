@@ -74,7 +74,7 @@ class ExportService {
   }  // Participants exports
   async exportParticipants(options: ExportOptions): Promise<void> {
     const queryString = this.buildQueryString(options.filters);
-    const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3012/api'}/export/participants`;
+    const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3012/api'}/api/export/participants`;
     const url = `${baseUrl}/${options.format}?${queryString}`;
     const filename = options.filename || `data-peserta-${new Date().toISOString().split('T')[0]}.${options.format === 'excel' ? 'xlsx' : 'pdf'}`;
     
@@ -84,7 +84,7 @@ class ExportService {
   // Participants not assessed exports
   async exportParticipantsNotAssessed(options: ExportOptions): Promise<void> {
     const queryString = this.buildQueryString(options.filters);
-    const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3012/api'}/export/participants/not-assessed`;
+    const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3012/api'}/api/export/participants/not-assessed`;
     const url = `${baseUrl}/${options.format}?${queryString}`;
     const filename = options.filename || `data-peserta-belum-asesmen-${new Date().toISOString().split('T')[0]}.${options.format === 'excel' ? 'xlsx' : 'pdf'}`;
     
@@ -94,7 +94,7 @@ class ExportService {
   // Participants ready to assess exports
   async exportParticipantsReadyToAssess(options: ExportOptions): Promise<void> {
     const queryString = this.buildQueryString(options.filters);
-    const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3012/api'}/export/participants/ready-to-assess`;
+    const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3012/api'}/api/export/participants/ready-to-assess`;
     const url = `${baseUrl}/${options.format}?${queryString}`;
     const filename = options.filename || `data-peserta-siap-asesmen-${new Date().toISOString().split('T')[0]}.${options.format === 'excel' ? 'xlsx' : 'pdf'}`;
     
@@ -104,7 +104,7 @@ class ExportService {
   // Assessors exports
   async exportAssessors(options: ExportOptions): Promise<void> {
     const queryString = this.buildQueryString(options.filters);
-    const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3012/api'}/export/assessors`;
+    const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3012/api'}/api/export/assessors`;
     const url = `${baseUrl}/${options.format}?${queryString}`;
     const filename = options.filename || `data-asesor-${new Date().toISOString().split('T')[0]}.${options.format === 'excel' ? 'xlsx' : 'pdf'}`;
     
@@ -114,7 +114,7 @@ class ExportService {
   // Assessments exports
   async exportAssessments(options: ExportOptions): Promise<void> {
     const queryString = this.buildQueryString(options.filters);
-    const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3012/api'}/export/assessments`;
+    const baseUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3012/api'}/api/export/assessments`;
     const url = `${baseUrl}/${options.format}?${queryString}`;
     const filename = options.filename || `data-hasil-asesmen-${new Date().toISOString().split('T')[0]}.${options.format === 'excel' ? 'xlsx' : 'pdf'}`;
     
