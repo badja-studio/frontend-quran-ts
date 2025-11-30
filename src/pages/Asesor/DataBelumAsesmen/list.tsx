@@ -27,7 +27,7 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["peserta-belum-asesmen", page, limit, searchQuery, sortBy, sortOrder, filters],
+    queryKey: ["peserta-belum-asesmen-asesor", page, limit, searchQuery, sortBy, sortOrder, filters],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -60,6 +60,11 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
             field: "status",
             op: "eq",
             value: "BELUM",
+          },
+          {
+            field: "asesor_id",
+            op: "eq",
+            value: user?.id || "",
           },
         ];
 
