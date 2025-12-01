@@ -18,7 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import useUserStore from "../../../store/user.store";
 
 const dataQuiz = {
-  makharij: [
+  makharj: [
     "د",
     "خ",
     "ح",
@@ -57,7 +57,7 @@ const dataQuiz = {
     { simbol: "ــًـ", arti: "Fathatain" },
     { simbol: "ــْـ", arti: "Sukun" },
   ],
-  shifat: [
+  sifat: [
     "د",
     "خ",
     "ح",
@@ -88,7 +88,7 @@ const dataQuiz = {
     "و",
     "ن",
   ],
-  ahkamHuruf: [
+  ahkam: [
     "Izhhar",
     "Izhhar Syafawi",
     "Idzgham Bighunnah",
@@ -100,7 +100,7 @@ const dataQuiz = {
     "Iqlab",
     "Idzgham Mutaqarribain",
   ],
-  ahkamMad: [
+  mad: [
     "Mad Thabi’i",
     "Mad Lazim Kilmi Mutsaqqal",
     "Mad Wajib Muttashil",
@@ -233,22 +233,30 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   const transformedData =
     response?.data.map((item) => ({
       id: item.id,
-      no_akun: item.no_akun || "",
-      nip: item.nip || "",
-      nama: item.nama,
+      nik: item.nik || "",
+      username: item.akun?.username || "",
+      email: item.email || "",
+      nomor_telepon: item.nomor_telepon || "",
+      nama: item.nama || "",
       jenis_kelamin: item.jenis_kelamin || "",
       tempat_lahir: item.tempat_lahir || "",
-      pegawai: item.pegawai,
+      tanggal_lahir: item.tanggal_lahir || "",
       jenjang: item.jenjang || "",
-      level: item.level || "",
+      sekolah: item.sekolah || "",
+      alamat_sekolah: item.alamat_sekolah || "",
       provinsi: item.provinsi || "",
       kab_kota: item.kab_kota || "",
-      sekolah: item.sekolah || "",
+      kecamatan: item.kecamatan || "",
+      desa_kelurahan: item.desa_kelurahan || "",
       pendidikan: item.pendidikan || "",
-      prodi: item.prodi || "",
       perguruan_tinggi: item.perguruan_tinggi || "",
-      jenis_pt: item.jenis_pt || "",
-      tahun_lulus: item.tahun_lulus || 0,
+      fakultas: item.fakultas || "",
+      prodi: item.prodi || "",
+      tahun_lulus: Number(item.tahun_lulus) || 0,
+      pegawai: item.pegawai || "",
+      sertifikasi: item.sertifikasi || "",
+      tahun_sertifikasi: item.tahun_sertifikasi || "",
+      mapel: item.mapel || "",
       jadwal: item.jadwal || "",
       asesor: item.assessor?.name || "",
       makhraj: item.scoring?.scores.makhraj || 0,
@@ -293,6 +301,7 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
     fetchUser();
   }, [user, fetchUser]);
   console.log(fetchUser);
+
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {
     return (
@@ -398,10 +407,10 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
             waktuPelaksanaan="26 Nov 2025"
             nilaiAkhir={97.5}
             sections={[
-              { title: "Makharijul Huruf", list: dataQuiz.makharij },
-              { title: "Shifatul Huruf", list: dataQuiz.shifat },
-              { title: "Ahkam Al-Huruf", list: dataQuiz.ahkamHuruf },
-              { title: "Ahkam Al-Mad wa Qashr", list: dataQuiz.ahkamMad },
+              { title: "Makharijul Huruf", list: dataQuiz.makharj },
+              { title: "Shifatul Huruf", list: dataQuiz.sifat },
+              { title: "Ahkam Al-Huruf", list: dataQuiz.ahkam },
+              { title: "Ahkam Al-Mad wa Qashr", list: dataQuiz.mad },
               { title: "Gharib", list: dataQuiz.gharib },
             ]}
           />

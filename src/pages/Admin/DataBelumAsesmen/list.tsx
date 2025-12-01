@@ -33,7 +33,15 @@ export default function ListPagesDataPesertaBelomAsesmen() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["peserta-belum-asesmen", page, limit, searchQuery, sortBy, sortOrder, filters],
+    queryKey: [
+      "peserta-belum-asesmen",
+      page,
+      limit,
+      searchQuery,
+      sortBy,
+      sortOrder,
+      filters,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -62,12 +70,12 @@ export default function ListPagesDataPesertaBelomAsesmen() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-          {
-            field: "status",
-            op: "eq",
-            value: "BELUM",
-          },
-        ];
+        {
+          field: "status",
+          op: "eq",
+          value: "BELUM",
+        },
+      ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -100,19 +108,33 @@ export default function ListPagesDataPesertaBelomAsesmen() {
   const transformedData: DataPesertaBelomAsesment[] =
     response?.data?.map((user) => ({
       id: user.id,
-      no_akun: user.no_akun || "-",
-      nip: user.nip || "-",
-      nama: user.nama,
-      jenis_kelamin: user.jenis_kelamin || "L",
-      usia: user.usia || 0,
-      pegawai: user.pegawai || "-",
-      jenjang: user.jenjang || "-",
-      level: user.level || "-",
-      provinsi: user.provinsi || "-",
-      kab_kota: user.kab_kota || "-",
-      sekolah: user.sekolah || "-",
-      jadwal: user.jadwal || "-",
-      asesor: user.assessor?.name || "-",
+      nik: user.nik || "",
+      username: user.username || "",
+      email: user.email || "",
+      nomor_telepon: user.nomor_telepon || "",
+      nama: user.nama || "",
+      jenis_kelamin: user.jenis_kelamin || "",
+      tempat_lahir: user.tempat_lahir || "",
+      tanggal_lahir: user.tanggal_lahir || "",
+      jenjang: user.jenjang || "",
+      sekolah: user.sekolah || "",
+      alamat_sekolah: user.alamat_sekolah || "",
+      provinsi: user.provinsi || "",
+      kab_kota: user.kab_kota || "",
+      kecamatan: user.kecamatan || "",
+      desa_kelurahan: user.desa_kelurahan || "",
+      pendidikan: user.pendidikan || "",
+      perguruan_tinggi: user.perguruan_tinggi || "",
+      fakultas: user.fakultas || "",
+      prodi: user.prodi || "",
+      tahun_lulus: Number(user.tahun_lulus) || 0,
+      pegawai: user.pegawai || "",
+      sertifikasi: user.sertifikasi || "",
+      tahun_sertifikasi: user.tahun_sertifikasi || "",
+      mapel: user.mapel || "",
+      jadwal: user.jadwal || "",
+      asesor: user.assessor?.name || "",
+      status: user.status || "-",
     })) || [];
 
   const pagination = response?.pagination || {
@@ -175,14 +197,21 @@ export default function ListPagesDataPesertaBelomAsesmen() {
       userEmail={`${user?.email}`}
     >
       <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Box>
             <Typography variant="h4" gutterBottom fontWeight="bold">
               Data Peserta Belum Asesmen
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Kelola pendaftaran dan verifikasi data peserta yang belum mengikuti
-              asesmen
+              Kelola pendaftaran dan verifikasi data peserta yang belum
+              mengikuti asesmen
             </Typography>
           </Box>
           <ExportButton
