@@ -139,7 +139,6 @@ const PesertaPage: React.FC = () => {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
-
   const endpoint =
     user?.role === "admin"
       ? "/api/admin/profile"
@@ -157,6 +156,7 @@ const PesertaPage: React.FC = () => {
     queryFn: async () => {
       if (!endpoint) return { data: [] };
       const res = await apiClient.get(endpoint);
+      console.log(res.data);
       return res.data;
     },
     staleTime: 30000,
@@ -188,11 +188,17 @@ const PesertaPage: React.FC = () => {
           id: user.assessor.id,
           name: user.assessor.name,
           email: user.assessor.email,
-          link_wa: user.assessor.link_wa,
+          link_grup_wa: user.assessor.link_grup_wa,
         }
       : null,
     status: user.status || "-",
-    link_wa: user.link_wa || "-",
+    link_grup_wa: user.link_grup_wa || "-",
+    makhraj: user.scoring?.scores.makhraj || 0,
+    sifat: user.scoring?.scores.sifat || 0,
+    ahkam: user.scoring?.scores.ahkam || 0,
+    mad: user.scoring?.scores.mad || 0,
+    gharib: user.scoring?.scores.gharib || 0,
+    total: user.scoring?.scores.overall || 0,
   });
 
   const asesmenList: DataPeserta[] = response?.data
@@ -234,7 +240,9 @@ const PesertaPage: React.FC = () => {
   });
 
   // Transform detail API ke sections
-  const mapDetailToSections = (detail: any) => {
+  const mapDetailToSections = (
+    detail: { data: ApiAssessmentItem[] } | null | undefined
+  ) => {
     const defaultSections = [
       { title: "Makharijul Huruf", list: dataQuiz.makharij },
       { title: "Shifatul Huruf", list: dataQuiz.sifat },
@@ -245,8 +253,9 @@ const PesertaPage: React.FC = () => {
 
     if (!detail?.data) return defaultSections;
 
-    const grouped: Record<string, any[]> = {};
-    detail.data.forEach((item: any) => {
+    const grouped: Record<string, { simbol: string; nilai: number }[]> = {};
+
+    detail.data.forEach((item: ApiAssessmentItem) => {
       if (!grouped[item.kategori]) grouped[item.kategori] = [];
       grouped[item.kategori].push({
         simbol: item.huruf,
@@ -269,7 +278,7 @@ const PesertaPage: React.FC = () => {
 
       if (!key || !grouped[key]) return sec;
 
-      const list = sec.list.map((item: any) => {
+      const list = sec.list.map((item) => {
         const simbol = typeof item === "string" ? item : item.simbol;
         const found = grouped[key].find((i) => i.simbol === simbol);
         return { simbol, nilai: found?.nilai ?? 0 };
@@ -404,7 +413,7 @@ const PesertaPage: React.FC = () => {
           waktuPelaksanaan={selectedAsesmen.jadwal || "26 Nov 2025"}
           nilaiAkhir={
             asesmenDetail?.data?.reduce(
-              (sum: number, i: any) => sum + parseFloat(i.nilai),
+              (sum: number, i: ApiAssessmentItem) => sum + parseFloat(i.nilai),
               0
             ) || 0
           }

@@ -17,55 +17,15 @@ import {
   QueryFunctionContext,
 } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
-import apiClient, { api, handleApiError } from "../services/api.config";
+import apiClient, { handleApiError } from "../services/api.config";
 import InfiniteSelect from "../components/Register/InfiniteSelect";
-
-interface Asesor {
-  id: string;
-  name: string;
-}
-
-type AssessorPage = {
-  data: Asesor[];
-  page?: number;
-  totalPages?: number;
-  hasMore?: boolean;
-};
-
-interface RegisterForm {
-  nik: string;
-  nama: string;
-  tempatLahir: string;
-  tanggalLahir: string;
-  jenisKelamin: "L" | "P" | "";
-  pendidikan: string;
-  kampus: string;
-  fakultas: string;
-  prodi: string;
-  tahunLulus: string;
-  tingkat: string;
-  sekolah: string;
-  alamatSekolah: string;
-  provinsi: string;
-  kabupaten: string;
-  kecamatan: string;
-  desa: string;
-  statusPegawai: string;
-  sertifikasi: "Sudah" | "Belum" | "";
-  tahunSertifikasi: string;
-  email: string;
-  whatsapp: string;
-  mapel:
-    | "Al-Qur'an Hadis"
-    | "Akidah Akhlak"
-    | "Fiqih"
-    | "Sejarah Kebudayaan Islam (SKI)"
-    | "Bahasa Arab"
-    | "";
-  asesor: string;
-  jadwal: string;
-  username: string;
-}
+import {
+  Asesor,
+  AssessorPage,
+  RegisterForm,
+  RegisterPayload,
+} from "../components/Register/types";
+import { useNavigate } from "react-router-dom";
 
 const LIMIT = 10;
 const jadwalDesember = Array.from({ length: 26 }, (_, i) => 6 + i).map(
@@ -73,36 +33,41 @@ const jadwalDesember = Array.from({ length: 26 }, (_, i) => 6 + i).map(
 );
 
 export default function Register() {
-  const { control, handleSubmit, setValue } = useForm<RegisterForm>({
+  const { control, handleSubmit, setValue, watch } = useForm<RegisterForm>({
     defaultValues: {
-      nik: "",
+      // nik: "",
       nama: "",
-      tempatLahir: "",
-      tanggalLahir: "",
-      jenisKelamin: "",
+      tempat_lahir: "",
+      tanggal_lahir: "",
+      jenis_kelamin: "",
       pendidikan: "",
       kampus: "",
-      fakultas: "",
+      jenjang: "",
+      sertifikat_profesi: "",
       prodi: "",
-      tahunLulus: "",
-      tingkat: "",
-      sekolah: "",
-      alamatSekolah: "",
+      tahun_lulus: "",
+      tingkat_sekolah: "",
+      nama_sekolah: "",
       provinsi: "",
       kabupaten: "",
       kecamatan: "",
       desa: "",
-      statusPegawai: "",
+      status_pegawai: "",
+      level: "",
+      alamat_sekolah: "",
       sertifikasi: "",
       tahunSertifikasi: "",
-      email: "",
-      whatsapp: "",
-      mapel: "",
+      // email: "",
+      // whatsapp: "",
+      // mapel: "",
+      password: "",
       asesor: "",
       jadwal: "",
       username: "",
     },
   });
+  const navigate = useNavigate();
+  const sertifikasiValue = watch("sertifikasi");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -194,9 +159,9 @@ export default function Register() {
 
   // Mutation register
   const registerMutation = useMutation({
-    mutationFn: async (payload: RegisterForm) => {
-      const res = await api.post("/api/auth/register", payload);
-      return res.data as RegisterForm;
+    mutationFn: async (payload: RegisterPayload) => {
+      const res = await apiClient.post("/api/auth/register", payload);
+      return res.data;
     },
     onMutate: () => {
       setLoading(true);
@@ -209,13 +174,39 @@ export default function Register() {
     onSuccess: (data) => {
       setSuccess(true);
       alert(`Registrasi berhasil: ${data.nama}`);
+      navigate("/");
     },
     onSettled: () => {
       setLoading(false);
     },
   });
 
-  const onSubmit = (data: RegisterForm) => registerMutation.mutate(data);
+  const onSubmit = (data: RegisterForm) => {
+    let hasilAkhir = "BELUM";
+
+    if (data.sertifikasi === "Sudah") {
+      hasilAkhir = `SUDAH ${data.tahunSertifikasi}`;
+    }
+
+    // buang field UI-only dari data
+    const { sertifikasi, tahunSertifikasi, ...rest } = data;
+    void sertifikasi;
+    void tahunSertifikasi;
+
+    const payload: RegisterPayload = {
+      ...rest,
+      sertifikat_profesi: hasilAkhir,
+      password: data.password, // tetap dikirim
+    };
+
+    // Buat data yang aman untuk di-log
+    const safeLog = { ...payload };
+    safeLog.password = "*** HIDDEN ***";
+
+    console.log("Payload:", safeLog);
+
+    registerMutation.mutate(payload);
+  };
 
   return (
     <Box
@@ -246,13 +237,27 @@ export default function Register() {
                 name="username"
                 control={control}
                 render={({ field }) => (
-                  <TextField label="Username" fullWidth {...field} />
+                  <TextField label="email" fullWidth {...field} />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="password"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    {...field}
+                  />
                 )}
               />
             </Grid>
 
             {/* Email */}
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <Controller
                 name="email"
                 control={control}
@@ -260,10 +265,10 @@ export default function Register() {
                   <TextField label="Email" fullWidth {...field} />
                 )}
               />
-            </Grid>
+            </Grid> */}
 
             {/* WhatsApp */}
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <Controller
                 name="whatsapp"
                 control={control}
@@ -271,7 +276,7 @@ export default function Register() {
                   <TextField label="WhatsApp" fullWidth {...field} />
                 )}
               />
-            </Grid>
+            </Grid> */}
 
             {/* NIK */}
             <Grid item xs={12} md={6}>
@@ -298,7 +303,7 @@ export default function Register() {
             {/* Tempat Lahir */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="tempatLahir"
+                name="tempat_lahir"
                 control={control}
                 render={({ field }) => (
                   <TextField label="Tempat Lahir" fullWidth {...field} />
@@ -309,7 +314,7 @@ export default function Register() {
             {/* Tanggal Lahir */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="tanggalLahir"
+                name="tanggal_lahir"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -326,7 +331,7 @@ export default function Register() {
             {/* Jenis Kelamin */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="jenisKelamin"
+                name="jenis_kelamin"
                 control={control}
                 render={({ field }) => (
                   <TextField label="Jenis Kelamin" select fullWidth {...field}>
@@ -362,7 +367,7 @@ export default function Register() {
             {/* Fakultas */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="fakultas"
+                name="jenjang"
                 control={control}
                 render={({ field }) => (
                   <TextField label="Fakultas" fullWidth {...field} />
@@ -384,7 +389,7 @@ export default function Register() {
             {/* Tahun Lulus */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="tahunLulus"
+                name="tahun_lulus"
                 control={control}
                 render={({ field }) => (
                   <TextField label="Tahun Lulus" fullWidth {...field} />
@@ -395,7 +400,7 @@ export default function Register() {
             {/* Tingkat */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="tingkat"
+                name="tingkat_sekolah"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -417,7 +422,7 @@ export default function Register() {
             {/* Sekolah */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="sekolah"
+                name="nama_sekolah"
                 control={control}
                 render={({ field }) => (
                   <TextField label="Nama Sekolah" fullWidth {...field} />
@@ -428,7 +433,7 @@ export default function Register() {
             {/* Alamat Sekolah */}
             <Grid item xs={12}>
               <Controller
-                name="alamatSekolah"
+                name="alamat_sekolah"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -512,7 +517,7 @@ export default function Register() {
             {/* Status Pegawai */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="statusPegawai"
+                name="status_pegawai"
                 control={control}
                 render={({ field }) => (
                   <TextField label="Status Pegawai" select fullWidth {...field}>
@@ -540,7 +545,7 @@ export default function Register() {
               />
             </Grid>
 
-            {control._formValues.sertifikasi === "Sudah" && (
+            {sertifikasiValue === "Sudah" && (
               <Grid item xs={12} md={6}>
                 <Controller
                   name="tahunSertifikasi"
@@ -555,7 +560,7 @@ export default function Register() {
             {/* Mapel */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="mapel"
+                name="level"
                 control={control}
                 render={({ field }) => (
                   <TextField label="Mata Pelajaran" select fullWidth {...field}>

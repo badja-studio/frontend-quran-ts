@@ -25,64 +25,21 @@ import {
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import apiClient from "../../../services/api.config";
 import useUserStore from "../../../store/user.store";
-
-interface Asesor {
-  id: string;
-  name: string;
-  email: string;
-}
-
-interface Peserta {
-  id: string;
-  nama: string;
-  nip: string;
-  no_akun: string;
-}
-
-// Tambahkan tipe response halaman assessor
-type AssessorPage = {
-  data: Asesor[];
-  page?: number;
-  totalPages?: number;
-  hasMore?: boolean;
-};
-
-type PesertaPage = {
-  data: Peserta[];
-  page?: number;
-  totalPages?: number;
-  hasMore?: boolean;
-};
-
-interface PesertaFormData {
-  no_akun: string;
-  nip: string;
-  nama: string;
-  jenis_kelamin: "L" | "P";
-  tempat_lahir: string;
-  jabatan: string;
-  jenjang: string;
-  level: string;
-  provinsi: string;
-  kab_kota: string;
-  sekolah: string;
-  pendidikan: string;
-  prodi: string;
-  perguruan_tinggi: string;
-  jenis_pt: string;
-  tahun_lulus: number;
-  jadwal: string;
-  akun_id?: string | number;
-  asesor_id?: string | null;
-  usia?: number;
-  pegawai: string;
-}
+import {
+  Peserta,
+  PesertaFormData,
+  AssessorPage,
+  Asesor,
+  PesertaPage,
+} from "./peserta/type";
 
 const LIMIT = 10;
 
 export default function InputPesertaPage() {
   const [mode, setMode] = useState<"create" | "edit">("create");
-  const [selectedPesertaId, setSelectedPesertaId] = useState<string | null>(null);
+  const [selectedPesertaId, setSelectedPesertaId] = useState<string | null>(
+    null
+  );
 
   const [showSuccessNotif, setShowSuccessNotif] = useState(false);
   const [showErrorNotif, setShowErrorNotif] = useState(false);
@@ -257,22 +214,29 @@ export default function InputPesertaPage() {
     formState: { errors },
   } = useForm<PesertaFormData>({
     defaultValues: {
-      no_akun: "",
-      nip: "",
+      username: "",
+      email: "",
+      no_telepon: "",
+      nik: "",
       nama: "",
       jenis_kelamin: "L",
       tempat_lahir: "",
-      jabatan: "",
-      jenjang: "",
-      level: "",
+      tanggal_lahir: new Date().toISOString(),
+      desa: "",
+      sertifikasi: "",
       provinsi: "",
+      kecamatan: "",
       kab_kota: "",
-      sekolah: "",
+      tahun_sertifikasi: 0,
       pendidikan: "",
+      fakultas: "",
       prodi: "",
       perguruan_tinggi: "",
-      jenis_pt: "",
+      sekolah: "",
+      tingkatan_sekolah: "",
+      alamat_sekolah: "",
       tahun_lulus: 0,
+      mapel: "",
       jadwal: new Date().toISOString(),
       asesor_id: null,
     },
@@ -282,25 +246,31 @@ export default function InputPesertaPage() {
   useEffect(() => {
     if (mode === "edit" && pesertaDetail) {
       const formData = {
-        no_akun: pesertaDetail.no_akun || "",
-        nip: pesertaDetail.nip || "",
+        username: pesertaDetail.username || "",
+        nik: pesertaDetail.nik || "",
         nama: pesertaDetail.nama || "",
         jenis_kelamin: (pesertaDetail.jenis_kelamin as "L" | "P") || "L",
         tempat_lahir: pesertaDetail.tempat_lahir || "",
-        jabatan: pesertaDetail.jabatan || "",
-        jenjang: pesertaDetail.jenjang || "",
-        level: pesertaDetail.level || "",
+        tanggal_lahir: pesertaDetail.tanggal_lahir || "",
+        desa: pesertaDetail.desa || "",
+        sertifikasi: pesertaDetail.sertifikasi || "",
         provinsi: pesertaDetail.provinsi || "",
+        kecamatan: pesertaDetail.kecamatan || "",
         kab_kota: pesertaDetail.kab_kota || "",
-        sekolah: pesertaDetail.sekolah || "",
+        tahun_sertifikasi: pesertaDetail.tahun_sertifikasi || "",
         pendidikan: pesertaDetail.pendidikan || "",
+        fakultas: pesertaDetail.fakultas || "",
         prodi: pesertaDetail.prodi || "",
+        mapel: pesertaDetail.mapel || "",
         perguruan_tinggi: pesertaDetail.perguruan_tinggi || "",
-        jenis_pt: pesertaDetail.jenis_pt || "",
+        sekolah: pesertaDetail.sekolah || "",
+        tingkatan_sekolah: pesertaDetail.tingkatan_sekolah || "",
+        alamat_sekolah: pesertaDetail.alamat_sekolah || "",
         tahun_lulus: pesertaDetail.tahun_lulus || 0,
         jadwal: pesertaDetail.jadwal || new Date().toISOString().split("T")[0],
         asesor_id: pesertaDetail.asesor_id || null,
-        usia: pesertaDetail.usia || 0,
+        no_telepon: pesertaDetail.no_telepon || "",
+        email: pesertaDetail.email || "",
         pegawai: pesertaDetail.pegawai || "",
         akun_id: pesertaDetail.akun_id,
       };
@@ -398,25 +368,31 @@ export default function InputPesertaPage() {
                     setMode("create");
                     setSelectedPesertaId(null);
                     reset({
-                      no_akun: "",
-                      nip: "",
+                      username: "",
+                      no_telepon: "",
+                      nik: "",
                       nama: "",
                       jenis_kelamin: "L",
                       tempat_lahir: "",
-                      jabatan: "",
-                      jenjang: "",
-                      level: "",
+                      tanggal_lahir: "",
+                      desa: "",
+                      sertifikasi: "",
+                      mapel: "",
                       provinsi: "",
+                      kecamatan: "",
                       kab_kota: "",
-                      sekolah: "",
+                      tahun_sertifikasi: 0,
                       pendidikan: "",
+                      fakultas: "",
                       prodi: "",
                       perguruan_tinggi: "",
-                      jenis_pt: "",
+                      sekolah: "",
+                      tingkatan_sekolah: "",
+                      alamat_sekolah: "",
                       tahun_lulus: 0,
                       jadwal: new Date().toISOString().split("T")[0],
                       asesor_id: null,
-                      usia: 0,
+                      email: "",
                       pegawai: "",
                     });
                   }}
@@ -437,25 +413,30 @@ export default function InputPesertaPage() {
                     setMode("edit");
                     setSelectedPesertaId(null);
                     reset({
-                      no_akun: "",
-                      nip: "",
+                      username: "",
+                      email: "",
+                      nik: "",
                       nama: "",
                       jenis_kelamin: "L",
                       tempat_lahir: "",
-                      jabatan: "",
-                      jenjang: "",
-                      level: "",
+                      tanggal_lahir: "",
+                      desa: "",
+                      sertifikasi: "",
                       provinsi: "",
                       kab_kota: "",
-                      sekolah: "",
+                      kecamatan: "",
+                      tahun_sertifikasi: 0,
                       pendidikan: "",
+                      fakultas: "",
                       prodi: "",
                       perguruan_tinggi: "",
-                      jenis_pt: "",
+                      sekolah: "",
+                      tingkatan_sekolah: "",
+                      alamat_sekolah: "",
                       tahun_lulus: 0,
                       jadwal: new Date().toISOString().split("T")[0],
                       asesor_id: null,
-                      usia: 0,
+                      no_telepon: "",
                       pegawai: "",
                     });
                   }}
@@ -495,11 +476,13 @@ export default function InputPesertaPage() {
                   }}
                   loading={isLoadingPesertaList}
                   ListboxProps={{
-                    onScroll: (event: React.SyntheticEvent<HTMLUListElement>) => {
+                    onScroll: (
+                      event: React.SyntheticEvent<HTMLUListElement>
+                    ) => {
                       const listboxNode = event.currentTarget as HTMLElement;
                       if (
                         listboxNode.scrollTop + listboxNode.clientHeight >=
-                        listboxNode.scrollHeight - 1 &&
+                          listboxNode.scrollHeight - 1 &&
                         hasNextPesertaPage &&
                         !isFetchingNextPesertaPage
                       ) {
@@ -542,17 +525,51 @@ export default function InputPesertaPage() {
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <Controller
-                  name="no_akun"
+                  name="username"
                   control={control}
-                  rules={{ required: "No Akun wajib diisi" }}
+                  rules={{ required: "Username wajib diisi" }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       fullWidth
-                      label="No Akun"
+                      label="Username"
                       required
-                      error={!!errors.no_akun}
-                      helperText={errors.no_akun?.message}
+                      error={!!errors.username}
+                      helperText={errors.username?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="no_telepon"
+                  control={control}
+                  rules={{ required: "No Telepon wajib diisi" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="No Whatsapp"
+                      required
+                      error={!!errors.no_telepon}
+                      helperText={errors.no_telepon?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="email"
+                  control={control}
+                  rules={{ required: "Email wajib diisi" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Email"
+                      required
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
                     />
                   )}
                 />
@@ -560,17 +577,17 @@ export default function InputPesertaPage() {
 
               <Grid item xs={12} md={6}>
                 <Controller
-                  name="nip"
+                  name="nik"
                   control={control}
-                  rules={{ required: "NIP wajib diisi" }}
+                  rules={{ required: "nik wajib diisi" }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       fullWidth
-                      label="NIP"
+                      label="NIK"
                       required
-                      error={!!errors.nip}
-                      helperText={errors.nip?.message}
+                      error={!!errors.nik}
+                      helperText={errors.nik?.message}
                     />
                   )}
                 />
@@ -599,20 +616,18 @@ export default function InputPesertaPage() {
 
               <Grid item xs={12} md={6}>
                 <Controller
-                  name="usia"
+                  name="tanggal_lahir"
                   control={control}
-                  rules={{
-                    required: "Usia wajib diisi",
-                  }}
+                  rules={{ required: "Tanggal Lahir wajib diisi" }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       fullWidth
-                      label="Usia"
+                      label="Tanggal Lahir"
                       required
-                      type="number"
-                      error={!!errors.usia}
-                      helperText={errors.usia?.message}
+                      type="date"
+                      error={!!errors.tanggal_lahir}
+                      helperText={errors.tanggal_lahir?.message}
                       InputLabelProps={{ shrink: true }}
                     />
                   )}
@@ -666,87 +681,7 @@ export default function InputPesertaPage() {
             <Typography variant="h6" fontWeight="bold" mb={2}>
               Profesi & Lokasi
             </Typography>
-
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="jabatan"
-                  control={control}
-                  rules={{ required: "Jabatan wajib diisi" }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Jabatan"
-                      required
-                      error={!!errors.jabatan}
-                      helperText={errors.jabatan?.message}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="pegawai"
-                  control={control}
-                  rules={{
-                    required: "Pegawai wajib diisi",
-                    minLength: {
-                      value: 3,
-                      message: "Pegawai minimal 3 karakter",
-                    },
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Pegawai"
-                      required
-                      error={!!errors.pegawai}
-                      helperText={errors.pegawai?.message}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="jenjang"
-                  control={control}
-                  rules={{ required: "Jenjang wajib diisi" }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Jenjang"
-                      required
-                      error={!!errors.jenjang}
-                      helperText={errors.jenjang?.message}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="level"
-                  control={control}
-                  rules={{ required: "Level wajib diisi" }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Level"
-                      required
-                      error={!!errors.level}
-                      helperText={errors.level?.message}
-                    />
-                  )}
-                />
-              </Grid>
-
               <Grid item xs={12} md={6}>
                 <Controller
                   name="provinsi"
@@ -785,17 +720,112 @@ export default function InputPesertaPage() {
 
               <Grid item xs={12} md={6}>
                 <Controller
-                  name="sekolah"
+                  name="kecamatan"
                   control={control}
-                  rules={{ required: "Sekolah wajib diisi" }}
+                  rules={{ required: "kecamatan wajib diisi" }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       fullWidth
-                      label="Sekolah"
+                      label="Kecamatan"
                       required
-                      error={!!errors.sekolah}
-                      helperText={errors.sekolah?.message}
+                      error={!!errors.kecamatan}
+                      helperText={errors.kecamatan?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="desa"
+                  control={control}
+                  rules={{ required: "Desa wajib diisi" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Desa/Kelurahan"
+                      required
+                      error={!!errors.desa}
+                      helperText={errors.desa?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="pegawai"
+                  control={control}
+                  rules={{
+                    required: "Pegawai wajib diisi",
+                    minLength: {
+                      value: 3,
+                      message: "Pegawai minimal 3 karakter",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Pegawai"
+                      required
+                      error={!!errors.pegawai}
+                      helperText={errors.pegawai?.message}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="sertifikasi"
+                  control={control}
+                  rules={{ required: "sertifikasi wajib diisi" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Sertifikasi"
+                      required
+                      error={!!errors.sertifikasi}
+                      helperText={errors.sertifikasi?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="tahun_sertifikasi"
+                  control={control}
+                  rules={{ required: "tahun_sertifikasi wajib diisi" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="tahun_sertifikasi"
+                      required
+                      error={!!errors.tahun_sertifikasi}
+                      helperText={errors.tahun_sertifikasi?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="mapel"
+                  control={control}
+                  rules={{ required: "mapel wajib diisi" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Mata Pelajaran"
+                      required
+                      error={!!errors.mapel}
+                      helperText={errors.mapel?.message}
                     />
                   )}
                 />
@@ -819,10 +849,44 @@ export default function InputPesertaPage() {
                     <TextField
                       {...field}
                       fullWidth
-                      label="Pendidikan"
+                      label="Pendidikan Terakhir"
                       required
                       error={!!errors.pendidikan}
                       helperText={errors.pendidikan?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="perguruan_tinggi"
+                  control={control}
+                  rules={{ required: "Perguruan Tinggi wajib diisi" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Asal Kampus"
+                      required
+                      error={!!errors.perguruan_tinggi}
+                      helperText={errors.perguruan_tinggi?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Controller
+                  name="fakultas"
+                  control={control}
+                  rules={{ required: "Fakultas wajib diisi" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Fakultas"
+                      required
+                      error={!!errors.fakultas}
+                      helperText={errors.fakultas?.message}
                     />
                   )}
                 />
@@ -845,20 +909,19 @@ export default function InputPesertaPage() {
                   )}
                 />
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <Controller
-                  name="perguruan_tinggi"
+                  name="tingkatan_sekolah"
                   control={control}
-                  rules={{ required: "Perguruan Tinggi wajib diisi" }}
+                  rules={{ required: "Tingkatan Sekolah wajib diisi" }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       fullWidth
-                      label="Perguruan Tinggi"
+                      label="Tingkatan Sekolah"
                       required
-                      error={!!errors.perguruan_tinggi}
-                      helperText={errors.perguruan_tinggi?.message}
+                      error={!!errors.tingkatan_sekolah}
+                      helperText={errors.tingkatan_sekolah?.message}
                     />
                   )}
                 />
@@ -866,17 +929,17 @@ export default function InputPesertaPage() {
 
               <Grid item xs={12} md={6}>
                 <Controller
-                  name="jenis_pt"
+                  name="sekolah"
                   control={control}
-                  rules={{ required: "Jenis PT wajib diisi" }}
+                  rules={{ required: "Nama Sekolah wajib diisi" }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       fullWidth
-                      label="Jenis PT"
+                      label="Nama Sekolah"
                       required
-                      error={!!errors.jenis_pt}
-                      helperText={errors.jenis_pt?.message}
+                      error={!!errors.sekolah}
+                      helperText={errors.sekolah?.message}
                     />
                   )}
                 />
@@ -957,7 +1020,7 @@ export default function InputPesertaPage() {
                           // when scrolled to bottom, try to fetch next page
                           if (
                             listboxNode.scrollTop + listboxNode.clientHeight >=
-                            listboxNode.scrollHeight - 1 &&
+                              listboxNode.scrollHeight - 1 &&
                             hasNextPage &&
                             !isFetchingNextPage
                           ) {
@@ -1002,7 +1065,7 @@ export default function InputPesertaPage() {
                   borderRadius: 2,
                   opacity:
                     createPesertaMutation.isPending ||
-                      updatePesertaMutation.isPending
+                    updatePesertaMutation.isPending
                       ? 0.7
                       : 1,
                 }}
@@ -1012,8 +1075,8 @@ export default function InputPesertaPage() {
                     ? "Menyimpan..."
                     : "Simpan"
                   : updatePesertaMutation.isPending
-                    ? "Mengupdate..."
-                    : "Update"}
+                  ? "Mengupdate..."
+                  : "Update"}
               </Button>
 
               <Button
@@ -1080,8 +1143,8 @@ export default function InputPesertaPage() {
                 ? createPesertaMutation.error.message
                 : "Terjadi kesalahan saat menyimpan data"
               : updatePesertaMutation.error instanceof Error
-                ? updatePesertaMutation.error.message
-                : "Terjadi kesalahan saat mengupdate data"}
+              ? updatePesertaMutation.error.message
+              : "Terjadi kesalahan saat mengupdate data"}
           </Alert>
         </Snackbar>
       </Box>

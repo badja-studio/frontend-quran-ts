@@ -5,7 +5,7 @@ export interface Asesor {
   id: string;
   name: string;
   email?: string;
-  link_wa?: string;
+  link_grup_wa?: string;
 }
 
 // Tipe peserta
@@ -30,7 +30,13 @@ export interface DataPeserta {
   jadwal?: string;
   asesor?: Asesor | null;
   status?: string;
-  link_wa?: string;
+  link_grup_wa?: string;
+  makhraj: number;
+  sifat: number;
+  ahkam: number;
+  mad: number;
+  gharib: number;
+  total: number;
 }
 
 // API response peserta
@@ -38,7 +44,7 @@ export interface ApiAssessor {
   id: string;
   name: string;
   email: string;
-  link_wa?: string;
+  link_grup_wa?: string;
 }
 
 export interface ApiParticipant {
@@ -60,9 +66,15 @@ export interface ApiParticipant {
   jenis_pt?: string;
   tahun_lulus?: number | string;
   jadwal?: string;
-  assessor?: ApiAssessor;
+  assessor?: {
+    id: string;
+    name: string;
+    email: string;
+    link_grup_wa?: string;
+  } | null;
   status?: string;
-  link_wa?: string;
+  link_grup_wa?: string;
+  scoring?: Scoring;
 }
 
 // Tipe item asesmen
@@ -90,6 +102,42 @@ export interface ApiAssessmentResponse {
     total: number;
     total_pages: number;
   };
+}
+export interface CategoryBreakdown {
+  category: string;
+  initialScore: number;
+  errorCount: number;
+  totalDeduction: number;
+  finalScore: number;
+}
+// Scoring Details interface
+export interface ScoringDetails {
+  categoryBreakdown: {
+    MAKHRAJ: CategoryBreakdown;
+    SIFAT: CategoryBreakdown;
+    AHKAM: CategoryBreakdown;
+    MAD: CategoryBreakdown;
+    GHARIB: CategoryBreakdown;
+  };
+  totalDeduction: number;
+  assessmentCount: number;
+  calculatedAt: string;
+}
+
+// Scores interface
+export interface Scores {
+  makhraj: number;
+  sifat: number;
+  ahkam: number;
+  mad: number;
+  gharib: number;
+  overall: number;
+}
+
+// Scoring interface
+export interface Scoring {
+  scores: Scores;
+  details: ScoringDetails;
 }
 
 // Tipe section untuk modal
