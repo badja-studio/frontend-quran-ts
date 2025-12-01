@@ -4,227 +4,202 @@ import { Box, Typography, Chip, Avatar } from "@mui/material";
 import ActionMenu from "./action";
 
 export const columnsPeserta: Column<DataPesertaHasilAssesment>[] = [
-    {
-        id: "no_akun",
-        label: "No. Akun",
-        minWidth: 100,
-        align: "center",
+  {
+    id: "nik",
+    label: "NIK",
+    minWidth: 150,
+    align: "center",
+  },
+  {
+    id: "username",
+    label: "Username",
+    minWidth: 150,
+    align: "center",
+  },
+  {
+    id: "nama",
+    label: "Nama Peserta",
+    minWidth: 220,
+    format: (value) => {
+      const nama = String(value);
+      return (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Avatar sx={{ width: 32, height: 32, bgcolor: "primary.main" }}>
+            {nama.charAt(0)}
+          </Avatar>
+          <Typography variant="body2" fontWeight="medium">
+            {nama}
+          </Typography>
+        </Box>
+      );
     },
-    {
-        id: "nip",
-        label: "NIP",
-        minWidth: 130,
-        align: "center",
+  },
+  {
+    id: "email",
+    label: "Email",
+    minWidth: 180,
+  },
+  {
+    id: "nomor_telepon",
+    label: "WhatsApp",
+    minWidth: 150,
+  },
+  {
+    id: "jenis_kelamin",
+    label: "Jenis Kelamin",
+    minWidth: 120,
+    align: "center",
+    format: (value) => {
+      const jk = String(value);
+      return (
+        <Chip
+          label={jk === "L" ? "Laki-laki" : "Perempuan"}
+          size="small"
+          color={jk === "L" ? "primary" : "secondary"}
+        />
+      );
     },
-    {
-        id: "nama",
-        label: "Nama Peserta",
-        minWidth: 200,
-        format: (value) => {
-            const nama = String(value);
-            return (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Avatar sx={{ width: 32, height: 32, bgcolor: "primary.main" }}>
-                        {nama.charAt(0)}
-                    </Avatar>
-                    <Typography variant="body2" fontWeight="medium">
-                        {nama}
-                    </Typography>
-                </Box>
-            );
-        },
+  },
+  {
+    id: "tempat_lahir",
+    label: "Tempat Lahir",
+    minWidth: 130,
+  },
+  {
+    id: "tanggal_lahir",
+    label: "Tanggal Lahir",
+    minWidth: 130,
+    align: "center",
+    format: (value) => new Date(String(value)).toLocaleDateString("id-ID"),
+  },
+  {
+    id: "pendidikan",
+    label: "Pendidikan Terakhir",
+    minWidth: 150,
+    align: "center",
+  },
+  {
+    id: "perguruan_tinggi",
+    label: "Asal Kampus",
+    minWidth: 180,
+  },
+  {
+    id: "fakultas",
+    label: "Fakultas",
+    minWidth: 150,
+  },
+  {
+    id: "prodi",
+    label: "Program Studi",
+    minWidth: 180,
+  },
+  {
+    id: "tahun_lulus",
+    label: "Tahun Lulus",
+    minWidth: 120,
+    align: "center",
+  },
+  {
+    id: "jenjang",
+    label: "Jenjang",
+    minWidth: 120,
+    align: "center",
+    format: (value) => (
+      <Chip size="small" label={String(value)} color="primary" />
+    ),
+  },
+  {
+    id: "sekolah",
+    label: "Nama Sekolah",
+    minWidth: 180,
+  },
+  {
+    id: "alamat_sekolah",
+    label: "Alamat Sekolah",
+    minWidth: 220,
+  },
+  {
+    id: "provinsi",
+    label: "Provinsi",
+    minWidth: 150,
+  },
+  {
+    id: "kab_kota",
+    label: "Kab/Kota",
+    minWidth: 150,
+  },
+  {
+    id: "kecamatan",
+    label: "Kecamatan",
+    minWidth: 150,
+  },
+  {
+    id: "desa_kelurahan",
+    label: "Desa/Kelurahan",
+    minWidth: 150,
+  },
+  {
+    id: "pegawai",
+    label: "Status Pegawai",
+    minWidth: 150,
+    align: "center",
+    format: (value) => (
+      <Chip
+        label={String(value)}
+        size="small"
+        color="info"
+        variant="outlined"
+      />
+    ),
+  },
+  {
+    id: "sertifikasi",
+    label: "Sertifikasi",
+    minWidth: 120,
+    align: "center",
+    format: (value) => {
+      const s = String(value);
+      return (
+        <Chip
+          label={s === "Sudah" ? "Sudah" : "Belum"}
+          size="small"
+          color={s === "Sudah" ? "success" : "warning"}
+        />
+      );
     },
-    {
-        id: "jenis_kelamin",
-        label: "Jenis Kelamin",
-        minWidth: 120,
-        align: "center",
-        format: (value) => {
-            const jenis_kelamin = String(value);
-            return (
-                <Chip
-                    label={jenis_kelamin === "L" ? "Laki-laki" : "Perempuan"}
-                    size="small"
-                    color={jenis_kelamin === "L" ? "primary" : "secondary"}
-                />
-            );
-        },
+  },
+  {
+    id: "tahun_sertifikasi",
+    label: "Tahun Sertifikasi",
+    minWidth: 120,
+    align: "center",
+  },
+  {
+    id: "mapel",
+    label: "Mapel Diampu",
+    minWidth: 180,
+  },
+  {
+    id: "jadwal",
+    label: "Jadwal",
+    minWidth: 150,
+    align: "center",
+    format: (value) => new Date(String(value)).toLocaleDateString("id-ID"),
+  },
+
+  {
+    id: "asesor",
+    label: "Asesor",
+    minWidth: 130,
+    align: "center",
+  },
+  {
+    id: "action",
+    label: "Action",
+    minWidth: 150,
+    align: "center",
+    format: (_value: unknown, row: DataPesertaHasilAssesment) => {
+      return <ActionMenu row={row} />;
     },
-    {
-        id: "usia",
-        label: "Usia",
-        minWidth: 130,
-        align: "center",
-    },
-    {
-        id: "pegawai",
-        label: "Pegawai",
-        minWidth: 120,
-        align: "center",
-        format: (value) => {
-            return (
-                <Chip
-                    label={String(value)}
-                    size="small"
-                    color="info"
-                    variant="outlined"
-                />
-            );
-        },
-    },
-    {
-        id: "jenjang",
-        label: "Jenjang",
-        minWidth: 100,
-        align: "center",
-        format: (value) => {
-            return (
-                <Chip
-                    label={String(value)}
-                    size="small"
-                    color="primary"
-                />
-            );
-        },
-    },
-    {
-        id: "level",
-        label: "Level",
-        minWidth: 100,
-        align: "center",
-        format: (value) => {
-            const level = String(value);
-            let color: "success" | "warning" | "info" = "info";
-            if (level === "Senior") color = "success";
-            else if (level === "Middle") color = "warning";
-            return (
-                <Chip label={level} size="small" color={color} />
-            );
-        },
-    },
-    {
-        id: "provinsi",
-        label: "Provinsi",
-        minWidth: 150,
-    },
-    {
-        id: "kab_kota",
-        label: "Kab/Kota",
-        minWidth: 150,
-    },
-    {
-        id: "sekolah",
-        label: "Sekolah",
-        minWidth: 200,
-    },
-    {
-        id: "pendidikan",
-        label: "Pendidikan",
-        minWidth: 100,
-        align: "center",
-        format: (value) => {
-            return (
-                <Chip
-                    label={String(value)}
-                    size="small"
-                    color="secondary"
-                    variant="outlined"
-                />
-            );
-        },
-    },
-    {
-        id: "program_studi",
-        label: "Program Studi",
-        minWidth: 200,
-    },
-    {
-        id: "perguruan_tinggi",
-        label: "Perguruan Tinggi",
-        minWidth: 180,
-    },
-    {
-        id: "jenis_pt",
-        label: "Jenis PT",
-        minWidth: 100,
-        align: "center",
-    },
-    {
-        id: "tahun_lulus",
-        label: "Tahun Lulus",
-        minWidth: 110,
-        align: "center",
-    },
-    {
-        id: "asesor",
-        label: "Asesor",
-        minWidth: 130,
-        align: "center",
-    },
-    {
-        id: "waktu",
-        label: "Waktu",
-        minWidth: 130,
-        align: "center",
-        format: (value) => {
-            const date = new Date(String(value));
-            return date.toLocaleDateString("id-ID");
-        },
-    },
-    {
-        id: "makhraj",
-        label: "Nilai Makhraj",
-        minWidth: 130,
-        align: "center",
-    },
-    {
-        id: "sifat",
-        label: "Nilai Sifat",
-        minWidth: 130,
-        align: "center",
-    },
-    {
-        id: "ahkam",
-        label: "Nilai Ahkam",
-        minWidth: 130,
-        align: "center",
-    },
-    {
-        id: "mad",
-        label: "Nilai Mad",
-        minWidth: 130,
-        align: "center",
-    },
-    {
-        id: "gharib",
-        label: "Nilai Gharib",
-        minWidth: 130,
-        align: "center",
-    },
-    {
-        id: "total",
-        label: "Total",
-        minWidth: 130,
-        align: "center",
-        format: (_value: unknown, row: DataPesertaHasilAssesment) => {
-            const total = row.makhraj + row.sifat + row.ahkam + row.mad + row.gharib;
-            return (
-                <Chip
-                    label={total}
-                    size="small"
-                    color="primary"
-                    sx={{ fontWeight: "bold" }}
-                />
-            );
-        },
-    },
-    {
-        id: "action",
-        label: "Action",
-        minWidth: 150,
-        align: "center",
-        format: (_value: unknown, row: DataPesertaHasilAssesment) => {
-            return <ActionMenu row={row} />;
-        },
-    },
-]
+  },
+];

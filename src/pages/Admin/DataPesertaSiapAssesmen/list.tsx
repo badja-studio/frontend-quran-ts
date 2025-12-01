@@ -33,7 +33,15 @@ export default function ListPagesDataPesertaSiapAssement() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["peserta-siap-asesmen", page, limit, searchQuery, sortBy, sortOrder, filters],
+    queryKey: [
+      "peserta-siap-asesmen",
+      page,
+      limit,
+      searchQuery,
+      sortBy,
+      sortOrder,
+      filters,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -63,12 +71,12 @@ export default function ListPagesDataPesertaSiapAssement() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-          {
-            field: "jadwal",
-            op: "eq",
-            value: currentDate,
-          },
-        ];
+        {
+          field: "jadwal",
+          op: "eq",
+          value: currentDate,
+        },
+      ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -101,17 +109,33 @@ export default function ListPagesDataPesertaSiapAssement() {
   const transformedData: DataPersetaSiapAssesmen[] =
     response?.data?.map((user) => ({
       id: user.id,
-      nama: user.nama || "-",
-      jenis_kelamin: user.jenis_kelamin || "L",
-      usia: user.usia || 0,
-      no_akun: user.no_akun || "-",
+      nik: user.nik || "",
+      username: user.username || "",
+      email: user.email || "",
+      nomor_telepon: user.nomor_telepon || "",
+      nama: user.nama || "",
+      jenis_kelamin: user.jenis_kelamin || "",
+      tempat_lahir: user.tempat_lahir || "",
+      tanggal_lahir: user.tanggal_lahir || "",
+      jenjang: user.jenjang || "",
+      sekolah: user.sekolah || "",
+      alamat_sekolah: user.alamat_sekolah || "",
+      provinsi: user.provinsi || "",
+      kab_kota: user.kab_kota || "",
+      kecamatan: user.kecamatan || "",
+      desa_kelurahan: user.desa_kelurahan || "",
+      pendidikan: user.pendidikan || "",
+      perguruan_tinggi: user.perguruan_tinggi || "",
+      fakultas: user.fakultas || "",
+      prodi: user.prodi || "",
+      tahun_lulus: Number(user.tahun_lulus) || 0,
+      pegawai: user.pegawai || "",
+      sertifikasi: user.sertifikasi || "",
+      tahun_sertifikasi: user.tahun_sertifikasi || "",
+      mapel: user.mapel || "",
+      jadwal: user.jadwal || "",
+      asesor: user.assessor?.name || "",
       status: "SIAP_ASSESMEN" as const,
-      pegawai: user.pegawai || "-",
-      jenjang: user.jenjang || "-",
-      level: user.level || "-",
-      provinsi: user.provinsi || "-",
-      kab_kota: user.kab_kota || "-",
-      sekolah: user.sekolah || "-",
     })) || [];
 
   const pagination = response?.pagination || {
@@ -174,7 +198,14 @@ export default function ListPagesDataPesertaSiapAssement() {
       userEmail={`${user?.email}`}
     >
       <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Box>
             <Typography variant="h4" gutterBottom fontWeight="bold">
               Data Peserta Siap Asesmen

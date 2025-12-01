@@ -5,21 +5,21 @@ import { Box, Typography, Chip, Avatar, Button } from "@mui/material";
 
 export const columnsPeserta: Column<DataPersetaSiap>[] = [
   {
-    id: "no_akun",
-    label: "No. Akun",
-    minWidth: 100,
+    id: "nik",
+    label: "NIK",
+    minWidth: 150,
     align: "center",
   },
   {
-    id: "nip",
-    label: "NIP",
-    minWidth: 130,
+    id: "username",
+    label: "Username",
+    minWidth: 150,
     align: "center",
   },
   {
     id: "nama",
     label: "Nama Peserta",
-    minWidth: 200,
+    minWidth: 220,
     format: (value) => {
       const nama = String(value);
       return (
@@ -33,6 +33,16 @@ export const columnsPeserta: Column<DataPersetaSiap>[] = [
         </Box>
       );
     },
+  },
+  {
+    id: "email",
+    label: "Email",
+    minWidth: 180,
+  },
+  {
+    id: "nomor_telepon",
+    label: "WhatsApp",
+    minWidth: 150,
   },
   {
     id: "jenis_kelamin",
@@ -54,45 +64,59 @@ export const columnsPeserta: Column<DataPersetaSiap>[] = [
     id: "tempat_lahir",
     label: "Tempat Lahir",
     minWidth: 130,
+  },
+  {
+    id: "tanggal_lahir",
+    label: "Tanggal Lahir",
+    minWidth: 130,
+    align: "center",
+    format: (value) => new Date(String(value)).toLocaleDateString("id-ID"),
+  },
+  {
+    id: "pendidikan",
+    label: "Pendidikan Terakhir",
+    minWidth: 150,
     align: "center",
   },
   {
-    id: "pegawai",
-    label: "Jabatan",
+    id: "perguruan_tinggi",
+    label: "Asal Kampus",
+    minWidth: 180,
+  },
+  {
+    id: "fakultas",
+    label: "Fakultas",
+    minWidth: 150,
+  },
+  {
+    id: "prodi",
+    label: "Program Studi",
+    minWidth: 180,
+  },
+  {
+    id: "tahun_lulus",
+    label: "Tahun Lulus",
     minWidth: 120,
     align: "center",
-    format: (value) => {
-      return (
-        <Chip
-          label={String(value)}
-          size="small"
-          color="info"
-          variant="outlined"
-        />
-      );
-    },
   },
   {
     id: "jenjang",
     label: "Jenjang",
-    minWidth: 100,
+    minWidth: 120,
     align: "center",
-    format: (value) => {
-      return <Chip label={String(value)} size="small" color="primary" />;
-    },
+    format: (value) => (
+      <Chip size="small" label={String(value)} color="primary" />
+    ),
   },
   {
-    id: "level",
-    label: "Level",
-    minWidth: 100,
-    align: "center",
-    format: (value) => {
-      const level = String(value);
-      let color: "success" | "warning" | "info" = "info";
-      if (level === "Senior") color = "success";
-      else if (level === "Middle") color = "warning";
-      return <Chip label={level} size="small" color={color} />;
-    },
+    id: "sekolah",
+    label: "Nama Sekolah",
+    minWidth: 180,
+  },
+  {
+    id: "alamat_sekolah",
+    label: "Alamat Sekolah",
+    minWidth: 220,
   },
   {
     id: "provinsi",
@@ -105,57 +129,62 @@ export const columnsPeserta: Column<DataPersetaSiap>[] = [
     minWidth: 150,
   },
   {
-    id: "sekolah",
-    label: "Sekolah",
-    minWidth: 200,
+    id: "kecamatan",
+    label: "Kecamatan",
+    minWidth: 150,
   },
   {
-    id: "pendidikan",
-    label: "Pendidikan",
-    minWidth: 100,
+    id: "desa_kelurahan",
+    label: "Desa/Kelurahan",
+    minWidth: 150,
+  },
+  {
+    id: "pegawai",
+    label: "Status Pegawai",
+    minWidth: 150,
+    align: "center",
+    format: (value) => (
+      <Chip
+        label={String(value)}
+        size="small"
+        color="info"
+        variant="outlined"
+      />
+    ),
+  },
+  {
+    id: "sertifikasi",
+    label: "Sertifikasi",
+    minWidth: 120,
     align: "center",
     format: (value) => {
+      const s = String(value);
       return (
         <Chip
-          label={String(value)}
+          label={s === "Sudah" ? "Sudah" : "Belum"}
           size="small"
-          color="secondary"
-          variant="outlined"
+          color={s === "Sudah" ? "success" : "warning"}
         />
       );
     },
   },
   {
-    id: "prodi",
-    label: "Program Studi",
-    minWidth: 200,
+    id: "tahun_sertifikasi",
+    label: "Tahun Sertifikasi",
+    minWidth: 120,
+    align: "center",
   },
   {
-    id: "perguruan_tinggi",
-    label: "Perguruan Tinggi",
+    id: "mapel",
+    label: "Mapel Diampu",
     minWidth: 180,
-  },
-  {
-    id: "jenis_pt",
-    label: "Jenis PT",
-    minWidth: 100,
-    align: "center",
-  },
-  {
-    id: "tahun_lulus",
-    label: "Tahun Lulus",
-    minWidth: 110,
-    align: "center",
   },
   {
     id: "jadwal",
     label: "Jadwal",
-    minWidth: 130,
+    minWidth: 150,
     align: "center",
-    format: (value) => {
-      const date = new Date(String(value));
-      return date.toLocaleDateString("id-ID");
-    },
+    format: (value) => new Date(String(value)).toLocaleDateString("id-ID"),
   },
   {
     id: "action",

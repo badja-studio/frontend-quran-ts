@@ -71,46 +71,49 @@ export const shifat = [
 ];
 
 export const ahkamHuruf = [
+  "Tanaffus",
   "Izhhar",
-  "Izhhar Syafawi",
   "Idzgham Bighunnah",
-  "Ikhfa’ Syafawi",
   "Idzgham Bilaghunnah",
-  "Idzgham Mimi",
   "Ikhfa’",
-  "Idzgham Mutajannisain",
   "Iqlab",
-  "Idzgham Mutaqarribain",
+  "Izhhar Syafawi",
+  "Ikhfa’ Syafawi",
+  "Idgham Mutamtsilain ",
+  "Idzgham Mutajannisain",
+  "Idgham Mutaqaribain",
+  "Ghunnah Musyaddadah",
 ];
 
 export const madList = [
   "Mad Thabi’i",
-  "Mad Lazim Kilmi Mutsaqqal",
   "Mad Wajib Muttashil",
-  "Mad Lazim Kilmi Mukhaffaf",
   "Mad Jaiz Munfashil",
-  "Mad Lazim Harfi Mutsaqqal",
   "Mad Iwadz",
-  "Mad Lazim Harfi Mukhaffaf",
   "Mad Lin",
-  "Mad Badal",
   "Mad Aridlissukun",
-  "Mad Shilah Qashirah",
   "Mad Tamkin",
-  "Mad Shilah Thawilah",
   "Mad Farq",
+  "Mad Lazim Kilmi Mutsaqqal",
+  "Mad Lazim Kilmi Mukhaffaf",
+  "Mad Lazim Harfi Mutsaqqal",
+  "Mad Lazim Harfi Mukhaffaf",
+  "Mad Badal",
+  "Mad Shilah Qashirah",
+  "Mad Shilah Thawilah",
+  "Qashr",
 ];
 
 export const gharibList = [
   "Iysmam",
   "Imalah",
-  "Saktah",
   "Tashil",
+  "Ibdal",
   "Naql",
   "Badal",
-  "Mad dan Qashr",
+  "Nun Washal",
 ];
 
-export const kelancaran = ["Mahir", "Cukup", "Kurang"];
+export const kelancaran = ["Tidak Lancar", "Kurang Lancar"];
 
 export const PenguranganNilai = ["Tidak Bisa Membaca"];
