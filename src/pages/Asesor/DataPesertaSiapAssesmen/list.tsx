@@ -65,17 +65,17 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
       };
 
       // Inject default filter untuk jadwal (tanggal hari ini)
-      const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+      // const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
       const formattedFilters: Array<{
         field: string;
         op: string;
         value: string | number | Date | string[];
       }> = [
-        {
-          field: "jadwal",
-          op: "eq",
-          value: currentDate,
-        },
+        // {
+        //   field: "jadwal",
+        //   op: "eq",
+        //   value: currentDate,
+        // },
         {
           field: "asesor_id",
           op: "eq",

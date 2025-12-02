@@ -226,7 +226,7 @@ const PenilaianPageCompact: React.FC = () => {
           asesor_id: user.id,
           huruf,
           kategori,
-          nilai: count > 0 ? 1 : 0,
+          nilai: count,
         }))
     );
 
