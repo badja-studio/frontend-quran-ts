@@ -16,8 +16,9 @@ import HeaderPeserta from "./HeaderPeserta";
 import useUserStore from "../../../store/user.store";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../../services/api.config";
-import { CategoryType } from "../../../utils/utils";
+import { CategoryType, CATEGORY } from "../../../utils/utils";
 
+// ===================== TYPES =====================
 type ScoreAction = "plus" | "minus";
 type MistakeMap = Record<string, number>;
 type MistakesState = Record<CategoryType, MistakeMap>;
@@ -47,16 +48,18 @@ interface PesertaFromApi {
   sekolah: string;
 }
 
+// ===================== CATEGORY WEIGHTS =====================
 const categoryWeights: Record<CategoryType, number> = {
-  makhraj: 55.5,
-  sifat: 14.5,
-  ahkam: 8,
-  mad: 13.5,
-  gharib: 6,
-  kelancaran: 2.5,
-  pengurangan: 0,
+  [CATEGORY.MAKHRAJ]: 55.5,
+  [CATEGORY.SIFAT]: 14.5,
+  [CATEGORY.AHKAM]: 8,
+  [CATEGORY.MAD]: 13.5,
+  [CATEGORY.GHARIB]: 6,
+  [CATEGORY.KELANCARAN]: 2.5,
+  [CATEGORY.PENGURANGAN]: 0, // ✅ sekarang valid
 };
 
+// ===================== COMPONENT =====================
 const PenilaianPageCompact: React.FC = () => {
   const { id: participantId } = useParams<{ id: string }>();
   const { user } = useUserStore();
@@ -78,13 +81,19 @@ const PenilaianPageCompact: React.FC = () => {
   const [mistakes, setMistakes] = useState<MistakesState>(() => {
     const mk = makhraj.map((h) => (typeof h === "string" ? h : h.simbol));
     return {
-      makhraj: mk.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
-      sifat: shifat.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
-      ahkam: ahkamHuruf.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
-      mad: madList.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
-      gharib: gharibList.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
-      kelancaran: kelancaran.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
-      pengurangan: PenguranganNilai.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
+      [CATEGORY.MAKHRAJ]: mk.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
+      [CATEGORY.SIFAT]: shifat.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
+      [CATEGORY.AHKAM]: ahkamHuruf.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
+      [CATEGORY.MAD]: madList.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
+      [CATEGORY.GHARIB]: gharibList.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
+      [CATEGORY.KELANCARAN]: kelancaran.reduce(
+        (a, b) => ({ ...a, [b]: 0 }),
+        {}
+      ),
+      [CATEGORY.PENGURANGAN]: PenguranganNilai.reduce(
+        (a, b) => ({ ...a, [b]: 0 }),
+        {}
+      ),
     };
   });
 
@@ -92,6 +101,7 @@ const PenilaianPageCompact: React.FC = () => {
   const [penguranganValue, setPenguranganValue] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
 
+  // ===================== HANDLER =====================
   const handleScore = (
     category: CategoryType,
     key: string,
@@ -108,12 +118,8 @@ const PenilaianPageCompact: React.FC = () => {
     });
   };
 
-  const getPenalty = (
-    category: CategoryType,
-    index: number,
-    item: string
-  ): number => {
-    if (category === "ahkam") {
+  const getPenalty = (category: CategoryType, index: number, item: string) => {
+    if (category === CATEGORY.AHKAM) {
       switch (item) {
         case "Tanaffus":
           return index === 0 ? 2 : 0.5;
@@ -127,7 +133,7 @@ const PenilaianPageCompact: React.FC = () => {
         case "Ikhfa’ Syafawi":
         case "Idgham Mutamtsilain":
         case "Idzgham Mutajannisain":
-        case "Idgham Mutaqaribain":
+        case "Idzgham Mutaqaribain":
         case "Ghunnah Musyaddadah":
           return index === 0 ? 0.5 : 0.25;
         default:
@@ -135,7 +141,7 @@ const PenilaianPageCompact: React.FC = () => {
       }
     }
 
-    if (category === "mad") {
+    if (category === CATEGORY.MAD) {
       switch (item) {
         case "Mad Thabi’i":
           return index === 0 ? 2 : 0.5;
@@ -164,11 +170,10 @@ const PenilaianPageCompact: React.FC = () => {
     }
 
     switch (category) {
-      case "makhraj":
+      case CATEGORY.MAKHRAJ:
         return index === 0 ? 2 : 0.5;
-      case "sifat":
-        return index === 0 ? 0.5 : 0.25;
-      case "gharib":
+      case CATEGORY.SIFAT:
+      case CATEGORY.GHARIB:
         return index === 0 ? 0.5 : 0.25;
       default:
         return 0;
@@ -181,11 +186,9 @@ const PenilaianPageCompact: React.FC = () => {
     return 0;
   };
 
+  // ===================== SCORE CALCULATIONS =====================
   const totalScore = (category: CategoryType): number => {
-    if (penguranganValue === "Tidak Bisa Membaca") {
-      // Semua kategori huruf otomatis 0 (dikurangi 90 poin dari total)
-      return 0;
-    }
+    if (penguranganValue === "Tidak Bisa Membaca") return 0;
 
     const maxScore = categoryWeights[category] || 0;
     const fields = mistakes[category] || {};
@@ -203,19 +206,22 @@ const PenilaianPageCompact: React.FC = () => {
     if (penguranganValue === "Tidak Bisa Membaca") return 10;
 
     let total =
-      totalScore("makhraj") +
-      totalScore("sifat") +
-      totalScore("ahkam") +
-      totalScore("mad") +
-      totalScore("gharib");
+      totalScore(CATEGORY.MAKHRAJ) +
+      totalScore(CATEGORY.SIFAT) +
+      totalScore(CATEGORY.AHKAM) +
+      totalScore(CATEGORY.MAD) +
+      totalScore(CATEGORY.GHARIB);
 
     const kelScore = kelancaranValue
-      ? categoryWeights.kelancaran - getKelancaranPenalty()
-      : categoryWeights.kelancaran;
+      ? categoryWeights[CATEGORY.KELANCARAN] - getKelancaranPenalty()
+      : categoryWeights[CATEGORY.KELANCARAN];
+
     total += kelScore;
 
     return Math.min(100, Number(total.toFixed(2)));
   };
+
+  // ===================== SUBMIT =====================
   const handleSubmit = async () => {
     if (!pesertaFromTable || !user) return;
 
@@ -230,15 +236,16 @@ const PenilaianPageCompact: React.FC = () => {
         }))
     );
 
-    const totals = {
-      makhraj: totalScore("makhraj"),
-      sifat: totalScore("sifat"),
-      ahkam: totalScore("ahkam"),
-      mad: totalScore("mad"),
-      gharib: totalScore("gharib"),
-      kelancaran: kelancaranValue
-        ? categoryWeights.kelancaran - getKelancaranPenalty()
-        : categoryWeights.kelancaran,
+    const totals: Record<CategoryType, number> = {
+      [CATEGORY.MAKHRAJ]: totalScore(CATEGORY.MAKHRAJ),
+      [CATEGORY.SIFAT]: totalScore(CATEGORY.SIFAT),
+      [CATEGORY.AHKAM]: totalScore(CATEGORY.AHKAM),
+      [CATEGORY.MAD]: totalScore(CATEGORY.MAD),
+      [CATEGORY.GHARIB]: totalScore(CATEGORY.GHARIB),
+      [CATEGORY.KELANCARAN]: kelancaranValue
+        ? categoryWeights[CATEGORY.KELANCARAN] - getKelancaranPenalty()
+        : categoryWeights[CATEGORY.KELANCARAN],
+      [CATEGORY.PENGURANGAN]: 0,
     };
 
     const avg = totalOverall();
@@ -250,7 +257,6 @@ const PenilaianPageCompact: React.FC = () => {
         avg,
       });
 
-      // Tampilkan semua data setelah berhasil submit
       console.log("Response API:", response.data);
       console.log("Nilai per huruf:", assessmentsHuruf);
       console.log("Total nilai per kategori:", totals);
@@ -269,6 +275,7 @@ const PenilaianPageCompact: React.FC = () => {
   if (!pesertaFromTable)
     return <Typography>Peserta tidak ditemukan</Typography>;
 
+  // ===================== RENDER =====================
   return (
     <Box sx={{ width: "100%", minHeight: "100vh", bgcolor: "grey.50", py: 2 }}>
       <Box sx={{ width: "100%", px: 2 }}>
@@ -282,7 +289,7 @@ const PenilaianPageCompact: React.FC = () => {
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <ScoreSection
                 title="Makharij Al-Huruf"
-                category="makhraj"
+                category={CATEGORY.MAKHRAJ}
                 list={makhraj.map((h) =>
                   typeof h === "string" ? h : h.simbol
                 )}
@@ -292,7 +299,7 @@ const PenilaianPageCompact: React.FC = () => {
               />
               <ScoreSection
                 title="Ahkam Al-Huruf"
-                category="ahkam"
+                category={CATEGORY.AHKAM}
                 list={ahkamHuruf}
                 mistakes={mistakes}
                 handleScore={handleScore}
@@ -300,7 +307,7 @@ const PenilaianPageCompact: React.FC = () => {
               />
               <ScoreSection
                 title="Kelancaran Saat Membaca"
-                category="kelancaran"
+                category={CATEGORY.KELANCARAN}
                 list={kelancaran}
                 isSelect
                 selectedValue={kelancaranValue}
@@ -314,22 +321,20 @@ const PenilaianPageCompact: React.FC = () => {
               />
               <ScoreSection
                 title="Pengurangan Nilai Peserta"
-                category="pengurangan"
+                category={CATEGORY.PENGURANGAN}
                 list={PenguranganNilai}
                 isSelect
                 selectedValue={penguranganValue}
                 onSelect={(value) => {
                   if (value === "Tidak Bisa Membaca") {
-                    // Jika saat ini sudah dipilih "Tidak Bisa Membaca", klik lagi → cancel
                     if (penguranganValue === "Tidak Bisa Membaca") {
                       setPenguranganValue(null);
-                      setLocked(false); // unlock
+                      setLocked(false);
                     } else {
                       setPenguranganValue("Tidak Bisa Membaca");
-                      setLocked(true); // lock
+                      setLocked(true);
                     }
                   } else {
-                    // pilihan selain "Tidak Bisa Membaca"
                     setPenguranganValue(
                       penguranganValue === value ? null : value
                     );
@@ -343,7 +348,7 @@ const PenilaianPageCompact: React.FC = () => {
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <ScoreSection
                 title="Sifatul Al-Huruf"
-                category="sifat"
+                category={CATEGORY.SIFAT}
                 list={shifat}
                 mistakes={mistakes}
                 handleScore={handleScore}
@@ -351,7 +356,7 @@ const PenilaianPageCompact: React.FC = () => {
               />
               <ScoreSection
                 title="Ahkam Al-Mad wal Qashr"
-                category="mad"
+                category={CATEGORY.MAD}
                 list={madList}
                 mistakes={mistakes}
                 handleScore={handleScore}
@@ -359,7 +364,7 @@ const PenilaianPageCompact: React.FC = () => {
               />
               <ScoreSection
                 title="Gharib"
-                category="gharib"
+                category={CATEGORY.GHARIB}
                 list={gharibList}
                 mistakes={mistakes}
                 handleScore={handleScore}
