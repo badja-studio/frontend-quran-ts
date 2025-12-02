@@ -98,6 +98,7 @@ export default function ListPagesDataPesertaHasilAsesmen() {
         setIsInitialLoad(false);
       }
 
+      console.log("data", result.data);
       return result.data;
     },
     retry: 1,

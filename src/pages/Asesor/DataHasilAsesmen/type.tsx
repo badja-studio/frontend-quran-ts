@@ -1,3 +1,4 @@
+import { CategoryType } from "../Penilaian/type";
 export interface DataPersetaHasil extends Record<string, unknown> {
   id: string;
   nik: string;
@@ -44,6 +45,42 @@ export interface CategoryBreakdown {
   finalScore: number;
 }
 
+export interface ApiAssessor {
+  id: string;
+  name: string;
+  email: string;
+  link_grup_wa?: string;
+}
+
+export interface ApiParticipant {
+  id: string;
+  no_akun?: string;
+  nip?: string;
+  nama: string;
+  jenis_kelamin?: "L" | "P";
+  tempat_lahir?: string;
+  jabatan?: string;
+  jenjang?: string;
+  level?: string;
+  provinsi?: string;
+  kab_kota?: string;
+  sekolah?: string;
+  pendidikan?: string;
+  prodi?: string;
+  perguruan_tinggi?: string;
+  jenis_pt?: string;
+  tahun_lulus?: number | string;
+  jadwal?: string;
+  assessor?: {
+    id: string;
+    name: string;
+    email: string;
+    link_grup_wa?: string;
+  } | null;
+  status?: string;
+  link_grup_wa?: string;
+  scoring?: Scoring;
+}
 // Scoring Details interface
 export interface ScoringDetails {
   categoryBreakdown: {
@@ -119,6 +156,18 @@ export interface User {
   };
   scoring?: Scoring;
 }
+export interface ApiAssessmentItem {
+  id: string;
+  peserta_id: string;
+  asesor_id: string;
+  huruf: string;
+  nilai: string; // biasanya "0.00" atau "1.00"
+  kategori: CategoryType;
+  createdAt: string;
+  updatedAt: string;
+  peserta?: ApiParticipant;
+  assessor?: ApiAssessor;
+}
 
 export interface GetUsersResponse {
   success: boolean;
@@ -130,4 +179,9 @@ export interface GetUsersResponse {
     total: number;
     total_pages: number;
   };
+}
+
+export interface QuizSection {
+  title: string;
+  list: (string | { simbol: string; nilai: number })[];
 }

@@ -180,18 +180,67 @@ export const columnsPeserta: Column<DataPesertaHasilAssesment>[] = [
     minWidth: 180,
   },
   {
-    id: "jadwal",
-    label: "Jadwal",
-    minWidth: 150,
-    align: "center",
-    format: (value) => new Date(String(value)).toLocaleDateString("id-ID"),
-  },
-
-  {
     id: "asesor",
     label: "Asesor",
     minWidth: 130,
     align: "center",
+  },
+  {
+    id: "jadwal",
+    label: "Waktu",
+    minWidth: 130,
+    align: "center",
+    format: (value) => {
+      const date = new Date(String(value));
+      return date.toLocaleDateString("id-ID");
+    },
+  },
+  {
+    id: "makhraj",
+    label: "Nilai Makhraj",
+    minWidth: 130,
+    align: "center",
+  },
+  {
+    id: "sifat",
+    label: "Nilai Sifat",
+    minWidth: 130,
+    align: "center",
+  },
+  {
+    id: "ahkam",
+    label: "Nilai Ahkam",
+    minWidth: 130,
+    align: "center",
+  },
+  {
+    id: "mad",
+    label: "Nilai Mad",
+    minWidth: 130,
+    align: "center",
+  },
+  {
+    id: "gharib",
+    label: "Nilai Gharib",
+    minWidth: 130,
+    align: "center",
+  },
+  {
+    id: "total",
+    label: "Total",
+    minWidth: 130,
+    align: "center",
+    format: (_value: unknown, row: DataPesertaHasilAssesment) => {
+      const total = row.makhraj + row.sifat + row.ahkam + row.mad + row.gharib;
+      return (
+        <Chip
+          label={total}
+          size="small"
+          color="primary"
+          sx={{ fontWeight: "bold" }}
+        />
+      );
+    },
   },
   {
     id: "action",

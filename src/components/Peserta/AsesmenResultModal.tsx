@@ -23,6 +23,7 @@ const modalStyle = {
   maxHeight: "90vh",
   overflowY: "auto",
 };
+
 interface SectionListItem {
   simbol: string;
   nilai: number;
@@ -40,7 +41,14 @@ interface AsesmenResultModalProps {
   asesorName: string;
   waktuPelaksanaan: string;
   nilaiAkhir: number;
-  sections: SectionItem[];
+  sections?: SectionItem[];
+  categoryScores?: {
+    makhraj: number;
+    sifat: number;
+    ahkam: number;
+    mad: number;
+    gharib: number;
+  };
 }
 
 const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
@@ -50,7 +58,8 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
   asesorName,
   waktuPelaksanaan,
   nilaiAkhir,
-  sections,
+  sections = [],
+  categoryScores,
 }) => {
   return (
     <Modal open={open} onClose={onClose}>
@@ -69,7 +78,6 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
           <Typography variant="h5" fontWeight="bold">
             Hasil Asesmen: {pesertaName}
           </Typography>
-
           <Button onClick={onClose}>
             <Close />
           </Button>
@@ -89,15 +97,12 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
           <Typography variant="h6" color="success.main" fontWeight="bold">
             Nilai Akhir: {nilaiAkhir.toFixed(1)}
           </Typography>
-          <Typography variant="h6" fontWeight="bold">
-            <strong>Predikat:</strong> Lancar
-          </Typography>
         </Grid>
 
         {/* BAGIAN GRID HURUF */}
         <Card sx={{ p: 2, mt: 3, borderRadius: 3 }}>
           <Grid container spacing={2}>
-            {sections.map((sec, idx) => (
+            {(sections ?? []).map((sec, idx) => (
               <Card key={idx} sx={{ p: 2, mt: 3, borderRadius: 3 }}>
                 <Grid container justifyContent="space-between" sx={{ mb: 2 }}>
                   <Typography variant="h6" fontWeight="bold">
@@ -114,12 +119,23 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
                       color: "green",
                     }}
                   >
-                    100.00
+                    {sec.title === "Makharijul Huruf"
+                      ? categoryScores?.makhraj.toFixed(2)
+                      : sec.title === "Shifatul Huruf"
+                      ? categoryScores?.sifat.toFixed(2)
+                      : sec.title === "Ahkam Al-Huruf"
+                      ? categoryScores?.ahkam.toFixed(2)
+                      : sec.title === "Ahkam Al-Mad wa Qashr"
+                      ? categoryScores?.mad.toFixed(2)
+                      : sec.title === "Gharib"
+                      ? categoryScores?.gharib.toFixed(2)
+                      : "0.00"}
                   </Typography>
                 </Grid>
 
                 <Grid container spacing={2}>
-                  {sec.list.map((item, i) => {
+                  {(sec.list ?? []).map((item, i) => {
+                    // <-- pastikan sec.list tidak undefined
                     const huruf = typeof item === "string" ? item : item.simbol;
 
                     return (

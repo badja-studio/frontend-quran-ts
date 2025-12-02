@@ -27,7 +27,15 @@ export default function ListPagesDataAsesor() {
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["data-asesor-admin", page, limit, searchQuery, sortBy, sortOrder, filters],
+    queryKey: [
+      "data-asesor-admin",
+      page,
+      limit,
+      searchQuery,
+      sortBy,
+      sortOrder,
+      filters,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append("page", page.toString());
@@ -50,10 +58,10 @@ export default function ListPagesDataAsesor() {
         in: "in",
       };
 
-      const formattedFilters = filters.map(filter => ({
+      const formattedFilters = filters.map((filter) => ({
         field: filter.key,
         op: operatorMap[filter.operator] || filter.operator,
-        value: filter.value
+        value: filter.value,
       }));
       params.append("filters", JSON.stringify(formattedFilters));
 
@@ -65,7 +73,7 @@ export default function ListPagesDataAsesor() {
       if (isInitialLoad) {
         setIsInitialLoad(false);
       }
-
+      console.log(result.data);
       return result.data;
     },
     retry: 1,
@@ -74,17 +82,19 @@ export default function ListPagesDataAsesor() {
 
   // Transform data untuk table
   const transformedData: DataAsesor[] =
-    response?.data?.map((assessor: Assessor): DataAsesor => ({
-      id: assessor.id,
-      name: assessor.name,
-      username: assessor.username,
-      no_telepon: assessor.no_telepon,
-      email: assessor.email,
-      link_grup_wa: assessor.link_grup_wa,
-      total_peserta_belum_asesmen: assessor.realTimeCounts.not_assessed,
-      total_peserta_selesai_asesmen: assessor.realTimeCounts.assessed,
-      akun_id: assessor.akun_id,
-    })) || [];
+    response?.data?.map(
+      (assessor: Assessor): DataAsesor => ({
+        id: assessor.id,
+        name: assessor.name,
+        username: assessor.username,
+        no_telepon: assessor.no_telepon,
+        email: assessor.email,
+        link_grup_wa: assessor.link_grup_wa,
+        total_peserta_belum_asesmen: assessor.realTimeCounts.not_assessed,
+        total_peserta_selesai_asesmen: assessor.realTimeCounts.assessed,
+        akun_id: assessor.akun_id,
+      })
+    ) || [];
 
   const pagination = response?.pagination || {
     currentPage: 1,
@@ -141,7 +151,6 @@ export default function ListPagesDataAsesor() {
     );
   }
 
-
   return (
     <DashboardLayout
       userRole="admin"
@@ -149,13 +158,21 @@ export default function ListPagesDataAsesor() {
       userEmail={`${user?.email}`}
     >
       <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Box>
             <Typography variant="h4" gutterBottom fontWeight="bold">
               Daftar Rekap Asesor
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Pantau dan kelola rekap data asesor serta jumlah peserta yang ditangani
+              Pantau dan kelola rekap data asesor serta jumlah peserta yang
+              ditangani
             </Typography>
           </Box>
           <ExportButton
@@ -170,7 +187,6 @@ export default function ListPagesDataAsesor() {
             {handleApiError(error).message}
           </Alert>
         )}
-
 
         <DataTable
           columns={columnsAsesor}

@@ -8,4 +8,4 @@ export const CATEGORY = {
   PENGURANGAN: "pengurangan",
 } as const;
 
-export type CategoryType = typeof CATEGORY[keyof typeof CATEGORY];
+export type CategoryType = (typeof CATEGORY)[keyof typeof CATEGORY];

@@ -13,12 +13,17 @@ import AsesmenResultModal from "../../../components/Peserta/AsesmenResultModal";
 import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
 import apiClient, { handleApiError } from "../../../services/api.config";
-import { DataPersetaHasil, GetUsersResponse } from "./type";
+import {
+  DataPersetaHasil,
+  GetUsersResponse,
+  ApiAssessmentItem,
+  QuizSection,
+} from "./type";
 import { useQuery } from "@tanstack/react-query";
 import useUserStore from "../../../store/user.store";
 
-const dataQuiz = {
-  makharj: [
+const dataQuiz: Record<string, QuizSection["list"]> = {
+  makhraj: [
     "د",
     "خ",
     "ح",
@@ -43,19 +48,19 @@ const dataQuiz = {
     "غ",
     "ع",
     "ظ",
-    { simbol: "ــُ", arti: "Dlammah" },
-    { simbol: "ــِـ", arti: "Kasrah" },
-    { simbol: "ــَـ", arti: "Fathah" },
+    "ــُ",
+    "ــِـ",
+    "ــَـ",
     "ي",
     "ء",
     "هـ",
     "و",
     "ن",
-    { simbol: "ــّـ", arti: "Tasydid" },
-    { simbol: "ــٌـ", arti: "Dlammatain" },
-    { simbol: "ــٍـ", arti: "Kasratain" },
-    { simbol: "ــًـ", arti: "Fathatain" },
-    { simbol: "ــْـ", arti: "Sukun" },
+    "ــّـ",
+    "ــٌـ",
+    "ــٍـ",
+    "ــًـ",
+    "ــْـ",
   ],
   sifat: [
     "د",
@@ -89,42 +94,45 @@ const dataQuiz = {
     "ن",
   ],
   ahkam: [
+    "Tanaffus",
     "Izhhar",
-    "Izhhar Syafawi",
     "Idzgham Bighunnah",
-    "Ikhfa’ Syafawi",
     "Idzgham Bilaghunnah",
-    "Idzgham Mimi",
     "Ikhfa’",
-    "Idzgham Mutajannisain",
     "Iqlab",
-    "Idzgham Mutaqarribain",
+    "Izhhar Syafawi",
+    "Ikhfa’ Syafawi",
+    "Idgham Mutamtsilain ",
+    "Idzgham Mutajannisain",
+    "Idgham Mutaqaribain",
+    "Ghunnah Musyaddadah",
   ],
   mad: [
     "Mad Thabi’i",
-    "Mad Lazim Kilmi Mutsaqqal",
     "Mad Wajib Muttashil",
-    "Mad Lazim Kilmi Mukhaffaf",
     "Mad Jaiz Munfashil",
-    "Mad Lazim Harfi Mutsaqqal",
     "Mad Iwadz",
-    "Mad Lazim Harfi Mukhaffaf",
     "Mad Lin",
-    "Mad Badal",
     "Mad Aridlissukun",
-    "Mad Shilah Qashirah",
     "Mad Tamkin",
-    "Mad Shilah Thawilah",
     "Mad Farq",
+    "Mad Lazim Kilmi Mutsaqqal",
+    "Mad Lazim Kilmi Mukhaffaf",
+    "Mad Lazim Harfi Mutsaqqal",
+    "Mad Lazim Harfi Mukhaffaf",
+    "Mad Badal",
+    "Mad Shilah Qashirah",
+    "Mad Shilah Thawilah",
+    "Qashr",
   ],
   gharib: [
     "Iysmam",
     "Imalah",
-    "Saktah",
     "Tashil",
+    "Ibdal",
     "Naql",
     "Badal",
-    "Mad dan Qashr",
+    "Nun Washal",
   ],
 };
 
@@ -140,12 +148,11 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAsesmen, setSelectedAsesmen] =
     useState<DataPersetaHasil | null>(null);
-
   const handleDetailClick = (row: DataPersetaHasil) => {
     setSelectedAsesmen(row);
     setModalVisible(true);
+    fetchDetail();
   };
-
   // Fetch data with React Query
   const {
     data: response,
@@ -222,7 +229,7 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
       if (isInitialLoad) {
         setIsInitialLoad(false);
       }
-
+      console.log(result.data);
       return result.data;
     },
     retry: 1,
@@ -275,6 +282,36 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
     total_pages: 0,
   };
 
+  const { data: asesmenDetail, refetch: fetchDetail } = useQuery({
+    queryKey: ["asesmen", selectedAsesmen?.id ?? "no-id"],
+    queryFn: async () => {
+      if (!selectedAsesmen?.id) return null;
+
+      let allData: ApiAssessmentItem[] = [];
+      let page = 1;
+      let totalPages = 1;
+
+      do {
+        const res = await apiClient.get(
+          `/api/assessments/participant/${selectedAsesmen.id}?page=${page}&per_page=10`
+        );
+
+        console.log(" data asesmen:", res.data);
+        if (!res.data?.data) break;
+
+        allData = allData.concat(res.data.data);
+
+        totalPages = res.data.pagination?.total_pages ?? 1;
+        page++;
+      } while (page <= totalPages);
+
+      console.log("Semua data asesmen:", allData);
+
+      return { data: allData };
+    },
+    enabled: false,
+    staleTime: 30000,
+  });
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
     setPage(1); // Reset ke halaman 1 saat search
@@ -297,10 +334,57 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
     setPage(1); // Reset to page 1 on sort change
   };
 
+  const mapDetailToSections = (
+    detail: { data: ApiAssessmentItem[] } | null | undefined
+  ) => {
+    const defaultSections = [
+      { title: "Makharijul Huruf", list: dataQuiz.makhraj },
+      { title: "Shifatul Huruf", list: dataQuiz.sifat },
+      { title: "Ahkam Al-Huruf", list: dataQuiz.ahkam },
+      { title: "Ahkam Al-Mad wa Qashr", list: dataQuiz.mad },
+      { title: "Gharib", list: dataQuiz.gharib },
+    ];
+    if (!detail?.data) return defaultSections;
+
+    const grouped: Record<string, { simbol: string; nilai: number }[]> = {};
+
+    detail.data.forEach((item: ApiAssessmentItem) => {
+      if (!grouped[item.kategori]) grouped[item.kategori] = [];
+      grouped[item.kategori].push({
+        simbol: item.huruf,
+        nilai: parseFloat(item.nilai),
+      });
+    });
+
+    return defaultSections.map((sec) => {
+      const key = sec.title.toLowerCase().includes("makharij")
+        ? "makhraj"
+        : sec.title.toLowerCase().includes("shifat")
+        ? "sifat"
+        : sec.title.toLowerCase().includes("ahkam al-huruf")
+        ? "ahkam"
+        : sec.title.toLowerCase().includes("mad")
+        ? "mad"
+        : sec.title.toLowerCase().includes("gharib")
+        ? "gharib"
+        : "";
+
+      if (!key || !grouped[key]) return sec;
+
+      const list = sec.list.map((item) => {
+        const simbol = typeof item === "string" ? item : item.simbol;
+        const found = grouped[key].find((i) => i.simbol === simbol);
+        return { simbol, nilai: found?.nilai ?? 0 };
+      });
+
+      return { ...sec, list };
+    });
+  };
+
+  const safeSections = mapDetailToSections(asesmenDetail) || [];
   useEffect(() => {
     fetchUser();
   }, [user, fetchUser]);
-  console.log(fetchUser);
 
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {
@@ -351,20 +435,17 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
             searchQuery={searchQuery}
           />
         </Box>
-
         {/* Loading indicator untuk search/filter/pagination */}
         {isFetching && !isInitialLoad && (
           <Box sx={{ width: "100%", mb: 2 }}>
             <LinearProgress />
           </Box>
         )}
-
         {error && (
           <Alert severity="error" sx={{ mb: 3 }}>
             {handleApiError(error).message}
           </Alert>
         )}
-
         <DataTable
           columns={columnsPeserta}
           data={transformedData}
@@ -402,17 +483,18 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
           <AsesmenResultModal
             open={modalVisible}
             onClose={() => setModalVisible(false)}
-            pesertaName="Ahmad Zaki"
-            asesorName="Ustadz Fauzan"
-            waktuPelaksanaan="26 Nov 2025"
-            nilaiAkhir={97.5}
-            sections={[
-              { title: "Makharijul Huruf", list: dataQuiz.makharj },
-              { title: "Shifatul Huruf", list: dataQuiz.sifat },
-              { title: "Ahkam Al-Huruf", list: dataQuiz.ahkam },
-              { title: "Ahkam Al-Mad wa Qashr", list: dataQuiz.mad },
-              { title: "Gharib", list: dataQuiz.gharib },
-            ]}
+            pesertaName={selectedAsesmen.nama || "Peserta"}
+            asesorName={selectedAsesmen.asesor || "Ustadz/ah"}
+            waktuPelaksanaan={selectedAsesmen.jadwal || "26 Nov 2025"}
+            nilaiAkhir={selectedAsesmen?.total || 0}
+            sections={safeSections}
+            categoryScores={{
+              makhraj: selectedAsesmen.makhraj || 0,
+              sifat: selectedAsesmen.sifat || 0,
+              ahkam: selectedAsesmen.ahkam || 0,
+              mad: selectedAsesmen.mad || 0,
+              gharib: selectedAsesmen.gharib || 0,
+            }}
           />
         )}
       </Box>

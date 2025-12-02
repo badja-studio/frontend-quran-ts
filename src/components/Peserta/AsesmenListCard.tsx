@@ -89,7 +89,7 @@ const AsesmenListCard: React.FC<Props> = ({ asesmen, onOpen }) => {
                   fullWidth
                   startIcon={<WhatsApp />}
                   sx={{ textTransform: "none", fontWeight: "bold" }}
-                  href={row.asesor?.link_wa || "#"}
+                  href={row.asesor?.link_grup_wa || "#"}
                   target="_blank"
                 >
                   Masuk Grup Asesor

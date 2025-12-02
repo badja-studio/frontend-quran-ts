@@ -82,7 +82,7 @@ export default function ListPagesDataPeserta() {
       if (isInitialLoad) {
         setIsInitialLoad(false);
       }
-
+      console.log("re", result.data);
       return result.data;
     },
     retry: 1,
@@ -95,7 +95,7 @@ export default function ListPagesDataPeserta() {
       id: user.id,
       nik: user.nik || "",
       username: user.username || "",
-      email: user.email || "",
+      email: user.username || "",
       nomor_telepon: user.nomor_telepon || "",
       nama: user.nama || "",
       jenis_kelamin: user.jenis_kelamin || "",
