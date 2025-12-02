@@ -1,6 +1,6 @@
 import React from "react";
 import { Paper, Typography, Box, Button } from "@mui/material";
-import { CategoryType } from "../../../utils/utils";
+import { CategoryType } from "./type";
 
 interface Props {
   category: CategoryType;

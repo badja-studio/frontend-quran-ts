@@ -9,14 +9,14 @@ import {
   madList,
   gharibList,
   kelancaran,
-  PenguranganNilai,
+  pengurangan,
 } from "./dummy";
 import ScoreSection from "./ScoreSection";
 import HeaderPeserta from "./HeaderPeserta";
 import useUserStore from "../../../store/user.store";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../../services/api.config";
-import { CategoryType } from "../../../utils/utils";
+import { CategoryType } from "./type";
 
 type ScoreAction = "plus" | "minus";
 type MistakeMap = Record<string, number>;
@@ -84,7 +84,7 @@ const PenilaianPageCompact: React.FC = () => {
       mad: madList.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
       gharib: gharibList.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
       kelancaran: kelancaran.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
-      pengurangan: PenguranganNilai.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
+      pengurangan: pengurangan.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
     };
   });
 
@@ -315,7 +315,7 @@ const PenilaianPageCompact: React.FC = () => {
               <ScoreSection
                 title="Pengurangan Nilai Peserta"
                 category="pengurangan"
-                list={PenguranganNilai}
+                list={pengurangan}
                 isSelect
                 selectedValue={penguranganValue}
                 onSelect={(value) => {

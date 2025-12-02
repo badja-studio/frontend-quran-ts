@@ -1,4 +1,4 @@
-import { CategoryType } from "../../../utils/utils";
+import { CategoryType } from "../Penilaian/type";
 export interface DataPersetaHasil extends Record<string, unknown> {
   id: string;
   nik: string;

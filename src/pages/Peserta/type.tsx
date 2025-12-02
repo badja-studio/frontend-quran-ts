@@ -1,4 +1,4 @@
-import { CategoryType } from "../../utils/utils";
+import { CategoryType } from "../Asesor/Penilaian/type";
 
 // Tipe asesor
 export interface Asesor {

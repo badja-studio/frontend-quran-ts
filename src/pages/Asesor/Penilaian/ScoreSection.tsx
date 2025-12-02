@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Box, Typography, Paper, Divider, Button } from "@mui/material";
 import ScoreGrid from "./ScoreGrid";
 
-import { CategoryType } from "../../../utils/utils";
+import { CategoryType } from "./type";
 
 interface Props {
   title: string;
