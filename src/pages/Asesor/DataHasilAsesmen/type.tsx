@@ -32,6 +32,8 @@ export interface DataPersetaHasil extends Record<string, unknown> {
   ahkam: number;
   mad: number;
   gharib: number;
+  kelancaran: number;
+  pengurangan: number;
   total: number;
   onDetailClick?: (row: DataPersetaHasil) => void;
 }
@@ -89,6 +91,8 @@ export interface ScoringDetails {
     AHKAM: CategoryBreakdown;
     MAD: CategoryBreakdown;
     GHARIB: CategoryBreakdown;
+    KELANCARAN: CategoryBreakdown;
+    PENGURANGAN: CategoryBreakdown;
   };
   totalDeduction: number;
   assessmentCount: number;
@@ -102,6 +106,8 @@ export interface Scores {
   ahkam: number;
   mad: number;
   gharib: number;
+  kelancaran: number;
+  pengurangan: number;
   overall: number;
 }
 

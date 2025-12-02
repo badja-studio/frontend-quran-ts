@@ -15,11 +15,11 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: { xs: "95%", sm: "80%", md: "60%" },
+  width: { xs: "95%", sm: "85%", md: "70%" },
   bgcolor: "background.paper",
   borderRadius: 4,
-  boxShadow: 24,
-  p: 3,
+  boxShadow: 28,
+  p: 4,
   maxHeight: "90vh",
   overflowY: "auto",
 };
@@ -48,6 +48,8 @@ interface AsesmenResultModalProps {
     ahkam: number;
     mad: number;
     gharib: number;
+    kelancaran: number;
+    pengurangan: number;
   };
 }
 
@@ -78,45 +80,76 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
           <Typography variant="h5" fontWeight="bold">
             Hasil Asesmen: {pesertaName}
           </Typography>
-          <Button onClick={onClose}>
+          <Button onClick={onClose} sx={{ minWidth: 0 }}>
             <Close />
           </Button>
         </Box>
 
         {/* INFO PESERTA */}
-        <Typography>
-          <strong>Asesor:</strong> {asesorName}
-        </Typography>
-        <Typography>
-          <strong>Waktu Pelaksanaan:</strong> {waktuPelaksanaan}
-        </Typography>
-
-        <Divider sx={{ my: 2 }} />
-
-        <Grid container justifyContent="space-between" alignItems="center">
-          <Typography variant="h6" color="success.main" fontWeight="bold">
-            Nilai Akhir: {nilaiAkhir.toFixed(1)}
+        <Box sx={{ mb: 2 }}>
+          <Typography>
+            <strong>Asesor:</strong> {asesorName}
           </Typography>
-        </Grid>
+          <Typography>
+            <strong>Waktu Pelaksanaan:</strong> {waktuPelaksanaan}
+          </Typography>
+        </Box>
 
-        {/* BAGIAN GRID HURUF */}
-        <Card sx={{ p: 2, mt: 3, borderRadius: 3 }}>
-          <Grid container spacing={2}>
-            {(sections ?? []).map((sec, idx) => (
-              <Card key={idx} sx={{ p: 2, mt: 3, borderRadius: 3 }}>
-                <Grid container justifyContent="space-between" sx={{ mb: 2 }}>
+        <Divider sx={{ mb: 3 }} />
+
+        {/* Nilai Akhir */}
+        <Box sx={{ mb: 3, display: "flex", justifyContent: "center" }}>
+          <Card
+            sx={{
+              px: 4,
+              py: 2,
+              borderRadius: 3,
+              background: "linear-gradient(135deg, #4CAF50, #2E7D32)",
+              color: "white",
+              boxShadow: 6,
+            }}
+          >
+            <Typography variant="h6" fontWeight="bold">
+              Nilai Akhir: {nilaiAkhir.toFixed(1)}
+            </Typography>
+          </Card>
+        </Box>
+
+        {/* GRID SECTIONS */}
+        <Grid container spacing={3}>
+          {(sections ?? []).map((sec, idx) => (
+            <Grid item xs={12} key={idx}>
+              <Card
+                sx={{
+                  p: 3,
+                  borderRadius: 3,
+                  boxShadow: 4,
+                  transition: "0.3s",
+                  "&:hover": { boxShadow: 8 },
+                }}
+              >
+                {/* Judul Section + Nilai */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 2,
+                  }}
+                >
                   <Typography variant="h6" fontWeight="bold">
                     {sec.title}
                   </Typography>
-
                   <Typography
                     sx={{
                       background: "#e8f5e9",
-                      px: 2,
-                      py: "2px",
+                      px: 2.5,
+                      py: 0.5,
                       borderRadius: 2,
                       fontWeight: "bold",
                       color: "green",
+                      minWidth: "60px",
+                      textAlign: "center",
                     }}
                   >
                     {sec.title === "Makharijul Huruf"
@@ -129,40 +162,64 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
                       ? categoryScores?.mad.toFixed(2)
                       : sec.title === "Gharib"
                       ? categoryScores?.gharib.toFixed(2)
+                      : sec.title === "Kelancaran"
+                      ? categoryScores?.kelancaran.toFixed(2)
+                      : sec.title === "Pengurangan"
+                      ? categoryScores?.pengurangan.toFixed(2)
                       : "0.00"}
                   </Typography>
-                </Grid>
+                </Box>
 
+                {/* List Huruf/Nilai */}
                 <Grid container spacing={2}>
                   {(sec.list ?? []).map((item, i) => {
-                    // <-- pastikan sec.list tidak undefined
                     const huruf = typeof item === "string" ? item : item.simbol;
+                    const nilai = typeof item === "string" ? 0 : item.nilai;
+
+                    const isSpecialCategory =
+                      sec.title.toLowerCase().includes("kelancaran") ||
+                      sec.title.toLowerCase().includes("pengurangan");
 
                     return (
-                      <Grid item xs={4} sm={3} md={2} lg={1.5} key={i}>
+                      <Grid
+                        item
+                        xs={isSpecialCategory ? 6 : 3}
+                        sm={isSpecialCategory ? 4 : 2}
+                        md={isSpecialCategory ? 3 : 1.5}
+                        key={i}
+                      >
                         <Card
                           variant="outlined"
                           sx={{
-                            p: 1.5,
-                            borderRadius: 2,
-                            height: "80px",
+                            p: 2,
+                            borderRadius: 3,
+                            height: "110px",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             alignItems: "center",
                             textAlign: "center",
-                            gap: "4px",
+                            gap: 1,
+                            backgroundColor:
+                              isSpecialCategory && nilai > 0
+                                ? "#ffebee"
+                                : "#fafafa",
+                            boxShadow: 1,
+                            transition: "0.3s",
+                            "&:hover": {
+                              boxShadow: 4,
+                              transform: "scale(1.05)",
+                            },
                           }}
                         >
                           <Typography
                             sx={{
                               fontSize: {
-                                xs: "0.55rem",
-                                sm: "0.7rem",
-                                md: "0.8rem",
+                                xs: "0.7rem",
+                                sm: "0.85rem",
+                                md: "1rem",
                               },
                               fontWeight: 500,
-                              lineHeight: 1.1,
                             }}
                           >
                             {huruf}
@@ -171,14 +228,18 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
                           <Typography
                             sx={{
                               fontSize: {
-                                xs: "0.65rem",
-                                sm: "0.8rem",
-                                md: "0.95rem",
+                                xs: "0.8rem",
+                                sm: "0.9rem",
+                                md: "1.05rem",
                               },
                               fontWeight: "bold",
+                              color:
+                                isSpecialCategory && nilai > 0
+                                  ? "green"
+                                  : "inherit",
                             }}
                           >
-                            {typeof item === "string" ? 0 : item.nilai}
+                            {isSpecialCategory && nilai === 0 ? "" : nilai}
                           </Typography>
                         </Card>
                       </Grid>
@@ -186,15 +247,15 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
                   })}
                 </Grid>
               </Card>
-            ))}
-          </Grid>
-        </Card>
+            </Grid>
+          ))}
+        </Grid>
 
         <Button
           onClick={onClose}
           variant="contained"
           fullWidth
-          sx={{ mt: 3, borderRadius: 2 }}
+          sx={{ mt: 4, borderRadius: 3, py: 1.5 }}
         >
           Tutup
         </Button>

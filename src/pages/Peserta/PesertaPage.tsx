@@ -20,6 +20,8 @@ import {
   QuizSection,
   ApiAssessmentItem,
 } from "./type";
+import authService from "../../services/auth.service";
+import { useNavigate } from "react-router-dom";
 
 // Data quiz default
 const dataQuiz: Record<string, QuizSection["list"]> = {
@@ -135,18 +137,17 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "Nun Washal",
   ],
   kelancaran: ["Tidak Lancar", "Kurang Lancar"],
+  pengurangan: ["Tidak Bisa Baca"],
 };
 
 const PesertaPage: React.FC = () => {
+  const navigate = useNavigate();
   const { user, loading, error, fetchUser } = useUserStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAsesmen, setSelectedAsesmen] = useState<DataPeserta | null>(
     null
   );
 
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
   const endpoint =
     user?.role === "admin"
       ? "/api/admin/profile"
@@ -164,7 +165,6 @@ const PesertaPage: React.FC = () => {
     queryFn: async () => {
       if (!endpoint) return { data: [] };
       const res = await apiClient.get(endpoint);
-      console.log(res.data);
       return res.data;
     },
     staleTime: 30000,
@@ -178,6 +178,7 @@ const PesertaPage: React.FC = () => {
     id: user.id,
     no_akun: user.no_akun || "-",
     nik: user.nik || "-",
+    no_handphone: user.no_handphone || "-",
     nama: user.nama || "-",
     jenis_kelamin: user.jenis_kelamin || "L",
     tempat_lahir: user.tempat_lahir || "-",
@@ -207,6 +208,7 @@ const PesertaPage: React.FC = () => {
           name: user.assessor.name,
           email: user.assessor.email,
           link_grup_wa: user.assessor.link_grup_wa,
+          no_telepon: user.assessor.no_telepon,
         }
       : null,
     status: user.status || "-",
@@ -217,6 +219,7 @@ const PesertaPage: React.FC = () => {
     mad: user.scoring?.scores.mad || 0,
     kelancaran: user.scoring?.scores.kelancaran || 0,
     gharib: user.scoring?.scores.gharib || 0,
+    pengurangan: user.scoring?.scores.pengurangan || 0,
     total: user.scoring?.scores.overall || 0,
     akun: {
       id: user.akun_id || "",
@@ -233,34 +236,31 @@ const PesertaPage: React.FC = () => {
 
   // Query detail asesmen peserta
   const { data: asesmenDetail, refetch: fetchDetail } = useQuery({
-    queryKey: ["asesmen", selectedAsesmen?.id ?? "no-id"],
+    queryKey: ["asesmen-detail"],
     queryFn: async () => {
       if (!selectedAsesmen?.id) return null;
 
-      let allData: ApiAssessmentItem[] = [];
-      let page = 1;
-      let totalPages = 1;
+      const res = await apiClient.get(
+        `/api/assessments/participant/${selectedAsesmen.id}`,
+        {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            "If-None-Match": "",
+          },
+        }
+      );
 
-      do {
-        const res = await apiClient.get(
-          `/api/assessments/participant/${selectedAsesmen.id}?page=${page}&per_page=10`
-        );
-
-        console.log(" data asesmen:", res.data);
-        if (!res.data?.data) break;
-
-        allData = allData.concat(res.data.data);
-
-        totalPages = res.data.pagination?.total_pages ?? 1;
-        page++;
-      } while (page <= totalPages);
-
-      console.log("Semua data asesmen:", allData);
+      // API langsung return semua item → tidak perlu loop
+      const allData: ApiAssessmentItem[] = res.data.data || [];
 
       return { data: allData };
     },
-    enabled: !!selectedAsesmen?.id,
-    staleTime: 30000,
+    enabled: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    staleTime: Infinity,
   });
 
   // Transform detail API ke sections
@@ -274,6 +274,7 @@ const PesertaPage: React.FC = () => {
       { title: "Ahkam Al-Mad wa Qashr", list: dataQuiz.mad },
       { title: "Gharib", list: dataQuiz.gharib },
       { title: "Kelancaran", list: dataQuiz.kelancaran },
+      { title: "Pengurangan", list: dataQuiz.pengurangan },
     ];
 
     if (!detail?.data) return defaultSections;
@@ -301,6 +302,8 @@ const PesertaPage: React.FC = () => {
         ? "gharib"
         : sec.title.toLowerCase().includes("kelancaran")
         ? "kelancaran"
+        : sec.title.toLowerCase().includes("pengurangan")
+        ? "pengurangan"
         : "";
 
       if (!key || !grouped[key]) return sec;
@@ -317,12 +320,24 @@ const PesertaPage: React.FC = () => {
   const safeSections = mapDetailToSections(asesmenDetail) || [];
   useEffect(() => {
     fetchUser();
-  }, [user, fetchUser]);
+  }, []);
 
-  const handleOpen = (asesmen: DataPeserta) => {
-    setSelectedAsesmen(asesmen);
+  const handleOpen = (item: DataPeserta) => {
+    console.log(selectedAsesmen?.id);
+    if (selectedAsesmen?.id === item.id && modalVisible) return;
+    setSelectedAsesmen(item);
     setModalVisible(true);
     fetchDetail();
+  };
+  // const handleEditSave = async (updated: DataPeserta) => {
+  //   await apiClient.put(`/api/participants/${updated.id}`, updated);
+  //   alert("Data berhasil diperbarui!");
+  // };
+
+  const handleLogout = () => {
+    // Clear all data from localStorage
+    authService.logout();
+    navigate("/");
   };
 
   return (
@@ -361,7 +376,7 @@ const PesertaPage: React.FC = () => {
 
         {/* Tombol Logout */}
         <Button
-          onClick={() => console.log("Logout clicked")}
+          onClick={handleLogout}
           variant="contained"
           color="error"
           sx={{
@@ -430,10 +445,7 @@ const PesertaPage: React.FC = () => {
             {asesmenList.length > 0 ? (
               <PesertaInfoCard
                 peserta={asesmenList[0]}
-                onEdit={() => {
-                  console.log("Edit clicked", asesmenList[0]);
-                  // bisa buka modal edit atau navigasi ke halaman edit
-                }}
+                // onEdit={handleEditSave}
               />
             ) : (
               <Box
@@ -473,6 +485,8 @@ const PesertaPage: React.FC = () => {
             ahkam: selectedAsesmen.ahkam || 0,
             mad: selectedAsesmen.mad || 0,
             gharib: selectedAsesmen.gharib || 0,
+            kelancaran: selectedAsesmen.kelancaran || 0,
+            pengurangan: selectedAsesmen.pengurangan || 0,
           }}
         />
       )}

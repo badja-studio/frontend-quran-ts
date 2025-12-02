@@ -267,11 +267,7 @@ const PenilaianPageCompact: React.FC = () => {
         avg,
       });
 
-      // Tampilkan semua data setelah berhasil submit
       console.log("Response API:", response.data);
-      console.log("Nilai per huruf:", assessmentsHuruf);
-      console.log("Total nilai per kategori:", totals);
-      console.log("Total keseluruhan:", avg);
 
       alert("Penilaian berhasil dikirim!");
       navigate("/dashboard/asesor/hasil-asesmen");

@@ -31,55 +31,48 @@ const PieChartWithInfo: React.FC<PieChartWithInfoProps> = ({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
         textAlign: "center",
-
-        width: {
-          xs: "100%",
-          sm: "100%",
-          md: "80%",
-          lg: "70%",
-        },
+        width: { xs: "100%", sm: "100%", md: "80%", lg: "70%" },
         mx: "auto",
+        p: 2,
       }}
     >
+      {/* Pie Chart */}
       <ReusablePieChart data={data} colors={colors} size={finalSize} />
 
-      <Box mt={2} sx={{ width: "100%", maxWidth: { xs: 220, md: 260 } }}>
-        <Typography
-          fontWeight={600}
-          mb={1}
-          sx={{
-            fontSize: "clamp(0.9rem, 1.5vw, 1.2rem)",
-          }}
-        >
-          Total: {totalAll.toLocaleString()}
-        </Typography>
+      {/* Total & Legend */}
+      <Box mt={3} sx={{ width: "100%", maxWidth: { xs: 220, md: 260 } }}>
+        {/** Optional title */}
+        {data.length > 0 && (
+          <Typography
+            fontWeight={600}
+            mb={2}
+            sx={{ fontSize: "clamp(0.9rem, 1.5vw, 1.2rem)" }}
+          >
+            Total: {totalAll.toLocaleString()}
+          </Typography>
+        )}
 
         <Stack spacing={1}>
           {data.map((item, index) => {
-            const percent = ((item.value / totalAll) * 100).toFixed(2);
+            const percent = totalAll
+              ? ((item.value / totalAll) * 100).toFixed(2)
+              : "0";
 
             return (
               <Box
                 key={item.name}
-                sx={{ display: "flex", alignItems: "center" }}
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
               >
                 <Box
                   sx={{
-                    width: 10,
-                    height: 10,
+                    width: 12,
+                    height: 12,
                     bgcolor: colors[index % colors.length],
-                    borderRadius: "3px",
-                    mr: 1,
+                    borderRadius: "50%",
                   }}
                 />
-
-                <Typography
-                  sx={{
-                    fontSize: "clamp(0.8rem, 1.5vw, 1.1rem)",
-                  }}
-                >
+                <Typography sx={{ fontSize: "clamp(0.8rem, 1.5vw, 1.1rem)" }}>
                   {item.name}: {item.value.toLocaleString()} ({percent}%)
                 </Typography>
               </Box>

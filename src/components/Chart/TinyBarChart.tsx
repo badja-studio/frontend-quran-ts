@@ -6,6 +6,7 @@ import {
   YAxis,
   Tooltip,
   Cell,
+  CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
 
@@ -23,27 +24,44 @@ interface KesalahanBarProps {
 const ReusableKesalahanBarChart: React.FC<KesalahanBarProps> = ({
   data,
   colors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A020F0"],
-  height = 250,
+  height = 300,
 }) => {
   return (
     <div style={{ width: "100%", height }}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
-          margin={{ top: 10, right: 10, left: 0, bottom: 80 }}
+          margin={{ top: 20, right: 20, left: 0, bottom: 80 }}
         >
+          {/* Grid halus */}
+          <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+
+          {/* X Axis miring */}
           <XAxis
             dataKey="name"
-            angle={-55}
+            angle={-45}
             textAnchor="end"
             interval={0}
-            height={80}
-            tick={{ fontSize: 12 }}
+            height={70}
+            tick={{ fontSize: 12, fill: "#555" }}
           />
-          <YAxis />
-          <Tooltip />
 
-          <Bar dataKey="total">
+          <YAxis
+            tick={{ fontSize: 12, fill: "#555" }}
+            tickFormatter={(val) => val.toLocaleString()}
+          />
+
+          <Tooltip
+            cursor={{ fill: "rgba(0,0,0,0.05)" }}
+            formatter={(value: number) => value.toLocaleString()}
+          />
+
+          <Bar
+            dataKey="total"
+            radius={[6, 6, 0, 0]}
+            barSize={30}
+            isAnimationActive={true}
+          >
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${entry.name}`}
