@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -5,58 +6,65 @@ import {
   Box,
   Typography,
   Button,
+  TextField,
+  MenuItem,
 } from "@mui/material";
-import { Person, Edit } from "@mui/icons-material";
+import { Person } from "@mui/icons-material";
 import InfoField from "./InfoField";
-import { DataPeserta } from "../../pages/Peserta/type";
+import { DataPeserta, PesertaFieldKey } from "../../pages/Peserta/type";
 
 interface Props {
   peserta: DataPeserta;
-  onEdit?: () => void;
+  onEdit?: (updated: DataPeserta) => void;
 }
 
 const PesertaInfoCard: React.FC<Props> = ({ peserta, onEdit }) => {
-  const fields = [
-    { label: "NIK", value: peserta.nik },
-    { label: "Nama Lengkap", value: peserta.nama },
-    { label: "Jenis Kelamin", value: peserta.jenis_kelamin },
-    { label: "Tempat Lahir", value: peserta.tempat_lahir },
-    { label: "Tanggal Lahir", value: peserta.tanggal_lahir },
-    { label: "Provinsi", value: peserta.provinsi },
-    { label: "Kabupaten/Kota", value: peserta.kota },
-    { label: "Kecamatan", value: peserta.kecamatan },
-    { label: "Kelurahan/Desa", value: peserta.kelurahan },
-    { label: "Status Pegawai", value: peserta.status_pegawai },
-    { label: "Sertifikasi", value: peserta.sertifikat_profesi },
-    { label: "Pendidikan Terakhir", value: peserta.pendidikan },
-    { label: "Perguruan Tinggi", value: peserta.perguruan_tinggi },
-    { label: "Fakultas", value: peserta.fakultas },
-    { label: "Program Studi", value: peserta.prodi },
-    { label: "Tingkatan", value: peserta.tingkat_sekolah },
-    { label: "Sekolah/Madrasah", value: peserta.sekolah },
-    { label: "Alamat Sekolah", value: peserta.alamat_sekolah },
-    { label: "Mapel Yang Diampu", value: peserta.level },
-    { label: "Status Asesmen", value: peserta.status },
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState<DataPeserta>(peserta);
+
+  const tingkatOptions = ["MI", "MTS", "MA"];
+  const statusPegawaiOptions = ["PNS", "Non PNS", "PPK"];
+
+  const fields: { key: PesertaFieldKey; label: string; type?: string }[] = [
+    { key: "nik", label: "NIK" },
+    { key: "nama", label: "Nama Lengkap" },
+    { key: "jenis_kelamin", label: "Jenis Kelamin" },
+    { key: "tempat_lahir", label: "Tempat Lahir" },
+    { key: "tanggal_lahir", label: "Tanggal Lahir", type: "date" },
+    { key: "provinsi", label: "Provinsi" },
+    { key: "kota", label: "Kabupaten/Kota" },
+    { key: "kecamatan", label: "Kecamatan" },
+    { key: "kelurahan", label: "Kelurahan/Desa" },
+    { key: "status_pegawai", label: "Status Pegawai" },
+    { key: "tingkat_sekolah", label: "Tingkatan" },
+    { key: "sekolah", label: "Sekolah/Madrasah" },
+    { key: "alamat_sekolah", label: "Alamat Sekolah" },
+    { key: "level", label: "Mapel Yang Diampu" },
+    { key: "status", label: "Status Asesmen" },
   ];
+
+  const handleChange = (key: PesertaFieldKey, value: string) => {
+    setEditData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSave = () => {
+    onEdit?.(editData);
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditData(peserta);
+    setIsEditing(false);
+  };
 
   return (
     <Card
       elevation={3}
-      sx={{
-        borderRadius: 3,
-        position: "relative",
-        transition: "0.3s",
-        "&:hover": {
-          transform: "translateY(-2px)",
-          boxShadow: "0 12px 20px rgba(0,0,0,0.12)",
-        },
-        backgroundColor: "#fff",
-      }}
+      sx={{ borderRadius: 3, position: "relative", backgroundColor: "#fff" }}
     >
-      {/* Tombol Edit */}
-      {onEdit && (
+      {/* {!isEditing && (
         <Button
-          onClick={onEdit}
+          onClick={() => setIsEditing(true)}
           variant="contained"
           color="secondary"
           startIcon={<Edit />}
@@ -66,19 +74,12 @@ const PesertaInfoCard: React.FC<Props> = ({ peserta, onEdit }) => {
             right: 16,
             textTransform: "none",
             fontWeight: "bold",
-            bgcolor: "secondary.light",
-            color: "secondary.main",
-            "&:hover": {
-              bgcolor: "secondary.main",
-              color: "#fff",
-            },
           }}
         >
           Edit
         </Button>
-      )}
+      )} */}
 
-      {/* HEADER */}
       <Box
         sx={{
           bgcolor: "primary.main",
@@ -99,13 +100,79 @@ const PesertaInfoCard: React.FC<Props> = ({ peserta, onEdit }) => {
 
       <CardContent sx={{ p: 3 }}>
         <Grid container spacing={3}>
-          {/* INFO 2 KOLON */}
-          {fields.map((field, idx) => (
-            <Grid item xs={12} sm={6} key={idx}>
-              <InfoField label={field.label} value={field.value || "-"} />
+          {fields.map((field) => (
+            <Grid item xs={12} sm={6} key={field.key}>
+              {isEditing ? (
+                field.key === "tingkat_sekolah" ? (
+                  <TextField
+                    select
+                    fullWidth
+                    size="small"
+                    label={field.label}
+                    value={editData[field.key] || ""}
+                    onChange={(e) => handleChange(field.key, e.target.value)}
+                  >
+                    {tingkatOptions.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ) : field.key === "status_pegawai" ? (
+                  <TextField
+                    select
+                    fullWidth
+                    size="small"
+                    label={field.label}
+                    value={editData[field.key] || ""}
+                    onChange={(e) => handleChange(field.key, e.target.value)}
+                  >
+                    {statusPegawaiOptions.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ) : (
+                  <TextField
+                    fullWidth
+                    size="small"
+                    type={field.type || "text"}
+                    label={field.label}
+                    value={editData[field.key] || ""}
+                    onChange={(e) => handleChange(field.key, e.target.value)}
+                  />
+                )
+              ) : (
+                <InfoField
+                  label={field.label}
+                  value={peserta[field.key] || "-"}
+                />
+              )}
             </Grid>
           ))}
         </Grid>
+
+        {isEditing && (
+          <Box mt={3} display="flex" gap={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSave}
+              sx={{ textTransform: "none" }}
+            >
+              Simpan
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleCancel}
+              sx={{ textTransform: "none" }}
+            >
+              Batal
+            </Button>
+          </Box>
+        )}
       </CardContent>
     </Card>
   );

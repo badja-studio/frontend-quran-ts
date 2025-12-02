@@ -173,15 +173,11 @@ export default function AdminDashboard() {
         </Box>
 
         {/* Participation Statistics */}
-        <Grid
-          container
-          spacing={3}
-          sx={{ mb: 4, px: 2, justifyContent: "center", alignItems: "center" }}
-        >
+        <Box sx={{ mb: 4, px: 2 }}>
           <ParticipationGroup
             items={transformParticipationData(overview.participationByLevel)}
           />
-        </Grid>
+        </Box>
 
         {/* Province Participation Chart */}
         <Grid

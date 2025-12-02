@@ -1,4 +1,11 @@
-import { Card, CardContent, Typography, Box, Divider } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Divider,
+  LinearProgress,
+} from "@mui/material";
 
 interface ParticipationCardProps {
   title: string;
@@ -14,36 +21,36 @@ export default function StatParticipationCard({
   color,
 }: ParticipationCardProps) {
   const notYet = total - done;
-  const percent = total > 0 ? ((done / total) * 100).toFixed(2) : "0";
+  const percent = total > 0 ? (done / total) * 100 : 0;
 
   return (
     <Card
       sx={{
         backgroundColor: color,
         color: "white",
-        borderRadius: 2,
-        boxShadow: 3,
+        borderRadius: 3,
+        boxShadow: 5,
         width: "100%",
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
-        padding: "clamp(0.5rem, 1vw, 1rem)",
+        justifyContent: "space-between",
+        p: { xs: 2, sm: 3 },
+        transition: "0.3s",
+        "&:hover": {
+          transform: "translateY(-4px)",
+          boxShadow: "0 12px 25px rgba(0,0,0,0.25)",
+        },
       }}
     >
-      <CardContent
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "clamp(0.2rem, 0.5vw, 0.5rem)",
-        }}
-      >
+      <CardContent sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
         {/* Angka utama */}
         <Typography
-          variant="h5"
+          variant="h4"
           fontWeight="bold"
           sx={{
-            fontSize: { xs: "1.2rem", sm: "1.5rem", md: "1.7rem" },
+            fontSize: { xs: "1.5rem", sm: "2rem", md: "2.3rem" },
+            lineHeight: 1,
           }}
         >
           {done.toLocaleString()}
@@ -51,63 +58,45 @@ export default function StatParticipationCard({
 
         {/* Judul */}
         <Typography
-          variant="body2"
-          sx={{ opacity: 0.9, fontSize: { xs: "0.7rem", sm: "0.85rem" } }}
+          variant="subtitle2"
+          sx={{ opacity: 0.85, fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
         >
           {title}
         </Typography>
 
-        <Divider
-          sx={{
-            borderColor: "rgba(255,255,255,0.4)",
-            my: "clamp(0.5rem, 1vw, 1rem)",
-          }}
-        />
+        <Divider sx={{ borderColor: "rgba(255,255,255,0.4)", my: 1.5 }} />
 
-        {/* Detail: DARI, BELUM, PERSEN */}
+        {/* Progress Bar */}
+        <Box sx={{ width: "100%", mb: 1 }}>
+          <LinearProgress
+            variant="determinate"
+            value={percent}
+            sx={{
+              height: 8,
+              borderRadius: 5,
+              backgroundColor: "rgba(255,255,255,0.2)",
+              "& .MuiLinearProgress-bar": {
+                borderRadius: 5,
+                backgroundColor: "rgba(255,255,255,0.9)",
+              },
+            }}
+          />
+        </Box>
+
+        {/* Detail Angka */}
         <Box display="flex" justifyContent="space-between">
-          <Typography
-            variant="caption"
-            sx={{ fontSize: { xs: "0.6rem", sm: "0.75rem" } }}
-          >
-            DARI
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{ fontSize: { xs: "0.6rem", sm: "0.75rem" } }}
-          >
-            {total.toLocaleString()}
-          </Typography>
+          <Typography variant="caption">DARI</Typography>
+          <Typography variant="caption">{total.toLocaleString()}</Typography>
         </Box>
 
         <Box display="flex" justifyContent="space-between">
-          <Typography
-            variant="caption"
-            sx={{ fontSize: { xs: "0.6rem", sm: "0.75rem" } }}
-          >
-            BELUM
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{ fontSize: { xs: "0.6rem", sm: "0.75rem" } }}
-          >
-            {notYet.toLocaleString()}
-          </Typography>
+          <Typography variant="caption">BELUM</Typography>
+          <Typography variant="caption">{notYet.toLocaleString()}</Typography>
         </Box>
 
         <Box display="flex" justifyContent="space-between">
-          <Typography
-            variant="caption"
-            sx={{ fontSize: { xs: "0.6rem", sm: "0.75rem" } }}
-          >
-            PERSEN
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{ fontSize: { xs: "0.6rem", sm: "0.75rem" } }}
-          >
-            {percent} %
-          </Typography>
+          <Typography variant="caption">PERSEN</Typography>
+          <Typography variant="caption">{percent.toFixed(2)} %</Typography>
         </Box>
       </CardContent>
     </Card>

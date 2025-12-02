@@ -134,6 +134,8 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "Badal",
     "Nun Washal",
   ],
+  kelancaran: ["Tidak Lancar", "Kurang Lancar"],
+  pengurangan: ["Tidak Bisa Baca"],
 };
 
 export default function ListAsesorPagesDataPesertaHasilAsesmen() {
@@ -271,6 +273,8 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
       ahkam: item.scoring?.scores.ahkam || 0,
       mad: item.scoring?.scores.mad || 0,
       gharib: item.scoring?.scores.gharib || 0,
+      kelancaran: item.scoring?.scores.kelancaran || 0,
+      pengurangan: item.scoring?.scores.pengurangan || 0,
       total: item.scoring?.scores.overall || 0,
       onDetailClick: handleDetailClick,
     })) || [];
@@ -283,34 +287,32 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   };
 
   const { data: asesmenDetail, refetch: fetchDetail } = useQuery({
-    queryKey: ["asesmen", selectedAsesmen?.id ?? "no-id"],
+    queryKey: ["asesmen-detail-asesor"],
     queryFn: async () => {
       if (!selectedAsesmen?.id) return null;
 
-      let allData: ApiAssessmentItem[] = [];
-      let page = 1;
-      let totalPages = 1;
+      const res = await apiClient.get(
+        `/api/assessments/participant/${selectedAsesmen.id}`,
+        {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            "If-None-Match": "",
+          },
+        }
+      );
 
-      do {
-        const res = await apiClient.get(
-          `/api/assessments/participant/${selectedAsesmen.id}?page=${page}&per_page=10`
-        );
-
-        console.log(" data asesmen:", res.data);
-        if (!res.data?.data) break;
-
-        allData = allData.concat(res.data.data);
-
-        totalPages = res.data.pagination?.total_pages ?? 1;
-        page++;
-      } while (page <= totalPages);
-
-      console.log("Semua data asesmen:", allData);
+      // API langsung return semua item → tidak perlu loop
+      const allData: ApiAssessmentItem[] = res.data.data || [];
+      console.log(allData);
 
       return { data: allData };
     },
     enabled: false,
-    staleTime: 30000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    staleTime: Infinity,
   });
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -343,8 +345,11 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
       { title: "Ahkam Al-Huruf", list: dataQuiz.ahkam },
       { title: "Ahkam Al-Mad wa Qashr", list: dataQuiz.mad },
       { title: "Gharib", list: dataQuiz.gharib },
+      { title: "Kelancaran", list: dataQuiz.kelancaran },
+      { title: "Pengurangan", list: dataQuiz.pengurangan },
     ];
-    if (!detail?.data) return defaultSections;
+
+    if (!detail?.data?.length) return defaultSections;
 
     const grouped: Record<string, { simbol: string; nilai: number }[]> = {};
 
@@ -367,6 +372,10 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
         ? "mad"
         : sec.title.toLowerCase().includes("gharib")
         ? "gharib"
+        : sec.title.toLowerCase().includes("kelancaran")
+        ? "kelancaran"
+        : sec.title.toLowerCase().includes("pengurangan")
+        ? "pengurangan"
         : "";
 
       if (!key || !grouped[key]) return sec;
@@ -384,7 +393,7 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   const safeSections = mapDetailToSections(asesmenDetail) || [];
   useEffect(() => {
     fetchUser();
-  }, [user, fetchUser]);
+  }, []);
 
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {
@@ -494,6 +503,8 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
               ahkam: selectedAsesmen.ahkam || 0,
               mad: selectedAsesmen.mad || 0,
               gharib: selectedAsesmen.gharib || 0,
+              kelancaran: selectedAsesmen.kelancaran || 0,
+              pengurangan: selectedAsesmen.pengurangan || 0,
             }}
           />
         )}
