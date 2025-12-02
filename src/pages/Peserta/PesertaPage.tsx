@@ -233,7 +233,7 @@ const PesertaPage: React.FC = () => {
 
   // Query detail asesmen peserta
   const { data: asesmenDetail, refetch: fetchDetail } = useQuery({
-    queryKey: ["asesmen", selectedAsesmen?.id ?? "no-id"],
+    queryKey: ["hasil", selectedAsesmen?.id ?? "no-id"],
     queryFn: async () => {
       if (!selectedAsesmen?.id) return null;
 
