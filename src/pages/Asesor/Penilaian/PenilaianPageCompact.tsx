@@ -87,6 +87,9 @@ const PenilaianPageCompact: React.FC = () => {
       pengurangan: pengurangan.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
     };
   });
+  const [kelancaranPenalty, setKelancaranPenalty] = useState<number>(0);
+  const [penguranganPenaltyValue, setPenguranganPenaltyValue] =
+    useState<number>(0);
 
   const [kelancaranValue, setKelancaranValue] = useState<string | null>(null);
   const [penguranganValue, setPenguranganValue] = useState<string | null>(null);
@@ -219,8 +222,8 @@ const PenilaianPageCompact: React.FC = () => {
   const handleSubmit = async () => {
     if (!pesertaFromTable || !user) return;
 
-    const assessmentsHuruf = Object.entries(mistakes).flatMap(
-      ([kategori, obj]) =>
+    const assessmentsHuruf = [
+      ...Object.entries(mistakes).flatMap(([kategori, obj]) =>
         Object.entries(obj).map(([huruf, count]) => ({
           peserta_id: pesertaFromTable.id,
           asesor_id: user.id,
@@ -228,7 +231,22 @@ const PenilaianPageCompact: React.FC = () => {
           kategori,
           nilai: count,
         }))
-    );
+      ),
+      {
+        peserta_id: pesertaFromTable.id,
+        asesor_id: user.id,
+        huruf: "Kelancaran",
+        kategori: "kelancaran",
+        nilai: kelancaranPenalty,
+      },
+      {
+        peserta_id: pesertaFromTable.id,
+        asesor_id: user.id,
+        huruf: "Pengurangan",
+        kategori: "pengurangan",
+        nilai: penguranganPenaltyValue,
+      },
+    ];
 
     const totals = {
       makhraj: totalScore("makhraj"),
@@ -236,9 +254,8 @@ const PenilaianPageCompact: React.FC = () => {
       ahkam: totalScore("ahkam"),
       mad: totalScore("mad"),
       gharib: totalScore("gharib"),
-      kelancaran: kelancaranValue
-        ? categoryWeights.kelancaran - getKelancaranPenalty()
-        : categoryWeights.kelancaran,
+      kelancaran: categoryWeights.kelancaran - kelancaranPenalty,
+      pengurangan: penguranganPenaltyValue,
     };
 
     const avg = totalOverall();
@@ -304,13 +321,18 @@ const PenilaianPageCompact: React.FC = () => {
                 list={kelancaran}
                 isSelect
                 selectedValue={kelancaranValue}
-                onSelect={(value) =>
-                  locked
-                    ? null
-                    : setKelancaranValue(
-                        kelancaranValue === value ? null : value
-                      )
-                }
+                onSelect={(value) => {
+                  setKelancaranValue(value === kelancaranValue ? null : value);
+
+                  const penalty =
+                    value === "Tidak Lancar"
+                      ? 3
+                      : value === "Kurang Lancar"
+                      ? 2
+                      : 0;
+
+                  setKelancaranPenalty(value === kelancaranValue ? 0 : penalty);
+                }}
               />
               <ScoreSection
                 title="Pengurangan Nilai Peserta"
@@ -319,21 +341,26 @@ const PenilaianPageCompact: React.FC = () => {
                 isSelect
                 selectedValue={penguranganValue}
                 onSelect={(value) => {
+                  if (locked && value !== "Tidak Bisa Membaca") return;
                   if (value === "Tidak Bisa Membaca") {
-                    // Jika saat ini sudah dipilih "Tidak Bisa Membaca", klik lagi → cancel
                     if (penguranganValue === "Tidak Bisa Membaca") {
                       setPenguranganValue(null);
-                      setLocked(false); // unlock
+                      setPenguranganPenaltyValue(0);
+                      setLocked(false);
                     } else {
                       setPenguranganValue("Tidak Bisa Membaca");
-                      setLocked(true); // lock
+                      setPenguranganPenaltyValue(90); // penalty
+                      setLocked(true);
                     }
-                  } else {
-                    // pilihan selain "Tidak Bisa Membaca"
-                    setPenguranganValue(
-                      penguranganValue === value ? null : value
-                    );
+                    return;
                   }
+
+                  // selain "Tidak Bisa Membaca"
+                  const selected = value === penguranganValue ? null : value;
+                  setPenguranganValue(selected);
+
+                  const numericPenalty = selected ? Number(selected) : 0;
+                  setPenguranganPenaltyValue(numericPenalty);
                 }}
               />
             </Box>
