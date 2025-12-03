@@ -25,11 +25,7 @@ import {
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import apiClient from "../../../services/api.config";
 import useUserStore from "../../../store/user.store";
-import {
-  Peserta,
-  PesertaFormData,
-  PesertaPage,
-} from "./peserta/type";
+import { Peserta, PesertaFormData, PesertaPage } from "./peserta/type";
 
 const LIMIT = 10;
 
@@ -158,9 +154,9 @@ export default function InputPesertaPage() {
       nama_sekolah: "",
       alamat_sekolah: "",
       provinsi: "",
-      kab_kota: "",
+      kota: "",
       kecamatan: "",
-      desa_kelurahan: "",
+      kelurahan: "",
       status_pegawai: "",
       sertifikasi: "",
       tahun_sertifikasi: 0,
@@ -190,9 +186,9 @@ export default function InputPesertaPage() {
         nama_sekolah: pesertaDetail.nama_sekolah || "",
         alamat_sekolah: pesertaDetail.alamat_sekolah || "",
         provinsi: pesertaDetail.provinsi || "",
-        kab_kota: pesertaDetail.kab_kota || "",
+        kota: pesertaDetail.kota || "",
         kecamatan: pesertaDetail.kecamatan || "",
-        desa_kelurahan: pesertaDetail.desa_kelurahan || "",
+        kelurahan: pesertaDetail.kelurahan || "",
         status_pegawai: pesertaDetail.status_pegawai || "",
         sertifikasi: pesertaDetail.sertifikasi || "",
         tahun_sertifikasi: pesertaDetail.tahun_sertifikasi || 0,
@@ -310,9 +306,9 @@ export default function InputPesertaPage() {
                       nama_sekolah: "",
                       alamat_sekolah: "",
                       provinsi: "",
-                      kab_kota: "",
+                      kota: "",
                       kecamatan: "",
-                      desa_kelurahan: "",
+                      kelurahan: "",
                       status_pegawai: "",
                       sertifikasi: "",
                       tahun_sertifikasi: 0,
@@ -354,9 +350,9 @@ export default function InputPesertaPage() {
                       nama_sekolah: "",
                       alamat_sekolah: "",
                       provinsi: "",
-                      kab_kota: "",
+                      kota: "",
                       kecamatan: "",
-                      desa_kelurahan: "",
+                      kelurahan: "",
                       status_pegawai: "",
                       sertifikasi: "",
                       tahun_sertifikasi: 0,
@@ -607,7 +603,7 @@ export default function InputPesertaPage() {
 
               <Grid item xs={12} md={6}>
                 <Controller
-                  name="kab_kota"
+                  name="kota"
                   control={control}
                   rules={{ required: "Kab/Kota wajib diisi" }}
                   render={({ field }) => (
@@ -616,8 +612,8 @@ export default function InputPesertaPage() {
                       fullWidth
                       label="Kab/Kota"
                       required
-                      error={!!errors.kab_kota}
-                      helperText={errors.kab_kota?.message}
+                      error={!!errors.kota}
+                      helperText={errors.kota?.message}
                     />
                   )}
                 />
@@ -643,7 +639,7 @@ export default function InputPesertaPage() {
 
               <Grid item xs={12} md={6}>
                 <Controller
-                  name="desa_kelurahan"
+                  name="kelurahan"
                   control={control}
                   rules={{ required: "Desa/Kelurahan wajib diisi" }}
                   render={({ field }) => (
@@ -652,8 +648,8 @@ export default function InputPesertaPage() {
                       fullWidth
                       label="Desa/Kelurahan"
                       required
-                      error={!!errors.desa_kelurahan}
-                      helperText={errors.desa_kelurahan?.message}
+                      error={!!errors.kelurahan}
+                      helperText={errors.kelurahan?.message}
                     />
                   )}
                 />
@@ -918,7 +914,13 @@ export default function InputPesertaPage() {
                 <Controller
                   name="password"
                   control={control}
-                  rules={{ required: "Password wajib diisi", minLength: { value: 6, message: "Password minimal 6 karakter" } }}
+                  rules={{
+                    required: "Password wajib diisi",
+                    minLength: {
+                      value: 6,
+                      message: "Password minimal 6 karakter",
+                    },
+                  }}
                   render={({ field }) => (
                     <TextField
                       {...field}

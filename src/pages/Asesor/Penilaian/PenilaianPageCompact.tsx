@@ -261,13 +261,11 @@ const PenilaianPageCompact: React.FC = () => {
     const avg = totalOverall();
 
     try {
-      const response = await apiClient.post("/api/assessments/bulk", {
+      await apiClient.post("/api/assessments/bulk", {
         assessments: assessmentsHuruf,
         totals,
         avg,
       });
-
-      console.log("Response API:", response.data);
 
       alert("Penilaian berhasil dikirim!");
       navigate("/dashboard/asesor/hasil-asesmen");

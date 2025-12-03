@@ -29,7 +29,6 @@ const useUserStore = create<UserStore>((set) => ({
     const current = useUserStore.getState();
     if (current.user || current.loading) return;
 
-    console.log("[UserStore] Fetch user started");
     set({ loading: true, error: null });
 
     try {
@@ -45,18 +44,15 @@ const useUserStore = create<UserStore>((set) => ({
           user: { ...response.data, role },
           loading: false,
         });
-        console.log("[UserStore] Fetch user success:", response.data);
       } else {
         set({
           error: response.message ?? "Gagal memuat data.",
           loading: false,
         });
-        console.log("[UserStore] Fetch user failed:", response.message);
       }
     } catch (err) {
       const apiError = handleApiError(err);
       set({ error: apiError.message, loading: false });
-      console.log("[UserStore] Fetch user error:", apiError.message);
     }
   },
 }));

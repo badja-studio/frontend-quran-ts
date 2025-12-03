@@ -303,7 +303,6 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
         }
       );
 
-      // API langsung return semua item → tidak perlu loop
       const allData: ApiAssessmentItem[] = res.data.data || [];
       console.log(allData);
 

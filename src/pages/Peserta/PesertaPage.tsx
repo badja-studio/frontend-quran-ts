@@ -370,7 +370,7 @@ const PesertaPage: React.FC = () => {
             fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
           }}
         >
-          Asesmen Baca Al-Quran
+          IQRA+
         </Typography>
 
         {/* Tombol Logout */}
