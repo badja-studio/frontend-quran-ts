@@ -27,31 +27,29 @@ export type PesertaPage = {
 };
 
 export interface PesertaFormData {
-  username: string;
+  no_akun: string;
+  nip: string;
   nik: string;
   nama: string;
   jenis_kelamin: "L" | "P";
   tempat_lahir: string;
   tanggal_lahir: string;
-  desa: string;
-  sertifikasi: string;
-  provinsi: string;
-  kab_kota: string;
-  kecamatan: string;
-  tahun_sertifikasi: number;
+  jabatan: string;
   pendidikan: string;
   prodi: string;
   perguruan_tinggi: string;
+  asal_kampus: string;
   fakultas: string;
-  sekolah: string;
-  tingkatan_sekolah: string;
-  alamat_sekolah: string;
   tahun_lulus: number;
-  jadwal: string;
-  akun_id?: string | number;
-  asesor_id?: string | null;
-  no_telepon?: string;
-  email?: string;
-  mapel: string;
-  pegawai: string;
+  tingkat_sekolah: string;
+  nama_sekolah: string;
+  alamat_sekolah: string;
+  provinsi: string;
+  kab_kota: string;
+  kecamatan: string;
+  desa_kelurahan: string;
+  status_pegawai: string;
+  sertifikasi: string;
+  tahun_sertifikasi: number;
+  password: string;
 }
