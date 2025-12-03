@@ -1,38 +1,7 @@
-version: '3.8'
-
 services:
-  # Development service
-  frontend-dev:
-    container_name: quran-frontend-dev
-    profiles:
-      - development
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    ports:
-      - "3000:3000"
-    volumes:
-      - .:/app
-      - /app/node_modules
-    environment:
-      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
-      - VITE_PRIMARY_COLOR=${VITE_PRIMARY_COLOR}
-      - VITE_PRIMARY_LIGHT=${VITE_PRIMARY_LIGHT}
-      - VITE_PRIMARY_DARK=${VITE_PRIMARY_DARK}
-      - VITE_SECONDARY_COLOR=${VITE_SECONDARY_COLOR}
-      - VITE_BACKGROUND_COLOR=${VITE_BACKGROUND_COLOR}
-      - VITE_PAPER_COLOR=${VITE_PAPER_COLOR}
-    env_file:
-      - .env
-    networks:
-      - quran-network
-    restart: unless-stopped
-
-  # Production service
-  frontend-prod:
-    container_name: quran-frontend-prod
-    profiles:
-      - production
+  # Frontend Production service
+  frontend:
+    container_name: quran-frontend
     build:
       context: .
       dockerfile: Dockerfile
@@ -46,6 +15,8 @@ services:
         - VITE_PAPER_COLOR=${VITE_PAPER_COLOR}
     ports:
       - "3001:3001"
+    env_file:
+      - .env
     networks:
       - quran-network
     restart: unless-stopped

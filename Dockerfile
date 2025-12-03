@@ -27,11 +27,17 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy source code (including .env now)
+# Copy source code
 COPY . .
+
+# Build the application for production
+RUN npm run build
+
+# Install a simple HTTP server to serve the static files
+RUN npm install -g serve
 
 # Expose port app
 EXPOSE 3001
 
-# Run development server (with env vars already set)
-CMD ["npm", "run", "dev", "--", "--port", "3001", "--host", "0.0.0.0"]
+# Serve the built application
+CMD ["serve", "-s", "dist", "-l", "3001"]
