@@ -153,8 +153,8 @@ const PesertaPage: React.FC = () => {
     user?.role === "admin"
       ? "/api/admin/profile"
       : user?.role === "assessor"
-        ? "/api/assessors/profile"
-        : "/api/participants/profile";
+      ? "/api/assessors/profile"
+      : "/api/participants/profile";
 
   // Query daftar peserta
   const {
@@ -205,12 +205,12 @@ const PesertaPage: React.FC = () => {
     jadwal: user.jadwal || "-",
     asesor: user.assessor
       ? {
-        id: user.assessor.id,
-        name: user.assessor.name,
-        email: user.assessor.email,
-        link_grup_wa: user.assessor.link_grup_wa,
-        no_telepon: user.assessor.no_telepon,
-      }
+          id: user.assessor.id,
+          name: user.assessor.name,
+          email: user.assessor.email,
+          link_grup_wa: user.assessor.link_grup_wa,
+          no_telepon: user.assessor.no_telepon,
+        }
       : null,
     status: user.status || "-",
     link_grup_wa: user.link_grup_wa || "-",
@@ -237,31 +237,24 @@ const PesertaPage: React.FC = () => {
 
   // Query detail asesmen peserta
   const { data: asesmenDetail, refetch: fetchDetail } = useQuery({
-    queryKey: ["asesmen-detail"],
-    queryFn: async () => {
-      if (!selectedAsesmen?.id) return null;
+    queryKey: ["asesmen-detail", selectedAsesmen?.id],
+    queryFn: async ({ queryKey }) => {
+      const [, participantId] = queryKey;
+      if (!participantId) return { data: [] };
 
       const res = await apiClient.get(
-        `/api/assessments/participant/${selectedAsesmen.id}`,
+        `/api/assessments/participant/${participantId}`,
         {
           headers: {
             "Cache-Control": "no-cache",
             Pragma: "no-cache",
-            "If-None-Match": "",
           },
         }
       );
 
-      // API langsung return semua item → tidak perlu loop
-      const allData: ApiAssessmentItem[] = res.data.data || [];
-
-      return { data: allData };
+      return { data: res.data.data || [] };
     },
     enabled: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false,
-    staleTime: Infinity,
   });
 
   // Transform detail API ke sections
@@ -294,18 +287,18 @@ const PesertaPage: React.FC = () => {
       const key = sec.title.toLowerCase().includes("makharij")
         ? "makhraj"
         : sec.title.toLowerCase().includes("shifat")
-          ? "sifat"
-          : sec.title.toLowerCase().includes("ahkam al-huruf")
-            ? "ahkam"
-            : sec.title.toLowerCase().includes("mad")
-              ? "mad"
-              : sec.title.toLowerCase().includes("gharib")
-                ? "gharib"
-                : sec.title.toLowerCase().includes("kelancaran")
-                  ? "kelancaran"
-                  : sec.title.toLowerCase().includes("pengurangan")
-                    ? "pengurangan"
-                    : "";
+        ? "sifat"
+        : sec.title.toLowerCase().includes("ahkam al-huruf")
+        ? "ahkam"
+        : sec.title.toLowerCase().includes("mad")
+        ? "mad"
+        : sec.title.toLowerCase().includes("gharib")
+        ? "gharib"
+        : sec.title.toLowerCase().includes("kelancaran")
+        ? "kelancaran"
+        : sec.title.toLowerCase().includes("pengurangan")
+        ? "pengurangan"
+        : "";
 
       if (!key || !grouped[key]) return sec;
 
@@ -321,12 +314,15 @@ const PesertaPage: React.FC = () => {
   const safeSections = mapDetailToSections(asesmenDetail) || [];
 
   const handleOpen = (item: DataPeserta) => {
-    console.log(selectedAsesmen?.id);
-    if (selectedAsesmen?.id === item.id && modalVisible) return;
     setSelectedAsesmen(item);
+
     setModalVisible(true);
-    fetchDetail();
+
+    setTimeout(() => {
+      fetchDetail();
+    }, 0);
   };
+
   // const handleEditSave = async (updated: DataPeserta) => {
   //   await apiClient.put(`/api/participants/${updated.id}`, updated);
   //   alert("Data berhasil diperbarui!");
@@ -446,7 +442,7 @@ const PesertaPage: React.FC = () => {
             {asesmenList.length > 0 ? (
               <PesertaInfoCard
                 peserta={asesmenList[0]}
-              // onEdit={handleEditSave}
+                // onEdit={handleEditSave}
               />
             ) : (
               <Box

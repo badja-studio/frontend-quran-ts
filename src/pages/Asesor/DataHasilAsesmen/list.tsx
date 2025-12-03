@@ -153,8 +153,11 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   const handleDetailClick = (row: DataPersetaHasil) => {
     setSelectedAsesmen(row);
     setModalVisible(true);
-    fetchDetail();
+    setTimeout(() => {
+      fetchDetail();
+    }, 0);
   };
+
   // Fetch data with React Query
   const {
     data: response,
@@ -199,17 +202,17 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-          {
-            field: "status",
-            op: "eq",
-            value: "SUDAH",
-          },
-          {
-            field: "asesor_id",
-            op: "eq",
-            value: user?.id || "",
-          },
-        ];
+        {
+          field: "status",
+          op: "eq",
+          value: "SUDAH",
+        },
+        {
+          field: "asesor_id",
+          op: "eq",
+          value: user?.id || "",
+        },
+      ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -288,32 +291,26 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   };
 
   const { data: asesmenDetail, refetch: fetchDetail } = useQuery({
-    queryKey: ["asesmen-detail-asesor"],
-    queryFn: async () => {
-      if (!selectedAsesmen?.id) return null;
+    queryKey: ["asesmen-detail-asesor", selectedAsesmen?.id],
+    queryFn: async ({ queryKey }) => {
+      const [, participantId] = queryKey;
+      if (!participantId) return { data: [] };
 
       const res = await apiClient.get(
-        `/api/assessments/participant/${selectedAsesmen.id}`,
+        `/api/assessments/participant/${participantId}`,
         {
           headers: {
             "Cache-Control": "no-cache",
             Pragma: "no-cache",
-            "If-None-Match": "",
           },
         }
       );
 
-      const allData: ApiAssessmentItem[] = res.data.data || [];
-      console.log(allData);
-
-      return { data: allData };
+      return { data: res.data.data || [] };
     },
     enabled: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false,
-    staleTime: Infinity,
   });
+
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
     setPage(1); // Reset ke halaman 1 saat search
@@ -365,18 +362,18 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
       const key = sec.title.toLowerCase().includes("makharij")
         ? "makhraj"
         : sec.title.toLowerCase().includes("shifat")
-          ? "sifat"
-          : sec.title.toLowerCase().includes("ahkam al-huruf")
-            ? "ahkam"
-            : sec.title.toLowerCase().includes("mad")
-              ? "mad"
-              : sec.title.toLowerCase().includes("gharib")
-                ? "gharib"
-                : sec.title.toLowerCase().includes("kelancaran")
-                  ? "kelancaran"
-                  : sec.title.toLowerCase().includes("pengurangan")
-                    ? "pengurangan"
-                    : "";
+        ? "sifat"
+        : sec.title.toLowerCase().includes("ahkam al-huruf")
+        ? "ahkam"
+        : sec.title.toLowerCase().includes("mad")
+        ? "mad"
+        : sec.title.toLowerCase().includes("gharib")
+        ? "gharib"
+        : sec.title.toLowerCase().includes("kelancaran")
+        ? "kelancaran"
+        : sec.title.toLowerCase().includes("pengurangan")
+        ? "pengurangan"
+        : "";
 
       if (!key || !grouped[key]) return sec;
 
