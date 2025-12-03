@@ -105,7 +105,7 @@ class ExportService {
     const queryString = this.buildQueryString(options.filters);
     const baseUrl = `${
       import.meta.env.VITE_API_BASE_URL || "http://localhost:3012/api"
-    }api/export/participants/not-assessed`;
+    }/api/export/participants/not-assessed`;
     const url = `${baseUrl}/${options.format}?${queryString}`;
     const filename =
       options.filename ||
@@ -121,7 +121,7 @@ class ExportService {
     const queryString = this.buildQueryString(options.filters);
     const baseUrl = `${
       import.meta.env.VITE_API_BASE_URL || "http://localhost:3012/api"
-    }api/export/participants/ready-to-assess`;
+    }/api/export/participants/ready-to-assess`;
     const url = `${baseUrl}/${options.format}?${queryString}`;
     const filename =
       options.filename ||
@@ -137,7 +137,7 @@ class ExportService {
     const queryString = this.buildQueryString(options.filters);
     const baseUrl = `${
       import.meta.env.VITE_API_BASE_URL || "http://localhost:3012/api"
-    }api/export/assessors`;
+    }/api/export/assessors`;
     const url = `${baseUrl}/${options.format}?${queryString}`;
     const filename =
       options.filename ||
@@ -153,7 +153,7 @@ class ExportService {
     const queryString = this.buildQueryString(options.filters);
     const baseUrl = `${
       import.meta.env.VITE_API_BASE_URL || "http://localhost:3012/api"
-    }api/export/assessments`;
+    }/api/export/assessments`;
     const url = `${baseUrl}/${options.format}?${queryString}`;
     const filename =
       options.filename ||
