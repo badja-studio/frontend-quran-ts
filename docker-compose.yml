@@ -41,7 +41,7 @@ services:
         - VITE_BACKGROUND_COLOR=${VITE_BACKGROUND_COLOR}
         - VITE_PAPER_COLOR=${VITE_PAPER_COLOR}
     ports:
-      - "80:80"
+      - "3001:3001"
     networks:
       - quran-network
     restart: unless-stopped
