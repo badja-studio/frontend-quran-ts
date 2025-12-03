@@ -39,7 +39,7 @@ export const columnsPeserta: Column<DataPersetaSiapAssesmen>[] = [
     minWidth: 180,
   },
   {
-    id: "nomor_telepon",
+    id: "no_handphone",
     label: "WhatsApp",
     minWidth: 150,
   },
@@ -123,7 +123,7 @@ export const columnsPeserta: Column<DataPersetaSiapAssesmen>[] = [
     minWidth: 150,
   },
   {
-    id: "kab_kota",
+    id: "kota",
     label: "Kab/Kota",
     minWidth: 150,
   },
@@ -133,12 +133,12 @@ export const columnsPeserta: Column<DataPersetaSiapAssesmen>[] = [
     minWidth: 150,
   },
   {
-    id: "desa_kelurahan",
+    id: "kelurahan",
     label: "Desa/Kelurahan",
     minWidth: 150,
   },
   {
-    id: "pegawai",
+    id: "status_pegawai",
     label: "Status Pegawai",
     minWidth: 150,
     align: "center",
@@ -152,29 +152,14 @@ export const columnsPeserta: Column<DataPersetaSiapAssesmen>[] = [
     ),
   },
   {
-    id: "sertifikasi",
+    id: "sertifikat_profesi",
     label: "Sertifikasi",
     minWidth: 120,
     align: "center",
-    format: (value) => {
-      const s = String(value);
-      return (
-        <Chip
-          label={s === "Sudah" ? "Sudah" : "Belum"}
-          size="small"
-          color={s === "Sudah" ? "success" : "warning"}
-        />
-      );
-    },
   },
+
   {
-    id: "tahun_sertifikasi",
-    label: "Tahun Sertifikasi",
-    minWidth: 120,
-    align: "center",
-  },
-  {
-    id: "mapel",
+    id: "level",
     label: "Mapel Diampu",
     minWidth: 180,
   },

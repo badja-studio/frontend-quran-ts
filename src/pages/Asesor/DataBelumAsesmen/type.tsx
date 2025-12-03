@@ -1,9 +1,9 @@
 export interface DataPersetaBelum extends Record<string, unknown> {
   id: string;
   nik: string;
-  username: string;
+
   email: string;
-  nomor_telepon: string;
+  no_handphone: string;
   nama: string;
   jenis_kelamin: string;
   tempat_lahir: string;
@@ -12,18 +12,18 @@ export interface DataPersetaBelum extends Record<string, unknown> {
   sekolah: string;
   alamat_sekolah: string;
   provinsi: string;
-  kab_kota: string;
+  kota: string;
   kecamatan: string;
-  desa_kelurahan: string;
+  kelurahan: string;
   pendidikan: string;
   perguruan_tinggi: string;
   fakultas: string;
   prodi: string;
   tahun_lulus: number;
-  pegawai: string;
+  status_pegawai: string;
   sertifikasi: string;
-  tahun_sertifikasi?: string;
-  mapel: string;
+  sertifikat_profesi?: string;
+  level: string;
   jadwal: string;
   asesor: string;
 }
@@ -38,7 +38,7 @@ export interface User {
   tanggal_lahir?: string;
   jenis_kelamin?: "L" | "P";
   email?: string;
-  nomor_telepon: string;
+  no_handphone: string;
   pendidikan?: string;
   perguruan_tinggi?: string;
   fakultas?: string;
@@ -48,13 +48,14 @@ export interface User {
   jenjang?: string;
   sekolah?: string;
   alamat_sekolah?: string;
-  kab_kota?: string;
+  kota?: string;
   kecamatan?: string;
-  desa_kelurahan?: string;
-  pegawai?: string;
+  kelurahan?: string;
+  status_pegawai?: string;
   sertifikasi?: string;
-  tahun_sertifikasi?: string;
-  mapel?: string;
+  sertifikat_profesi?: string;
+
+  level?: string;
   jadwal?: string;
   asesor_id?: string | null;
   status?: string;

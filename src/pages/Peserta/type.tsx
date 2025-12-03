@@ -18,6 +18,7 @@ export interface DataPeserta {
   id: string;
   no_akun?: string;
   nip?: string;
+  email?: string;
   nik: string;
   nama: string;
   jenis_kelamin?: "L" | "P";
@@ -62,7 +63,6 @@ export interface DataPeserta {
 // Type for valid field keys in DataPeserta
 export type PesertaFieldKey = keyof DataPeserta;
 
-
 // API response peserta
 export interface ApiAssessor {
   id: string;
@@ -77,6 +77,7 @@ export interface ApiParticipant {
   no_akun?: string;
   nik: string;
   nip?: string;
+  email?: string;
   nama: string;
   jenis_kelamin?: "L" | "P";
   tempat_lahir?: string;

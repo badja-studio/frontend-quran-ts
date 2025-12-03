@@ -16,7 +16,7 @@ export const filterConfigs: FilterConfig<DataPesertaHasilAssesment>[] = [
     operators: ["contains", "startsWith", "endsWith"],
   },
   {
-    key: "nomor_telepon",
+    key: "no_handphone",
     label: "Nomor Telepon",
     type: "text",
     operators: ["contains", "startsWith"],
@@ -72,7 +72,7 @@ export const filterConfigs: FilterConfig<DataPesertaHasilAssesment>[] = [
     operators: ["contains", "startsWith"],
   },
   {
-    key: "kab_kota",
+    key: "kota",
     label: "Kab/Kota",
     type: "text",
     operators: ["contains", "startsWith"],
@@ -84,7 +84,7 @@ export const filterConfigs: FilterConfig<DataPesertaHasilAssesment>[] = [
     operators: ["contains", "startsWith"],
   },
   {
-    key: "desa_kelurahan",
+    key: "kelurahan",
     label: "Desa/Kelurahan",
     type: "text",
     operators: ["contains", "startsWith"],
@@ -126,8 +126,8 @@ export const filterConfigs: FilterConfig<DataPesertaHasilAssesment>[] = [
     operators: ["equals", "contains"],
   },
   {
-    key: "pegawai",
-    label: "Status Pegawai",
+    key: "status_pegawai",
+    label: "Status status_pegawai",
     type: "select",
     options: [
       { label: "PNS", value: "PNS" },
@@ -136,22 +136,14 @@ export const filterConfigs: FilterConfig<DataPesertaHasilAssesment>[] = [
     ],
   },
   {
-    key: "sertifikasi",
+    key: "sertifikat_profesi",
     label: "Sertifikasi",
-    type: "select",
-    options: [
-      { label: "Sudah", value: "Sudah" },
-      { label: "Belum", value: "Belum" },
-    ],
-  },
-  {
-    key: "tahun_sertifikasi",
-    label: "Tahun Sertifikasi",
     type: "text",
     operators: ["equals", "contains"],
   },
+
   {
-    key: "mapel",
+    key: "level",
     label: "Mata Pelajaran",
     type: "select",
     options: [

@@ -39,7 +39,7 @@ export const columnsPeserta: Column<DataPesertaBelomAsesment>[] = [
     minWidth: 180,
   },
   {
-    id: "nomor_telepon",
+    id: "no_handphone",
     label: "WhatsApp",
     minWidth: 150,
   },
@@ -123,7 +123,7 @@ export const columnsPeserta: Column<DataPesertaBelomAsesment>[] = [
     minWidth: 150,
   },
   {
-    id: "kab_kota",
+    id: "kota",
     label: "Kab/Kota",
     minWidth: 150,
   },
@@ -133,12 +133,12 @@ export const columnsPeserta: Column<DataPesertaBelomAsesment>[] = [
     minWidth: 150,
   },
   {
-    id: "desa_kelurahan",
+    id: "kelurahan",
     label: "Desa/Kelurahan",
     minWidth: 150,
   },
   {
-    id: "pegawai",
+    id: "status_pegawai",
     label: "Status Pegawai",
     minWidth: 150,
     align: "center",
@@ -151,30 +151,15 @@ export const columnsPeserta: Column<DataPesertaBelomAsesment>[] = [
       />
     ),
   },
+
   {
-    id: "sertifikasi",
+    id: "sertifikat_profesi",
     label: "Sertifikasi",
     minWidth: 120,
     align: "center",
-    format: (value) => {
-      const s = String(value);
-      return (
-        <Chip
-          label={s === "Sudah" ? "Sudah" : "Belum"}
-          size="small"
-          color={s === "Sudah" ? "success" : "warning"}
-        />
-      );
-    },
   },
   {
-    id: "tahun_sertifikasi",
-    label: "Tahun Sertifikasi",
-    minWidth: 120,
-    align: "center",
-  },
-  {
-    id: "mapel",
+    id: "level",
     label: "Mapel Diampu",
     minWidth: 180,
   },
@@ -185,11 +170,10 @@ export const columnsPeserta: Column<DataPesertaBelomAsesment>[] = [
     align: "center",
     format: (value) => new Date(String(value)).toLocaleDateString("id-ID"),
   },
-
   {
     id: "asesor",
     label: "Asesor",
-    minWidth: 130,
+    minWidth: 150,
     align: "center",
   },
 ];
