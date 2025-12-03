@@ -4,6 +4,8 @@ services:
   # Development service
   frontend-dev:
     container_name: quran-frontend-dev
+    profiles:
+      - development
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -29,6 +31,8 @@ services:
   # Production service
   frontend-prod:
     container_name: quran-frontend-prod
+    profiles:
+      - production
     build:
       context: .
       dockerfile: Dockerfile
@@ -41,12 +45,10 @@ services:
         - VITE_BACKGROUND_COLOR=${VITE_BACKGROUND_COLOR}
         - VITE_PAPER_COLOR=${VITE_PAPER_COLOR}
     ports:
-      - "80:80"
+      - "3001:3001"
     networks:
       - quran-network
     restart: unless-stopped
-    profiles:
-      - production
 
 networks:
   quran-network:

@@ -167,7 +167,11 @@ const PesertaInfoCard: React.FC<Props> = ({ peserta, onEdit }) => {
               ) : (
                 <InfoField
                   label={field.label}
-                  value={peserta[field.key] || "-"}
+                  value={
+                    peserta[field.key] != null
+                      ? String(peserta[field.key])
+                      : "-"
+                  }
                 />
               )}
             </Grid>

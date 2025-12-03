@@ -7,6 +7,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 3000,
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      'assesment.iqi.web.id',
+      '.iqi.web.id', // Allow all subdomains
+    ],
     watch: {
       usePolling: true,
     },
@@ -14,5 +20,11 @@ export default defineConfig({
   preview: {
     host: '0.0.0.0',
     port: 3000,
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      'assesment.iqi.web.id',
+      '.iqi.web.id', // Allow all subdomains
+    ],
   },
 })

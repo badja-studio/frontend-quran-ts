@@ -59,6 +59,10 @@ export interface DataPeserta {
   akun?: Akun | null;
 }
 
+// Type for valid field keys in DataPeserta
+export type PesertaFieldKey = keyof DataPeserta;
+
+
 // API response peserta
 export interface ApiAssessor {
   id: string;
