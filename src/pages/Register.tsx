@@ -149,9 +149,31 @@ export default function Register() {
               <Controller
                 name="nik"
                 control={control}
-                rules={{ required: "NIK wajib diisi" }}
-                render={({ field }) => (
-                  <TextField label="NIK" fullWidth required {...field} />
+                rules={{
+                  required: "NIK wajib diisi",
+                  pattern: {
+                    value: /^\d{16}$/,
+                    message: "NIK harus 16 digit angka",
+                  },
+                  minLength: {
+                    value: 16,
+                    message: "NIK harus 16 digit",
+                  },
+                  maxLength: {
+                    value: 16,
+                    message: "NIK harus 16 digit",
+                  },
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <TextField
+                    label="NIK"
+                    fullWidth
+                    required
+                    error={!!error}
+                    helperText={error?.message}
+                    placeholder="1234567890123456"
+                    {...field}
+                  />
                 )}
               />
             </Grid>
