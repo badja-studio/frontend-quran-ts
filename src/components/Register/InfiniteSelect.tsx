@@ -13,6 +13,8 @@ interface Props {
   value: BaseItem | null;
   onChange: (v: BaseItem | null) => void;
   disabled?: boolean;
+  size?: "small" | "medium";
+  required?: boolean;
 }
 
 export default function InfiniteSelect({
@@ -21,6 +23,8 @@ export default function InfiniteSelect({
   value,
   onChange,
   disabled,
+  size = "medium",
+  required = false,
 }: Props) {
   const query = useQuery({
     queryKey: ["inf-select", url],
@@ -52,7 +56,7 @@ export default function InfiniteSelect({
       getOptionLabel={(o) => o?.nama ?? ""}
       isOptionEqualToValue={(o, v) => o?.id === v?.id}
       renderInput={(params) => (
-        <TextField {...params} label={label} size="small" />
+        <TextField {...params} label={label} size={size} required={required} />
       )}
     />
   );

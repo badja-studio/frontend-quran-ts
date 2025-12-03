@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TextField,
   Grid,
@@ -8,65 +8,58 @@ import {
   Paper,
   Box,
   Alert,
-  Autocomplete,
 } from "@mui/material";
-import {
-  useMutation,
-  useInfiniteQuery,
-  InfiniteData,
-  QueryFunctionContext,
-} from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
 import apiClient, { handleApiError } from "../services/api.config";
 import InfiniteSelect from "../components/Register/InfiniteSelect";
-import {
-  Asesor,
-  AssessorPage,
-  RegisterForm,
-  RegisterPayload,
-} from "../components/Register/types";
+import InfiniteAsesorSelect from "../components/Register/InfiniteAsesorSelect";
+import { RegisterForm, RegisterPayload, Asesor } from "../components/Register/types";
 import { useNavigate } from "react-router-dom";
 
-const LIMIT = 10;
-const jadwalDesember = Array.from({ length: 26 }, (_, i) => 6 + i).map(
-  (d) => `2025-12-${String(d).padStart(2, "0")}`
-);
-
 export default function Register() {
-  const { control, handleSubmit, setValue, watch } = useForm<RegisterForm>({
+  const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      navigate("/", { replace: true });
+    }
+  }, [navigate]);
+
+  const { control, handleSubmit, watch } = useForm<RegisterForm>({
     defaultValues: {
-      // nik: "",
+      no_akun: "",
+      nip: "",
+      nik: "",
       nama: "",
+      email: "",
+      no_handphone: "",
+      jenis_kelamin: "L",
       tempat_lahir: "",
       tanggal_lahir: "",
-      jenis_kelamin: "",
+      jabatan: "",
       pendidikan: "",
-      kampus: "",
-      jenjang: "",
-      sertifikat_profesi: "",
       prodi: "",
-      tahun_lulus: "",
+      perguruan_tinggi: "",
+      asal_kampus: "",
+      fakultas: "",
+      tahun_lulus: 0,
       tingkat_sekolah: "",
       nama_sekolah: "",
-      provinsi: "",
-      kabupaten: "",
-      kecamatan: "",
-      desa: "",
-      status_pegawai: "",
-      level: "",
       alamat_sekolah: "",
+      provinsi: "",
+      kab_kota: "",
+      kecamatan: "",
+      desa_kelurahan: "",
+      status_pegawai: "",
       sertifikasi: "",
-      tahunSertifikasi: "",
-      // email: "",
-      // whatsapp: "",
-      // mapel: "",
+      tahun_sertifikasi: 0,
       password: "",
-      asesor: "",
-      jadwal: "",
-      username: "",
+      asesor_id: "",
     },
   });
-  const navigate = useNavigate();
   const sertifikasiValue = watch("sertifikasi");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,80 +80,12 @@ export default function Register() {
   const [desaObj, setDesaObj] = useState<{ id: number; nama: string } | null>(
     null
   );
-
-  // Asesor search
-  const [asesorSearch, setAsesorSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(asesorSearch), 500);
-    return () => clearTimeout(timer);
-  }, [asesorSearch]);
-
-  const fetchAsesors = async (
-    context: QueryFunctionContext<readonly unknown[], unknown>
-  ): Promise<AssessorPage> => {
-    const pageParam = (context.pageParam as number) ?? 1;
-    const params = new URLSearchParams();
-    params.append("page", String(pageParam));
-    params.append("limit", String(LIMIT));
-    if (debouncedSearch) params.append("search", debouncedSearch);
-
-    const res = await apiClient.get(`/api/assessors?${params.toString()}`);
-    const payload = res.data;
-
-    if (Array.isArray(payload)) {
-      return {
-        data: payload,
-        page: pageParam,
-        hasMore: payload.length === LIMIT,
-      };
-    }
-
-    return {
-      data: payload.data ?? [],
-      page: payload.page ?? pageParam,
-      totalPages: payload.totalPages,
-      hasMore:
-        typeof payload.hasMore === "boolean" ? payload.hasMore : undefined,
-    };
-  };
-
-  // Infinite query for assessors
-  const {
-    data: asesorsPages,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery<AssessorPage, unknown, InfiniteData<AssessorPage>>({
-    queryKey: ["asesors-dropdown-update", debouncedSearch],
-    queryFn: fetchAsesors,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, pages) => {
-      const current = lastPage.page ?? pages.length ?? 1;
-
-      if (typeof lastPage.totalPages === "number") {
-        return current < lastPage.totalPages ? current + 1 : undefined;
-      }
-      if (typeof lastPage.hasMore === "boolean") {
-        return lastPage.hasMore ? current + 1 : undefined;
-      }
-      return (lastPage.data?.length ?? 0) === LIMIT ? current + 1 : undefined;
-    },
-  });
-
-  // Flatten pages -> single array of asesors
-  const asesors: Asesor[] = useMemo(() => {
-    if (!asesorsPages?.pages) return [];
-    const all = asesorsPages.pages.flatMap((p: AssessorPage) => p.data || []);
-    const map = new Map<string, Asesor>();
-    all.forEach((a: Asesor) => map.set(a.id, a));
-    return Array.from(map.values());
-  }, [asesorsPages]);
+  const [asesorObj, setAsesorObj] = useState<Asesor | null>(null);
 
   // Mutation register
   const registerMutation = useMutation({
     mutationFn: async (payload: RegisterPayload) => {
-      const res = await apiClient.post("/api/auth/register", payload);
+      const res = await apiClient.post("/api/participants/register", payload);
       return res.data;
     },
     onMutate: () => {
@@ -182,30 +107,12 @@ export default function Register() {
   });
 
   const onSubmit = (data: RegisterForm) => {
-    let hasilAkhir = "BELUM";
-
-    if (data.sertifikasi === "Sudah") {
-      hasilAkhir = `SUDAH ${data.tahunSertifikasi}`;
-    }
-
-    // buang field UI-only dari data
-    const { sertifikasi, tahunSertifikasi, ...rest } = data;
-    void sertifikasi;
-    void tahunSertifikasi;
-
-    const payload: RegisterPayload = {
-      ...rest,
-      sertifikat_profesi: hasilAkhir,
-      password: data.password, // tetap dikirim
-    };
-
     // Buat data yang aman untuk di-log
-    const safeLog = { ...payload };
+    const safeLog = { ...data };
     safeLog.password = "*** HIDDEN ***";
-
     console.log("Payload:", safeLog);
 
-    registerMutation.mutate(payload);
+    registerMutation.mutate(data);
   };
 
   return (
@@ -231,60 +138,56 @@ export default function Register() {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
-            {/* Username */}
+            {/* No Akun */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="username"
+                name="no_akun"
                 control={control}
+                rules={{ required: "No Akun wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="email" fullWidth {...field} />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Controller
-                name="password"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    {...field}
-                  />
+                  <TextField label="No Akun" fullWidth required {...field} />
                 )}
               />
             </Grid>
 
-            {/* Email */}
-            {/* <Grid item xs={12} md={6}>
+            {/* NIP */}
+            <Grid item xs={12} md={6}>
               <Controller
-                name="email"
+                name="nip"
                 control={control}
+                rules={{ required: "NIP wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Email" fullWidth {...field} />
+                  <TextField label="NIP" fullWidth required {...field} />
                 )}
               />
-            </Grid> */}
-
-            {/* WhatsApp */}
-            {/* <Grid item xs={12} md={6}>
-              <Controller
-                name="whatsapp"
-                control={control}
-                render={({ field }) => (
-                  <TextField label="WhatsApp" fullWidth {...field} />
-                )}
-              />
-            </Grid> */}
+            </Grid>
 
             {/* NIK */}
             <Grid item xs={12} md={6}>
               <Controller
                 name="nik"
                 control={control}
+                rules={{ required: "NIK wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="NIK" fullWidth {...field} />
+                  <TextField label="NIK" fullWidth required {...field} />
+                )}
+              />
+            </Grid>
+
+            {/* Password */}
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="password"
+                control={control}
+                rules={{ required: "Password wajib diisi", minLength: { value: 6, message: "Password minimal 6 karakter" } }}
+                render={({ field }) => (
+                  <TextField
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    required
+                    {...field}
+                  />
                 )}
               />
             </Grid>
@@ -294,8 +197,57 @@ export default function Register() {
               <Controller
                 name="nama"
                 control={control}
+                rules={{ required: "Nama Lengkap wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Nama Lengkap" fullWidth {...field} />
+                  <TextField label="Nama Lengkap" fullWidth required {...field} />
+                )}
+              />
+            </Grid>
+
+            {/* Email */}
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="email"
+                control={control}
+                rules={{
+                  required: "Email wajib diisi",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Format email tidak valid"
+                  }
+                }}
+                render={({ field }) => (
+                  <TextField
+                    label="Email"
+                    type="email"
+                    fullWidth
+                    required
+                    {...field}
+                  />
+                )}
+              />
+            </Grid>
+
+            {/* No Phone */}
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="no_handphone"
+                control={control}
+                rules={{
+                  required: "No Telepon wajib diisi",
+                  pattern: {
+                    value: /^[0-9+\-\s()]+$/,
+                    message: "Format nomor telepon tidak valid"
+                  }
+                }}
+                render={({ field }) => (
+                  <TextField
+                    label="No Telepon"
+                    type="tel"
+                    fullWidth
+                    required
+                    {...field}
+                  />
                 )}
               />
             </Grid>
@@ -305,8 +257,9 @@ export default function Register() {
               <Controller
                 name="tempat_lahir"
                 control={control}
+                rules={{ required: "Tempat Lahir wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Tempat Lahir" fullWidth {...field} />
+                  <TextField label="Tempat Lahir" fullWidth required {...field} />
                 )}
               />
             </Grid>
@@ -316,11 +269,13 @@ export default function Register() {
               <Controller
                 name="tanggal_lahir"
                 control={control}
+                rules={{ required: "Tanggal Lahir wajib diisi" }}
                 render={({ field }) => (
                   <TextField
                     label="Tanggal Lahir"
                     type="date"
                     fullWidth
+                    required
                     InputLabelProps={{ shrink: true }}
                     {...field}
                   />
@@ -333,8 +288,9 @@ export default function Register() {
               <Controller
                 name="jenis_kelamin"
                 control={control}
+                rules={{ required: "Jenis Kelamin wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Jenis Kelamin" select fullWidth {...field}>
+                  <TextField label="Jenis Kelamin" select fullWidth required {...field}>
                     <MenuItem value="L">Laki-laki</MenuItem>
                     <MenuItem value="P">Perempuan</MenuItem>
                   </TextField>
@@ -347,19 +303,33 @@ export default function Register() {
               <Controller
                 name="pendidikan"
                 control={control}
+                rules={{ required: "Pendidikan Terakhir wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Pendidikan Terakhir" fullWidth {...field} />
+                  <TextField label="Pendidikan Terakhir" fullWidth required {...field} />
                 )}
               />
             </Grid>
 
-            {/* Kampus */}
+            {/* Perguruan Tinggi */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="kampus"
+                name="perguruan_tinggi"
                 control={control}
+                rules={{ required: "Perguruan Tinggi wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Asal Kampus" fullWidth {...field} />
+                  <TextField label="Perguruan Tinggi" fullWidth required {...field} />
+                )}
+              />
+            </Grid>
+
+            {/* Asal Kampus */}
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="asal_kampus"
+                control={control}
+                rules={{ required: "Asal Kampus wajib diisi" }}
+                render={({ field }) => (
+                  <TextField label="Asal Kampus" fullWidth required {...field} />
                 )}
               />
             </Grid>
@@ -367,10 +337,11 @@ export default function Register() {
             {/* Fakultas */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="jenjang"
+                name="fakultas"
                 control={control}
+                rules={{ required: "Fakultas wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Fakultas" fullWidth {...field} />
+                  <TextField label="Fakultas" fullWidth required {...field} />
                 )}
               />
             </Grid>
@@ -380,8 +351,9 @@ export default function Register() {
               <Controller
                 name="prodi"
                 control={control}
+                rules={{ required: "Program Studi wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Program Studi" fullWidth {...field} />
+                  <TextField label="Program Studi" fullWidth required {...field} />
                 )}
               />
             </Grid>
@@ -391,8 +363,20 @@ export default function Register() {
               <Controller
                 name="tahun_lulus"
                 control={control}
-                render={({ field }) => (
-                  <TextField label="Tahun Lulus" fullWidth {...field} />
+                rules={{ required: "Tahun Lulus wajib diisi" }}
+                render={({ field: { onChange, value, ...field } }) => (
+                  <TextField
+                    label="Tahun Lulus"
+                    fullWidth
+                    required
+                    type="number"
+                    value={value || ""}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onChange(val ? parseInt(val, 10) : 0);
+                    }}
+                    {...field}
+                  />
                 )}
               />
             </Grid>
@@ -402,11 +386,13 @@ export default function Register() {
               <Controller
                 name="tingkat_sekolah"
                 control={control}
+                rules={{ required: "Tingkatan Sekolah wajib diisi" }}
                 render={({ field }) => (
                   <TextField
                     label="Tingkatan Sekolah"
                     select
                     fullWidth
+                    required
                     {...field}
                   >
                     {["MI", "MTS", "MA"].map((v) => (
@@ -424,8 +410,9 @@ export default function Register() {
               <Controller
                 name="nama_sekolah"
                 control={control}
+                rules={{ required: "Nama Sekolah wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Nama Sekolah" fullWidth {...field} />
+                  <TextField label="Nama Sekolah" fullWidth required {...field} />
                 )}
               />
             </Grid>
@@ -435,10 +422,12 @@ export default function Register() {
               <Controller
                 name="alamat_sekolah"
                 control={control}
+                rules={{ required: "Alamat Sekolah wajib diisi" }}
                 render={({ field }) => (
                   <TextField
                     label="Alamat Sekolah"
                     fullWidth
+                    required
                     multiline
                     rows={2}
                     {...field}
@@ -449,68 +438,115 @@ export default function Register() {
 
             {/* Pilihan Wilayah */}
             <Grid item xs={12} md={6}>
-              <InfiniteSelect
-                label="Provinsi"
-                url="/api/master/provinces"
-                value={provinsiObj}
-                onChange={(v) => {
-                  setProvinsiObj(v);
-                  setKabupatenObj(null);
-                  setKecamatanObj(null);
-                  setDesaObj(null);
-                  setValue("provinsi", v?.nama ?? "");
-                }}
+              <Controller
+                name="provinsi"
+                control={control}
+                rules={{ required: "Provinsi wajib diisi" }}
+                render={({ field }) => (
+                  <InfiniteSelect
+                    label="Provinsi"
+                    url="/api/master/provinces"
+                    value={provinsiObj}
+                    required
+                    onChange={(v) => {
+                      setProvinsiObj(v);
+                      setKabupatenObj(null);
+                      setKecamatanObj(null);
+                      setDesaObj(null);
+                      field.onChange(v?.nama ?? "");
+                    }}
+                  />
+                )}
               />
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <InfiniteSelect
-                label="Kota / Kabupaten"
-                url={
-                  provinsiObj
-                    ? `/api/master/provinces/${provinsiObj.id}/cities`
-                    : ""
-                }
-                value={kabupatenObj}
-                disabled={!provinsiObj}
-                onChange={(v) => {
-                  setKabupatenObj(v);
-                  setKecamatanObj(null);
-                  setDesaObj(null);
-                  setValue("kabupaten", v?.nama ?? "");
-                }}
+              <Controller
+                name="kab_kota"
+                control={control}
+                rules={{ required: "Kota / Kabupaten wajib diisi" }}
+                render={({ field }) => (
+                  <InfiniteSelect
+                    label="Kota / Kabupaten"
+                    url={
+                      provinsiObj
+                        ? `/api/master/provinces/${provinsiObj.id}/cities`
+                        : ""
+                    }
+                    value={kabupatenObj}
+                    disabled={!provinsiObj}
+                    required
+                    onChange={(v) => {
+                      setKabupatenObj(v);
+                      setKecamatanObj(null);
+                      setDesaObj(null);
+                      field.onChange(v?.nama ?? "");
+                    }}
+                  />
+                )}
               />
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <InfiniteSelect
-                label="Kecamatan"
-                url={
-                  kabupatenObj
-                    ? `/api/master/cities/${kabupatenObj.id}/districts`
-                    : ""
-                }
-                value={kecamatanObj}
-                disabled={!kabupatenObj}
-                onChange={(v) => {
-                  setKecamatanObj(v);
-                  setDesaObj(null);
-                  setValue("kecamatan", v?.nama ?? "");
-                }}
+              <Controller
+                name="kecamatan"
+                control={control}
+                rules={{ required: "Kecamatan wajib diisi" }}
+                render={({ field }) => (
+                  <InfiniteSelect
+                    label="Kecamatan"
+                    url={
+                      kabupatenObj
+                        ? `/api/master/cities/${kabupatenObj.id}/districts`
+                        : ""
+                    }
+                    value={kecamatanObj}
+                    disabled={!kabupatenObj}
+                    required
+                    onChange={(v) => {
+                      setKecamatanObj(v);
+                      setDesaObj(null);
+                      field.onChange(v?.nama ?? "");
+                    }}
+                  />
+                )}
               />
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <InfiniteSelect
-                label="Desa / Kelurahan"
-                url={
-                  kecamatanObj
-                    ? `/api/master/districts/${kecamatanObj.id}/villages`
-                    : ""
-                }
-                value={desaObj}
-                disabled={!kecamatanObj}
-                onChange={(v) => setValue("desa", v?.nama ?? "")}
+              <Controller
+                name="desa_kelurahan"
+                control={control}
+                rules={{ required: "Desa / Kelurahan wajib diisi" }}
+                render={({ field }) => (
+                  <InfiniteSelect
+                    label="Desa / Kelurahan"
+                    url={
+                      kecamatanObj
+                        ? `/api/master/districts/${kecamatanObj.id}/villages`
+                        : ""
+                    }
+                    value={desaObj}
+                    disabled={!kecamatanObj}
+                    required
+                    onChange={(v) => {
+                      setDesaObj(v);
+                      field.onChange(v?.nama ?? "");
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+
+            {/* Jabatan */}
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="jabatan"
+                control={control}
+                rules={{ required: "Jabatan wajib diisi" }}
+                render={({ field }) => (
+                  <TextField label="Jabatan" fullWidth required {...field} />
+                )}
               />
             </Grid>
 
@@ -519,8 +555,9 @@ export default function Register() {
               <Controller
                 name="status_pegawai"
                 control={control}
+                rules={{ required: "Status Pegawai wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Status Pegawai" select fullWidth {...field}>
+                  <TextField label="Status Pegawai" select fullWidth required {...field}>
                     {["PNS", "PPPK", "Non PNS"].map((v) => (
                       <MenuItem key={v} value={v}>
                         {v}
@@ -536,8 +573,9 @@ export default function Register() {
               <Controller
                 name="sertifikasi"
                 control={control}
+                rules={{ required: "Sertifikasi wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Sertifikasi" select fullWidth {...field}>
+                  <TextField label="Sertifikasi" select fullWidth required {...field}>
                     <MenuItem value="Sudah">Sudah</MenuItem>
                     <MenuItem value="Belum">Belum</MenuItem>
                   </TextField>
@@ -548,100 +586,43 @@ export default function Register() {
             {sertifikasiValue === "Sudah" && (
               <Grid item xs={12} md={6}>
                 <Controller
-                  name="tahunSertifikasi"
+                  name="tahun_sertifikasi"
                   control={control}
-                  render={({ field }) => (
-                    <TextField label="Tahun Sertifikasi" fullWidth {...field} />
+                  rules={{ required: "Tahun Sertifikasi wajib diisi" }}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <TextField
+                      label="Tahun Sertifikasi"
+                      fullWidth
+                      required
+                      type="number"
+                      value={value || ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        onChange(val ? parseInt(val, 10) : 0);
+                      }}
+                      {...field}
+                    />
                   )}
                 />
               </Grid>
             )}
 
-            {/* Mapel */}
-            <Grid item xs={12} md={6}>
-              <Controller
-                name="level"
-                control={control}
-                render={({ field }) => (
-                  <TextField label="Mata Pelajaran" select fullWidth {...field}>
-                    {[
-                      "Al-Qur'an Hadis",
-                      "Akidah Akhlak",
-                      "Fiqih",
-                      "Sejarah Kebudayaan Islam (SKI)",
-                      "Bahasa Arab",
-                    ].map((v) => (
-                      <MenuItem key={v} value={v}>
-                        {v}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                )}
-              />
-            </Grid>
-
             {/* Asesor */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="asesor"
+                name="asesor_id"
                 control={control}
+                rules={{ required: "Asesor wajib dipilih" }}
                 render={({ field }) => (
-                  <Autocomplete
-                    options={asesors}
-                    getOptionLabel={(option) => option?.name || ""}
-                    value={asesors.find((a) => a.id === field.value) || null}
-                    onChange={(_, newValue) =>
-                      field.onChange(newValue?.id || "")
-                    }
-                    onInputChange={(_, newInputValue) =>
-                      setAsesorSearch(newInputValue)
-                    }
-                    ListboxProps={{
-                      onScroll: (
-                        event: React.SyntheticEvent<HTMLUListElement>
-                      ) => {
-                        const listboxNode = event.currentTarget as HTMLElement;
-                        if (
-                          listboxNode.scrollTop + listboxNode.clientHeight >=
-                            listboxNode.scrollHeight - 1 &&
-                          hasNextPage &&
-                          !isFetchingNextPage
-                        ) {
-                          fetchNextPage();
-                        }
-                      },
+                  <InfiniteAsesorSelect
+                    label="Pilih Asesor"
+                    value={asesorObj}
+                    required
+                    onChange={(v) => {
+                      setAsesorObj(v);
+                      field.onChange(v?.id ?? "");
                     }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Pilih Asesor"
-                        placeholder="Ketik nama asesor..."
-                      />
-                    )}
-                    noOptionsText="Tidak ada asesor ditemukan"
                   />
-                )}
-              />
-            </Grid>
-
-            {/* Jadwal */}
-            <Grid item xs={12} md={6}>
-              <Controller
-                name="jadwal"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    select
-                    label="Pilih Jadwal Asesmen"
-                    fullWidth
-                    {...field}
-                  >
-                    {jadwalDesember.map((v) => (
-                      <MenuItem key={v} value={v}>
-                        {v}
-                      </MenuItem>
-                    ))}
-                  </TextField>
                 )}
               />
             </Grid>
@@ -656,6 +637,27 @@ export default function Register() {
               >
                 {loading ? "Mengirim..." : "Register"}
               </Button>
+            </Grid>
+
+            <Grid item xs={12} mt={2}>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography variant="body2" color="text.secondary">
+                  Sudah punya akun?{" "}
+                  <Button
+                    variant="text"
+                    onClick={() => navigate("/")}
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: 600,
+                      "&:hover": {
+                        textDecoration: "underline",
+                      },
+                    }}
+                  >
+                    Login di sini
+                  </Button>
+                </Typography>
+              </Box>
             </Grid>
           </Grid>
         </form>
