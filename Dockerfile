@@ -1,31 +1,19 @@
-# Production Dockerfile - Multi-stage build
-FROM node:20-alpine AS builder
+# Production build using Node
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files
+# Copy dependency files
 COPY package*.json ./
 
-# Install ALL dependencies (including devDependencies for build)
-RUN npm ci && npm cache clean --force
+# Install dependencies
+RUN npm install
 
 # Copy source code
 COPY . .
 
-# Build application
-RUN npm run build
-
-# Production stage with nginx
-FROM nginx:alpine
-
-# Copy built files from builder
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port
+# Expose port app (misal Vite preview 4173 / Express 3001)
 EXPOSE 3001
 
-# Start nginx
+# Jalankan seperti development (TANPA nginx)
 CMD ["npm", "run", "dev"]
