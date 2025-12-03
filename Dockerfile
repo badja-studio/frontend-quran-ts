@@ -3,14 +3,14 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Accept build arguments
-ARG VITE_API_BASE_URL
-ARG VITE_PRIMARY_COLOR
-ARG VITE_PRIMARY_LIGHT
-ARG VITE_PRIMARY_DARK
-ARG VITE_SECONDARY_COLOR
-ARG VITE_BACKGROUND_COLOR
-ARG VITE_PAPER_COLOR
+# Accept build arguments with defaults
+ARG VITE_API_BASE_URL=https://api-quran.kancralabs.com
+ARG VITE_PRIMARY_COLOR=#2E7D32
+ARG VITE_PRIMARY_LIGHT=#4CAF50
+ARG VITE_PRIMARY_DARK=#1B5E20
+ARG VITE_SECONDARY_COLOR=#388E3C
+ARG VITE_BACKGROUND_COLOR=#FFFFFF
+ARG VITE_PAPER_COLOR=#F5F5F5
 
 # Set as environment variables (Vite needs these at build time)
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
@@ -27,7 +27,7 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy source code
+# Copy source code (including .env now)
 COPY . .
 
 # Expose port app
