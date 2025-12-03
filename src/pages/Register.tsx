@@ -51,12 +51,12 @@ export default function Register() {
       fakultas: "",
       tahun_lulus: 0,
       tingkat_sekolah: "",
-      nama_sekolah: "",
+      sekolah: "",
       alamat_sekolah: "",
       provinsi: "",
-      kab_kota: "",
+      kota: "",
       kecamatan: "",
-      desa_kelurahan: "",
+      kelurahan: "",
       status_pegawai: "",
       sertifikasi: "",
       tahun_sertifikasi: 0,
@@ -91,6 +91,7 @@ export default function Register() {
   const registerMutation = useMutation({
     mutationFn: async (payload: RegisterPayload) => {
       const res = await apiClient.post("/api/participants/register", payload);
+
       return res.data;
     },
     onMutate: () => {
@@ -454,7 +455,7 @@ export default function Register() {
             {/* Sekolah */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="nama_sekolah"
+                name="sekolah"
                 control={control}
                 rules={{ required: "Nama Sekolah wajib diisi" }}
                 render={({ field }) => (
@@ -513,7 +514,7 @@ export default function Register() {
 
             <Grid item xs={12} md={6}>
               <Controller
-                name="kab_kota"
+                name="kota"
                 control={control}
                 rules={{ required: "Kota / Kabupaten wajib diisi" }}
                 render={({ field }) => (
@@ -566,7 +567,7 @@ export default function Register() {
 
             <Grid item xs={12} md={6}>
               <Controller
-                name="desa_kelurahan"
+                name="kelurahan"
                 control={control}
                 rules={{ required: "Desa / Kelurahan wajib diisi" }}
                 render={({ field }) => (
