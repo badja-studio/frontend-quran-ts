@@ -11,8 +11,29 @@ import {
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import InfoField from "./InfoField";
-import { DataPeserta, PesertaFieldKey } from "../../pages/Peserta/type";
+import { DataPeserta } from "../../pages/Peserta/type";
 
+type PesertaFieldKey =
+  | "nik"
+  | "nama"
+  | "jenis_kelamin"
+  | "tempat_lahir"
+  | "tanggal_lahir"
+  | "provinsi"
+  | "kota"
+  | "kecamatan"
+  | "kelurahan"
+  | "status_pegawai"
+  | "sertifikat_profesi"
+  | "pendidikan"
+  | "perguruan_tinggi"
+  | "fakultas"
+  | "prodi"
+  | "tingkat_sekolah"
+  | "sekolah"
+  | "alamat_sekolah"
+  | "level"
+  | "status";
 interface Props {
   peserta: DataPeserta;
   onEdit?: (updated: DataPeserta) => void;

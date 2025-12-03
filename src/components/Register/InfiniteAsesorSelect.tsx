@@ -41,44 +41,37 @@ export default function InfiniteAsesorSelect({
     return () => clearTimeout(timer);
   }, [inputValue]);
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  } = useInfiniteQuery<AssessorPage>({
-    queryKey: ["asesor-infinite", debouncedSearch],
-    queryFn: async ({ pageParam = 1 }) => {
-      const res = await api.get<Asesor[]>("/api/assessors", {
-        params: {
-          page: pageParam,
-          limit: 10,
-          search: setDebouncedSearch || undefined,
-        },
-      }) as AssessorApiResponse;
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery<AssessorPage>({
+      queryKey: ["asesor-infinite", debouncedSearch],
+      queryFn: async ({ pageParam = 1 }) => {
+        const res = (await api.get<Asesor[]>("/api/assessors", {
+          params: {
+            page: pageParam,
+            limit: 10,
+            search: debouncedSearch || undefined,
+          },
+        })) as AssessorApiResponse;
 
-      // Backend returns: { success, message, data: Asesor[], pagination: {...} }
-      // The pagination is at the root level, not nested inside data
-      return {
-        data: res.data || [],
-        pagination: res.pagination || {
-          current_page: 1,
-          per_page: 10,
-          total: 0,
-          total_pages: 1,
-        },
-      };
-    },
-    getNextPageParam: (lastPage) => {
-      const { current_page, total_pages } = lastPage.pagination;
-      if (current_page < total_pages) {
-        return current_page + 1;
-      }
-      return undefined;
-    },
-    initialPageParam: 1,
-  });
+        return {
+          data: res.data || [],
+          pagination: res.pagination || {
+            current_page: 1,
+            per_page: 10,
+            total: 0,
+            total_pages: 1,
+          },
+        };
+      },
+      getNextPageParam: (lastPage) => {
+        const { current_page, total_pages } = lastPage.pagination;
+        if (current_page < total_pages) {
+          return current_page + 1;
+        }
+        return undefined;
+      },
+      initialPageParam: 1,
+    });
 
   // Flatten all pages into single array
   const options = data?.pages.flatMap((page) => page.data) ?? [];

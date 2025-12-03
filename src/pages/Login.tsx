@@ -104,13 +104,18 @@ function Login() {
       }}
     >
       <Container maxWidth="sm">
-        <Box sx={{ textAlign: "center", mb: 4 }}>
-          <MenuBookIcon sx={{ fontSize: 60, color: "primary.main", mb: 2 }} />
-          <Typography variant="h4" component="h1" gutterBottom color="primary">
-            Welcome Back
+        <Box sx={{ textAlign: "center", mb: 5 }}>
+          <MenuBookIcon sx={{ fontSize: 70, color: "primary.main", mb: 1 }} />
+          <Typography
+            variant="h3"
+            fontWeight="bold"
+            gutterBottom
+            color="primary"
+          >
+            IQRA+
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Sign in to continue to Quran App
+            Instrumen Qur’an & Read Assessment
           </Typography>
         </Box>
 
@@ -205,13 +210,13 @@ function Login() {
                     Loading...
                   </>
                 ) : (
-                  "Sign In"
+                  "Login"
                 )}
               </Button>
 
               <Box sx={{ textAlign: "center", mt: 2 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Don't have an account?{" "}
+                  Belum punya akun?{" "}
                   <Link
                     component="button"
                     type="button"
@@ -226,7 +231,7 @@ function Login() {
                       },
                     }}
                   >
-                    Sign Up
+                    Daftar Sekarang
                   </Link>
                 </Typography>
               </Box>

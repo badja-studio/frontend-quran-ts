@@ -69,4 +69,8 @@ export interface RegisterForm {
   tahun_sertifikasi: number;
   password: string;
   asesor_id: string;
+  jadwal: string;
+  kota: string;
+  kelurahan: string;
+  level: string;
 }
