@@ -41,17 +41,22 @@ export default function InfiniteAsesorSelect({
     return () => clearTimeout(timer);
   }, [inputValue]);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteQuery<AssessorPage>({
-      queryKey: ["asesor-infinite", debouncedSearch],
-      queryFn: async ({ pageParam = 1 }) => {
-        const res = (await api.get<Asesor[]>("/api/assessors", {
-          params: {
-            page: pageParam,
-            limit: 10,
-            search: debouncedSearch || undefined,
-          },
-        })) as AssessorApiResponse;
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery<AssessorPage>({
+    queryKey: ["asesor-infinite", debouncedSearch],
+    queryFn: async ({ pageParam = 1 }) => {
+      const res = await api.get<Asesor[]>("/api/assessors", {
+        params: {
+          page: pageParam,
+          limit: 10,
+          search: debouncedSearch || undefined,
+        },
+      }) as AssessorApiResponse;
 
         return {
           data: res.data || [],
