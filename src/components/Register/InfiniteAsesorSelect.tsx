@@ -54,7 +54,7 @@ export default function InfiniteAsesorSelect({
         params: {
           page: pageParam,
           limit: 10,
-          search: debouncedSearch || undefined,
+          search: setDebouncedSearch || undefined,
         },
       }) as AssessorApiResponse;
 

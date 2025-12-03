@@ -6,6 +6,7 @@ export interface Asesor {
   name: string;
   email?: string;
   link_grup_wa?: string;
+  no_telepon: string;
 }
 export interface Akun {
   id: string;
@@ -33,8 +34,8 @@ export interface DataPeserta {
   pendidikan?: string;
   prodi?: string;
   perguruan_tinggi?: string;
-  status_pegawai: string;
-  sertifikat_profesi: string;
+  status_pegawai?: string;
+  sertifikat_profesi?: string;
   jenis_pt?: string;
   tahun_lulus?: number | string;
   alamat_sekolah: string;
@@ -44,12 +45,15 @@ export interface DataPeserta {
   asesor?: Asesor | null;
   status?: string;
   link_grup_wa?: string;
+  no_handphone?: string;
+  no_telepon?: string;
   makhraj: number;
   sifat: number;
   ahkam: number;
   mad: number;
   gharib: number;
   kelancaran: number;
+  pengurangan: number;
   total: number;
   scoring?: Scoring | null;
   akun?: Akun | null;
@@ -61,6 +65,7 @@ export interface ApiAssessor {
   name: string;
   email: string;
   link_grup_wa?: string;
+  no_telepon: string;
 }
 
 export interface ApiParticipant {
@@ -96,8 +101,11 @@ export interface ApiParticipant {
     name: string;
     email: string;
     link_grup_wa?: string;
+    no_telepon: string;
   } | null;
   status?: string;
+  no_telepon: string;
+  no_handphone: string;
   link_grup_wa?: string;
   scoring?: Scoring;
 }
@@ -144,6 +152,7 @@ export interface ScoringDetails {
     MAD: CategoryBreakdown;
     GHARIB: CategoryBreakdown;
     KELANCARAN: CategoryBreakdown;
+    PENGURANGAN: CategoryBreakdown;
   };
   totalDeduction: number;
   assessmentCount: number;
@@ -158,6 +167,7 @@ export interface Scores {
   mad: number;
   gharib: number;
   kelancaran: number;
+  pengurangan: number;
   overall: number;
 }
 
