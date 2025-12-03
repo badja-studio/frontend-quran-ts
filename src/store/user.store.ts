@@ -23,18 +23,17 @@ const useUserStore = create<UserStore>((set) => ({
   error: null,
 
   setUser: (userData) => set({ user: userData, error: null }),
-
   clearUser: () => set({ user: null, error: null }),
 
   fetchUser: async () => {
     const current = useUserStore.getState();
     if (current.user || current.loading) return;
 
+    console.log("[UserStore] Fetch user started");
     set({ loading: true, error: null });
 
     try {
       const role = localStorage.getItem("userRole") as UserProfile["role"];
-
       let endpoint = "/api/participants/profile";
       if (role === "admin") endpoint = "/api/admins/profile";
       else if (role === "assessor") endpoint = "/api/assessors/profile";
@@ -46,15 +45,18 @@ const useUserStore = create<UserStore>((set) => ({
           user: { ...response.data, role },
           loading: false,
         });
+        console.log("[UserStore] Fetch user success:", response.data);
       } else {
         set({
           error: response.message ?? "Gagal memuat data.",
           loading: false,
         });
+        console.log("[UserStore] Fetch user failed:", response.message);
       }
     } catch (err) {
       const apiError = handleApiError(err);
       set({ error: apiError.message, loading: false });
+      console.log("[UserStore] Fetch user error:", apiError.message);
     }
   },
 }));

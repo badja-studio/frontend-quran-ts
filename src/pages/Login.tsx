@@ -21,6 +21,7 @@ import {
   VisibilityOff,
 } from "@mui/icons-material";
 import authService from "../services/auth.service";
+import useUserStore from "../store/user.store";
 
 interface LoginFormInputs {
   identifier: string;
@@ -49,36 +50,37 @@ function Login() {
   };
 
   const onSubmit = async (data: LoginFormInputs) => {
-    // Clear previous errors
     setLoginError("");
     setIsLoading(true);
 
     try {
-      // Prepare credentials based on login type
+      // Persiapkan credentials
       const credentials = {
         username: data.identifier,
         password: data.password,
       };
 
-      // Call login API
+      // Panggil login API
       const response = await authService.login(credentials);
 
       if (response.success && response.data) {
-        // Success - redirect based on role
-        const role = response.data.user.role.toLowerCase();
+        await useUserStore.getState().fetchUser();
+        const user = useUserStore.getState().user;
 
-        // Navigate to appropriate dashboard
-        if (role === "admin") {
-          navigate("/dashboard/admin");
-        } else if (role === "assessor" || role === "guru") {
-          navigate("/dashboard/asesor/siap-asesmen");
-        } else if (role === "participant" || role === "siswa") {
-          navigate("/peserta");
-        } else {
-          navigate("/dashboard");
+        if (!user) {
+          setLoginError("Gagal memuat profile user.");
+          return;
         }
+
+        // Redirect setelah semua data siap
+        const role = response.data.user.role.toLowerCase();
+        if (role === "admin") navigate("/dashboard/admin");
+        else if (role === "assessor" || role === "guru")
+          navigate("/dashboard/asesor/siap-asesmen");
+        else if (role === "participant" || role === "siswa")
+          navigate("/peserta");
+        else navigate("/dashboard");
       } else {
-        // Login failed
         setLoginError(response.message || "Login gagal. Silakan coba lagi.");
       }
     } catch (error: unknown) {
@@ -91,6 +93,7 @@ function Login() {
       setIsLoading(false);
     }
   };
+
   return (
     <Box
       sx={{

@@ -96,7 +96,10 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
       params.append("filters", JSON.stringify(formattedFilters));
 
       const result = await apiClient.get<GetUsersResponse>(
-        `/api/participants?${params.toString()}`
+        `/api/participants?${params.toString()}`,
+        {
+          headers: { "Cache-Control": "no-cache" },
+        }
       );
 
       // Setelah load pertama selesai
@@ -116,7 +119,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
       nik: user.nik || "",
       username: user.username || "",
       email: user.email || "",
-      nomor_telepon: user.nomor_telepon || "",
+      no_handphone: user.no_handphone || "",
       nama: user.nama || "",
       jenis_kelamin: user.jenis_kelamin || "",
       tempat_lahir: user.tempat_lahir || "",
@@ -125,18 +128,17 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
       sekolah: user.sekolah || "",
       alamat_sekolah: user.alamat_sekolah || "",
       provinsi: user.provinsi || "",
-      kab_kota: user.kab_kota || "",
+      kota: user.kota || "",
       kecamatan: user.kecamatan || "",
-      desa_kelurahan: user.desa_kelurahan || "",
+      kelurahan: user.kelurahan || "",
       pendidikan: user.pendidikan || "",
       perguruan_tinggi: user.perguruan_tinggi || "",
       fakultas: user.fakultas || "",
       prodi: user.prodi || "",
       tahun_lulus: Number(user.tahun_lulus) || 0,
-      pegawai: user.pegawai || "",
-      sertifikasi: user.sertifikasi || "",
-      tahun_sertifikasi: user.tahun_sertifikasi || "",
-      mapel: user.mapel || "",
+      status_pegawai: user.status_pegawai || "",
+      sertifikat_profesi: user.sertifikat_profesi || "",
+      level: user.level || "",
       jadwal: user.jadwal || "",
       asesor: user.assessor?.name || "",
       status: user.status || "-",

@@ -63,6 +63,7 @@ export default function Register() {
       password: "",
       asesor_id: "",
       jadwal: "",
+      level: "",
     },
   });
   const sertifikasiValue = watch("sertifikasi");
@@ -442,9 +443,40 @@ export default function Register() {
                     required
                     {...field}
                   >
-                    {["MI", "MTS", "MA"].map((v) => (
+                    {["MI", "MTs", "MA"].map((v) => (
                       <MenuItem key={v} value={v}>
                         {v}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="level"
+                control={control}
+                rules={{ required: "Mata Pelajaran wajib diisi" }}
+                render={({ field }) => (
+                  <TextField
+                    label="Mata Pelajaran"
+                    select
+                    fullWidth
+                    required
+                    {...field}
+                  >
+                    {[
+                      { label: "Al-Qur'an Hadis", value: "Al-Qur'an Hadis" },
+                      { label: "Akidah Akhlak", value: "Akidah Akhlak" },
+                      { label: "Fiqih", value: "Fiqih" },
+                      {
+                        label: "Sejarah Kebudayaan Islam (SKI)",
+                        value: "Sejarah Kebudayaan Islam (SKI)",
+                      },
+                      { label: "Bahasa Arab", value: "Bahasa Arab" },
+                    ].map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
                       </MenuItem>
                     ))}
                   </TextField>

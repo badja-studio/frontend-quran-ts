@@ -16,6 +16,7 @@ import { DataPeserta } from "../../pages/Peserta/type";
 type PesertaFieldKey =
   | "nik"
   | "nama"
+  | "email"
   | "jenis_kelamin"
   | "tempat_lahir"
   | "tanggal_lahir"
@@ -34,6 +35,7 @@ type PesertaFieldKey =
   | "alamat_sekolah"
   | "level"
   | "status";
+
 interface Props {
   peserta: DataPeserta;
   onEdit?: (updated: DataPeserta) => void;
@@ -49,6 +51,7 @@ const PesertaInfoCard: React.FC<Props> = ({ peserta, onEdit }) => {
   const fields: { key: PesertaFieldKey; label: string; type?: string }[] = [
     { key: "nik", label: "NIK" },
     { key: "nama", label: "Nama Lengkap" },
+    // { key: "email", label: "Email" },
     { key: "jenis_kelamin", label: "Jenis Kelamin" },
     { key: "tempat_lahir", label: "Tempat Lahir" },
     { key: "tanggal_lahir", label: "Tanggal Lahir", type: "date" },
