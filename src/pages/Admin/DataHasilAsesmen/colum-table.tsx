@@ -1,7 +1,7 @@
 import { DataPesertaHasilAssesment } from "./type";
 import { Column } from "../../../components/Table/DataTable";
 import { Box, Typography, Chip, Avatar } from "@mui/material";
-import ActionMenu from "./action";
+// import ActionMenu from "./action";
 
 export const columnsPeserta: Column<DataPesertaHasilAssesment>[] = [
   {
@@ -227,13 +227,13 @@ export const columnsPeserta: Column<DataPesertaHasilAssesment>[] = [
       );
     },
   },
-  {
-    id: "action",
-    label: "Action",
-    minWidth: 150,
-    align: "center",
-    format: (_value: unknown, row: DataPesertaHasilAssesment) => {
-      return <ActionMenu row={row} />;
-    },
-  },
+  // {
+  //   id: "action",
+  //   label: "Action",
+  //   minWidth: 150,
+  //   align: "center",
+  //   format: (_value: unknown, row: DataPesertaHasilAssesment) => {
+  //     return <ActionMenu row={row} />;
+  //   },
+  // },
 ];

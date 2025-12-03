@@ -21,7 +21,6 @@ import {
   VisibilityOff,
 } from "@mui/icons-material";
 import authService from "../services/auth.service";
-import useUserStore from "../store/user.store";
 
 interface LoginFormInputs {
   identifier: string;
@@ -64,15 +63,7 @@ function Login() {
       const response = await authService.login(credentials);
 
       if (response.success && response.data) {
-        await useUserStore.getState().fetchUser();
-        const user = useUserStore.getState().user;
-
-        if (!user) {
-          setLoginError("Gagal memuat profile user.");
-          return;
-        }
-
-        // Redirect setelah semua data siap
+        // Redirect berdasarkan role (React Query akan fetch profile otomatis di halaman tujuan)
         const role = response.data.user.role.toLowerCase();
         if (role === "admin") navigate("/dashboard/admin");
         else if (role === "assessor" || role === "guru")

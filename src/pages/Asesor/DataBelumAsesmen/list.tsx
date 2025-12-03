@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   Box,
@@ -11,10 +11,10 @@ import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import ExportButton from "../../../components/Export/ExportButton";
 import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
-import useUserStore from "../../../store/user.store";
 import { DataPersetaBelum, GetUsersResponse } from "./type";
 import apiClient, { handleApiError } from "../../../services/api.config";
 import { useQuery } from "@tanstack/react-query";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 export default function ListAsesorPagesDataPesertaBelomAsesmen() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,7 +24,7 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
-  const { user, fetchUser } = useUserStore();
+  const { data: user } = useUserProfile();
 
   // Fetch data with React Query
   const {
@@ -70,17 +70,17 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-        {
-          field: "status",
-          op: "eq",
-          value: "BELUM",
-        },
-        {
-          field: "asesor_id",
-          op: "eq",
-          value: user?.id || "",
-        },
-      ];
+          {
+            field: "status",
+            op: "eq",
+            value: "BELUM",
+          },
+          {
+            field: "asesor_id",
+            op: "eq",
+            value: user?.id || "",
+          },
+        ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -168,10 +168,6 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
     }
     setPage(1); // Reset to page 1 on sort change
   };
-
-  useEffect(() => {
-    fetchUser();
-  }, [user, fetchUser]);
 
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {

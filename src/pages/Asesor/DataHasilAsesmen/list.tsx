@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   Box,
@@ -20,7 +20,7 @@ import {
   QuizSection,
 } from "./type";
 import { useQuery } from "@tanstack/react-query";
-import useUserStore from "../../../store/user.store";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 const dataQuiz: Record<string, QuizSection["list"]> = {
   makhraj: [
@@ -146,7 +146,7 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
-  const { user, fetchUser } = useUserStore();
+  const { data: user } = useUserProfile();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAsesmen, setSelectedAsesmen] =
     useState<DataPersetaHasil | null>(null);
@@ -199,17 +199,17 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-        {
-          field: "status",
-          op: "eq",
-          value: "SUDAH",
-        },
-        {
-          field: "asesor_id",
-          op: "eq",
-          value: user?.id || "",
-        },
-      ];
+          {
+            field: "status",
+            op: "eq",
+            value: "SUDAH",
+          },
+          {
+            field: "asesor_id",
+            op: "eq",
+            value: user?.id || "",
+          },
+        ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -365,18 +365,18 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
       const key = sec.title.toLowerCase().includes("makharij")
         ? "makhraj"
         : sec.title.toLowerCase().includes("shifat")
-        ? "sifat"
-        : sec.title.toLowerCase().includes("ahkam al-huruf")
-        ? "ahkam"
-        : sec.title.toLowerCase().includes("mad")
-        ? "mad"
-        : sec.title.toLowerCase().includes("gharib")
-        ? "gharib"
-        : sec.title.toLowerCase().includes("kelancaran")
-        ? "kelancaran"
-        : sec.title.toLowerCase().includes("pengurangan")
-        ? "pengurangan"
-        : "";
+          ? "sifat"
+          : sec.title.toLowerCase().includes("ahkam al-huruf")
+            ? "ahkam"
+            : sec.title.toLowerCase().includes("mad")
+              ? "mad"
+              : sec.title.toLowerCase().includes("gharib")
+                ? "gharib"
+                : sec.title.toLowerCase().includes("kelancaran")
+                  ? "kelancaran"
+                  : sec.title.toLowerCase().includes("pengurangan")
+                    ? "pengurangan"
+                    : "";
 
       if (!key || !grouped[key]) return sec;
 
@@ -391,9 +391,6 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   };
 
   const safeSections = mapDetailToSections(asesmenDetail) || [];
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {

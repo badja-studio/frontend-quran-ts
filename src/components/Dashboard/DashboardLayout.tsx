@@ -31,6 +31,7 @@ import {
   UploadFile,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import authService from "../../services/auth.service";
 
 const drawerWidth = 260;
@@ -147,11 +148,11 @@ const menuConfig: MenuConfig = {
           icon: <PeopleIcon />,
           path: "/dashboard/admin/input-asesor",
         },
-        {
-          text: "Input Peserta",
-          icon: <PeopleIcon />,
-          path: "/dashboard/admin/input-peserta",
-        },
+        // {
+        //   text: "Input Peserta",
+        //   icon: <PeopleIcon />,
+        //   path: "/dashboard/admin/input-peserta",
+        // },
       ],
     },
     {
@@ -204,6 +205,7 @@ export default function DashboardLayout({
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -224,6 +226,10 @@ export default function DashboardLayout({
   const handleLogout = () => {
     // Clear all data from localStorage
     authService.logout();
+
+    // Clear React Query cache
+    queryClient.clear();
+
     handleMenuClose();
     navigate("/");
   };
@@ -374,9 +380,8 @@ export default function DashboardLayout({
         position="fixed"
         sx={{
           width: {
-            sm: `calc(100% - ${
-              drawerOpen ? drawerWidth : drawerWidthCollapsed
-            }px)`,
+            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
+              }px)`,
           },
           ml: { sm: `${drawerOpen ? drawerWidth : drawerWidthCollapsed}px` },
           transition: "all 0.3s",
@@ -397,8 +402,8 @@ export default function DashboardLayout({
             {userRole === "assessor" || userRole === "guru"
               ? "Assessor"
               : userRole === "admin"
-              ? "Admin"
-              : "Participant"}
+                ? "Admin"
+                : "Participant"}
           </Typography>
           <IconButton
             size="large"
@@ -497,9 +502,8 @@ export default function DashboardLayout({
           flexGrow: 1,
           p: 3,
           width: {
-            sm: `calc(100% - ${
-              drawerOpen ? drawerWidth : drawerWidthCollapsed
-            }px)`,
+            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
+              }px)`,
           },
           minHeight: "100vh",
           bgcolor: "grey.50",

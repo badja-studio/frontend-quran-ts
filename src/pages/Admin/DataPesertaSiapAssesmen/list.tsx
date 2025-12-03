@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   Box,
@@ -14,7 +14,7 @@ import { filterConfigs } from "./config-filter";
 import { columnsPeserta } from "./colum-table";
 import { DataPersetaSiapAssesmen, GetUsersResponse } from "./type";
 import apiClient, { handleApiError } from "../../../services/api.config";
-import useUserStore from "../../../store/user.store";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 export default function ListPagesDataPesertaSiapAssement() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,7 +24,7 @@ export default function ListPagesDataPesertaSiapAssement() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
-  const { user, fetchUser } = useUserStore();
+  const { data: user } = useUserProfile();
 
   // Fetch data with React Query
   const {
@@ -71,12 +71,12 @@ export default function ListPagesDataPesertaSiapAssement() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-        {
-          field: "jadwal",
-          op: "eq",
-          value: currentDate,
-        },
-      ];
+          {
+            field: "jadwal",
+            op: "eq",
+            value: currentDate,
+          },
+        ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -166,10 +166,6 @@ export default function ListPagesDataPesertaSiapAssement() {
     }
     setPage(1); // Reset to page 1 on sort change
   };
-
-  useEffect(() => {
-    fetchUser();
-  }, [user, fetchUser]);
 
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {
