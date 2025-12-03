@@ -144,30 +144,6 @@ export default function Register() {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
-            {/* No Akun */}
-            {/* <Grid item xs={12} md={6}>
-              <Controller
-                name="no_akun"
-                control={control}
-                rules={{ required: "No Akun wajib diisi" }}
-                render={({ field }) => (
-                  <TextField label="No Akun" fullWidth required {...field} />
-                )}
-              />
-            </Grid> */}
-
-            {/* NIP */}
-            {/* <Grid item xs={12} md={6}>
-              <Controller
-                name="nip"
-                control={control}
-                rules={{ required: "NIP wajib diisi" }}
-                render={({ field }) => (
-                  <TextField label="NIP" fullWidth required {...field} />
-                )}
-              />
-            </Grid> */}
-
             {/* NIK */}
             <Grid item xs={12} md={6}>
               <Controller

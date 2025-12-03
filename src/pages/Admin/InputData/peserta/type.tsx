@@ -45,9 +45,9 @@ export interface PesertaFormData {
   nama_sekolah: string;
   alamat_sekolah: string;
   provinsi: string;
-  kab_kota: string;
+  kota: string;
   kecamatan: string;
-  desa_kelurahan: string;
+  kelurahan: string;
   status_pegawai: string;
   sertifikasi: string;
   tahun_sertifikasi: number;
