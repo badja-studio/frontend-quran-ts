@@ -13,10 +13,10 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { WhatsApp as WhatsAppIcon } from "@mui/icons-material";
-import useUserStore from "../../../store/user.store";
 import apiClient from "../../../services/api.config";
 import { useQuery } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 // Tipe Assessor
 export interface AssessorProfile {
@@ -49,15 +49,9 @@ interface AsesorFormData {
 }
 
 export default function AsesmenForm() {
-  const { user, fetchUser } = useUserStore();
+  const { data: user } = useUserProfile();
 
-  useEffect(() => {
-    fetchUser()
-      .then((res) => console.log("User fetched successfully:", res))
-      .catch((err) => console.error("Error fetching user:", err));
-  }, [fetchUser]);
-
-  const { data: response, error } = useQuery<ApiAssessorResponse>({
+  const { data: response } = useQuery<ApiAssessorResponse>({
     queryKey: ["Assessor-profile"],
     queryFn: async () => {
       console.log("Fetching assessor profile...");
@@ -67,11 +61,6 @@ export default function AsesmenForm() {
     staleTime: 30000,
     enabled: !!user,
   });
-
-  useEffect(() => {
-    if (response) console.log("Assessor data loaded:", response);
-    if (error) console.error("Error fetching assessor data:", error);
-  }, [response, error]);
 
   const {
     control,
@@ -138,7 +127,6 @@ export default function AsesmenForm() {
         link_grup_wa: response.data.link_grup_wa || "",
       });
     }
-    console.log("Form direset");
   };
 
   const baseStyle = {

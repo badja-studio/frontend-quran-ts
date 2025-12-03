@@ -6,7 +6,7 @@ import { Box, Card, Typography, Avatar, Divider, Grid, Button, TextField } from 
 import { useForm, Controller } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../../services/api.config";
-import useUserStore from "../../../store/user.store";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 // Interface untuk response API
 interface AdminUser {
@@ -43,13 +43,7 @@ interface AdminFormData {
 }
 
 export default function AdminForm() {
-  const { user, fetchUser } = useUserStore();
-
-  useEffect(() => {
-    fetchUser()
-      .then((res) => console.log("User fetched successfully:", res))
-      .catch((err) => console.error("Error fetching user:", err));
-  }, [fetchUser]);
+  const { data: user } = useUserProfile();
 
   // Fetch admin profile dari API
   const { data: response, error, isLoading } = useQuery<ApiAdminResponse>({

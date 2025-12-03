@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import apiClient from "../../../services/api.config";
-import useUserStore from "../../../store/user.store";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 interface Asesor {
   id: string;
@@ -59,7 +59,7 @@ export default function InputAsesorPage() {
   const [showErrorNotif, setShowErrorNotif] = useState(false);
   const [asesorSearch, setAsesorSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const { user, fetchUser } = useUserStore();
+  const { data: user } = useUserProfile();
 
   // Debounce search query
   useEffect(() => {
@@ -225,10 +225,6 @@ export default function InputAsesorPage() {
   const handleCloseErrorNotif = () => {
     setShowErrorNotif(false);
   };
-
-  useEffect(() => {
-    fetchUser();
-  }, [user, fetchUser]);
 
   return (
     <DashboardLayout

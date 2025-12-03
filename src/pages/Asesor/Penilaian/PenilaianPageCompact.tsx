@@ -13,10 +13,10 @@ import {
 } from "./dummy";
 import ScoreSection from "./ScoreSection";
 import HeaderPeserta from "./HeaderPeserta";
-import useUserStore from "../../../store/user.store";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../../services/api.config";
 import { CategoryType } from "./type";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 type ScoreAction = "plus" | "minus";
 type MistakeMap = Record<string, number>;
@@ -59,7 +59,7 @@ const categoryWeights: Record<CategoryType, number> = {
 
 const PenilaianPageCompact: React.FC = () => {
   const { id: participantId } = useParams<{ id: string }>();
-  const { user } = useUserStore();
+  const { data: user } = useUserProfile();
   const location = useLocation();
   const navigate = useNavigate();
   const pesertaFromTable = (location.state as LocationState)?.peserta;
@@ -322,8 +322,8 @@ const PenilaianPageCompact: React.FC = () => {
                     value === "Tidak Lancar"
                       ? 3
                       : value === "Kurang Lancar"
-                      ? 2
-                      : 0;
+                        ? 2
+                        : 0;
 
                   setKelancaranPenalty(value === kelancaranValue ? 0 : penalty);
                 }}

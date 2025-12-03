@@ -24,8 +24,8 @@ import {
 } from "@mui/material";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import apiClient from "../../../services/api.config";
-import useUserStore from "../../../store/user.store";
 import { Peserta, PesertaFormData, PesertaPage } from "./peserta/type";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 const LIMIT = 10;
 
@@ -39,7 +39,7 @@ export default function InputPesertaPage() {
   const [showErrorNotif, setShowErrorNotif] = useState(false);
   const [pesertaSearch, setPesertaSearch] = useState("");
   const [debouncedPesertaSearch, setDebouncedPesertaSearch] = useState("");
-  const { user, fetchUser } = useUserStore();
+  const { data: user } = useUserProfile();
 
   // Debounce search query for peserta
   useEffect(() => {
@@ -246,10 +246,6 @@ export default function InputPesertaPage() {
     setShowErrorNotif(false);
   };
 
-  useEffect(() => {
-    fetchUser();
-  }, [user, fetchUser]);
-
   return (
     <DashboardLayout
       userRole="admin"
@@ -401,7 +397,7 @@ export default function InputPesertaPage() {
                       const listboxNode = event.currentTarget as HTMLElement;
                       if (
                         listboxNode.scrollTop + listboxNode.clientHeight >=
-                          listboxNode.scrollHeight - 1 &&
+                        listboxNode.scrollHeight - 1 &&
                         hasNextPesertaPage &&
                         !isFetchingNextPesertaPage
                       ) {
@@ -954,7 +950,7 @@ export default function InputPesertaPage() {
                   borderRadius: 2,
                   opacity:
                     createPesertaMutation.isPending ||
-                    updatePesertaMutation.isPending
+                      updatePesertaMutation.isPending
                       ? 0.7
                       : 1,
                 }}
@@ -964,8 +960,8 @@ export default function InputPesertaPage() {
                     ? "Menyimpan..."
                     : "Simpan"
                   : updatePesertaMutation.isPending
-                  ? "Mengupdate..."
-                  : "Update"}
+                    ? "Mengupdate..."
+                    : "Update"}
               </Button>
 
               <Button
@@ -1032,8 +1028,8 @@ export default function InputPesertaPage() {
                 ? createPesertaMutation.error.message
                 : "Terjadi kesalahan saat menyimpan data"
               : updatePesertaMutation.error instanceof Error
-              ? updatePesertaMutation.error.message
-              : "Terjadi kesalahan saat mengupdate data"}
+                ? updatePesertaMutation.error.message
+                : "Terjadi kesalahan saat mengupdate data"}
           </Alert>
         </Snackbar>
       </Box>
