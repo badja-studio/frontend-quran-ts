@@ -41,8 +41,8 @@ export type AssessorPage = {
 export type RegisterPayload = RegisterForm;
 
 export interface RegisterForm {
-  no_akun: string;
-  nip: string;
+  no_akun?: string;
+  nip?: string;
   nik: string;
   nama: string;
   email: string;
@@ -58,15 +58,20 @@ export interface RegisterForm {
   fakultas: string;
   tahun_lulus: number;
   tingkat_sekolah: string;
-  nama_sekolah: string;
+  nama_sekolah?: string;
   alamat_sekolah: string;
   provinsi: string;
-  kab_kota: string;
+  kab_kota?: string;
   kecamatan: string;
+  sekolah: string;
   desa_kelurahan: string;
   status_pegawai: string;
   sertifikasi: string;
   tahun_sertifikasi: number;
   password: string;
   asesor_id: string;
+  jadwal: string;
+  kota: string;
+  kelurahan: string;
+  level: string;
 }

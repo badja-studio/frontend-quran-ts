@@ -58,27 +58,25 @@ export default function InfiniteAsesorSelect({
         },
       }) as AssessorApiResponse;
 
-      // Backend returns: { success, message, data: Asesor[], pagination: {...} }
-      // The pagination is at the root level, not nested inside data
-      return {
-        data: res.data || [],
-        pagination: res.pagination || {
-          current_page: 1,
-          per_page: 10,
-          total: 0,
-          total_pages: 1,
-        },
-      };
-    },
-    getNextPageParam: (lastPage) => {
-      const { current_page, total_pages } = lastPage.pagination;
-      if (current_page < total_pages) {
-        return current_page + 1;
-      }
-      return undefined;
-    },
-    initialPageParam: 1,
-  });
+        return {
+          data: res.data || [],
+          pagination: res.pagination || {
+            current_page: 1,
+            per_page: 10,
+            total: 0,
+            total_pages: 1,
+          },
+        };
+      },
+      getNextPageParam: (lastPage) => {
+        const { current_page, total_pages } = lastPage.pagination;
+        if (current_page < total_pages) {
+          return current_page + 1;
+        }
+        return undefined;
+      },
+      initialPageParam: 1,
+    });
 
   // Flatten all pages into single array
   const options = data?.pages.flatMap((page) => page.data) ?? [];

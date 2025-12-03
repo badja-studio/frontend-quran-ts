@@ -257,10 +257,24 @@ export default function DashboardLayout({
         }}
       >
         {drawerOpen && (
-          <Typography variant="h6" noWrap component="div" fontWeight="bold">
-            Quran App
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            fontWeight="bold"
+            sx={{
+              fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
+              color: "primary.main",
+              letterSpacing: 0.5,
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+            }}
+          >
+            IQRA+
           </Typography>
         )}
+
         <IconButton
           onClick={handleDrawerCollapse}
           sx={{

@@ -7,7 +7,7 @@ import {
   Alert,
   Button,
 } from "@mui/material";
-import { Person, ErrorOutline } from "@mui/icons-material";
+import { ErrorOutline } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 import AsesmenResultModal from "../../components/Peserta/AsesmenResultModal";
 import PesertaInfoCard from "../../components/Peserta/PesertaInfoCard";
@@ -152,8 +152,8 @@ const PesertaPage: React.FC = () => {
     user?.role === "admin"
       ? "/api/admin/profile"
       : user?.role === "assessor"
-        ? "/api/assessors/profile"
-        : "/api/participants/profile";
+      ? "/api/assessors/profile"
+      : "/api/participants/profile";
 
   // Query daftar peserta
   const {
@@ -204,12 +204,12 @@ const PesertaPage: React.FC = () => {
     jadwal: user.jadwal || "-",
     asesor: user.assessor
       ? {
-        id: user.assessor.id,
-        name: user.assessor.name,
-        email: user.assessor.email,
-        link_grup_wa: user.assessor.link_grup_wa,
-        no_telepon: user.assessor.no_telepon,
-      }
+          id: user.assessor.id,
+          name: user.assessor.name,
+          email: user.assessor.email,
+          link_grup_wa: user.assessor.link_grup_wa,
+          no_telepon: user.assessor.no_telepon,
+        }
       : null,
     status: user.status || "-",
     link_grup_wa: user.link_grup_wa || "-",
@@ -293,18 +293,18 @@ const PesertaPage: React.FC = () => {
       const key = sec.title.toLowerCase().includes("makharij")
         ? "makhraj"
         : sec.title.toLowerCase().includes("shifat")
-          ? "sifat"
-          : sec.title.toLowerCase().includes("ahkam al-huruf")
-            ? "ahkam"
-            : sec.title.toLowerCase().includes("mad")
-              ? "mad"
-              : sec.title.toLowerCase().includes("gharib")
-                ? "gharib"
-                : sec.title.toLowerCase().includes("kelancaran")
-                  ? "kelancaran"
-                  : sec.title.toLowerCase().includes("pengurangan")
-                    ? "pengurangan"
-                    : "";
+        ? "sifat"
+        : sec.title.toLowerCase().includes("ahkam al-huruf")
+        ? "ahkam"
+        : sec.title.toLowerCase().includes("mad")
+        ? "mad"
+        : sec.title.toLowerCase().includes("gharib")
+        ? "gharib"
+        : sec.title.toLowerCase().includes("kelancaran")
+        ? "kelancaran"
+        : sec.title.toLowerCase().includes("pengurangan")
+        ? "pengurangan"
+        : "";
 
       if (!key || !grouped[key]) return sec;
 
@@ -361,7 +361,6 @@ const PesertaPage: React.FC = () => {
           boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
         }}
       >
-        <Person sx={{ fontSize: { xs: 20, sm: 26, md: 32 } }} />
         <Typography
           variant="h4"
           fontWeight="bold"
@@ -371,7 +370,7 @@ const PesertaPage: React.FC = () => {
             fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
           }}
         >
-          Profil Peserta
+          Asesmen Baca Al-Quran
         </Typography>
 
         {/* Tombol Logout */}
@@ -445,7 +444,7 @@ const PesertaPage: React.FC = () => {
             {asesmenList.length > 0 ? (
               <PesertaInfoCard
                 peserta={asesmenList[0]}
-              // onEdit={handleEditSave}
+                // onEdit={handleEditSave}
               />
             ) : (
               <Box

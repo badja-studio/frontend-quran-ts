@@ -14,7 +14,11 @@ import { useForm, Controller } from "react-hook-form";
 import apiClient, { handleApiError } from "../services/api.config";
 import InfiniteSelect from "../components/Register/InfiniteSelect";
 import InfiniteAsesorSelect from "../components/Register/InfiniteAsesorSelect";
-import { RegisterForm, RegisterPayload, Asesor } from "../components/Register/types";
+import {
+  RegisterForm,
+  RegisterPayload,
+  Asesor,
+} from "../components/Register/types";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
@@ -47,17 +51,18 @@ export default function Register() {
       fakultas: "",
       tahun_lulus: 0,
       tingkat_sekolah: "",
-      nama_sekolah: "",
+      sekolah: "",
       alamat_sekolah: "",
       provinsi: "",
-      kab_kota: "",
+      kota: "",
       kecamatan: "",
-      desa_kelurahan: "",
+      kelurahan: "",
       status_pegawai: "",
       sertifikasi: "",
       tahun_sertifikasi: 0,
       password: "",
       asesor_id: "",
+      jadwal: "",
     },
   });
   const sertifikasiValue = watch("sertifikasi");
@@ -86,6 +91,7 @@ export default function Register() {
   const registerMutation = useMutation({
     mutationFn: async (payload: RegisterPayload) => {
       const res = await apiClient.post("/api/participants/register", payload);
+
       return res.data;
     },
     onMutate: () => {
@@ -110,7 +116,6 @@ export default function Register() {
     // Buat data yang aman untuk di-log
     const safeLog = { ...data };
     safeLog.password = "*** HIDDEN ***";
-    console.log("Payload:", safeLog);
 
     registerMutation.mutate(data);
   };
@@ -139,7 +144,7 @@ export default function Register() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
             {/* No Akun */}
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <Controller
                 name="no_akun"
                 control={control}
@@ -148,10 +153,10 @@ export default function Register() {
                   <TextField label="No Akun" fullWidth required {...field} />
                 )}
               />
-            </Grid>
+            </Grid> */}
 
             {/* NIP */}
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <Controller
                 name="nip"
                 control={control}
@@ -160,7 +165,7 @@ export default function Register() {
                   <TextField label="NIP" fullWidth required {...field} />
                 )}
               />
-            </Grid>
+            </Grid> */}
 
             {/* NIK */}
             <Grid item xs={12} md={6}>
@@ -179,7 +184,13 @@ export default function Register() {
               <Controller
                 name="password"
                 control={control}
-                rules={{ required: "Password wajib diisi", minLength: { value: 6, message: "Password minimal 6 karakter" } }}
+                rules={{
+                  required: "Password wajib diisi",
+                  minLength: {
+                    value: 6,
+                    message: "Password minimal 6 karakter",
+                  },
+                }}
                 render={({ field }) => (
                   <TextField
                     label="Password"
@@ -199,7 +210,12 @@ export default function Register() {
                 control={control}
                 rules={{ required: "Nama Lengkap wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Nama Lengkap" fullWidth required {...field} />
+                  <TextField
+                    label="Nama Lengkap"
+                    fullWidth
+                    required
+                    {...field}
+                  />
                 )}
               />
             </Grid>
@@ -213,8 +229,8 @@ export default function Register() {
                   required: "Email wajib diisi",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Format email tidak valid"
-                  }
+                    message: "Format email tidak valid",
+                  },
                 }}
                 render={({ field }) => (
                   <TextField
@@ -237,8 +253,8 @@ export default function Register() {
                   required: "No Telepon wajib diisi",
                   pattern: {
                     value: /^[0-9+\-\s()]+$/,
-                    message: "Format nomor telepon tidak valid"
-                  }
+                    message: "Format nomor telepon tidak valid",
+                  },
                 }}
                 render={({ field }) => (
                   <TextField
@@ -259,7 +275,12 @@ export default function Register() {
                 control={control}
                 rules={{ required: "Tempat Lahir wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Tempat Lahir" fullWidth required {...field} />
+                  <TextField
+                    label="Tempat Lahir"
+                    fullWidth
+                    required
+                    {...field}
+                  />
                 )}
               />
             </Grid>
@@ -290,7 +311,13 @@ export default function Register() {
                 control={control}
                 rules={{ required: "Jenis Kelamin wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Jenis Kelamin" select fullWidth required {...field}>
+                  <TextField
+                    label="Jenis Kelamin"
+                    select
+                    fullWidth
+                    required
+                    {...field}
+                  >
                     <MenuItem value="L">Laki-laki</MenuItem>
                     <MenuItem value="P">Perempuan</MenuItem>
                   </TextField>
@@ -305,7 +332,12 @@ export default function Register() {
                 control={control}
                 rules={{ required: "Pendidikan Terakhir wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Pendidikan Terakhir" fullWidth required {...field} />
+                  <TextField
+                    label="Pendidikan Terakhir"
+                    fullWidth
+                    required
+                    {...field}
+                  />
                 )}
               />
             </Grid>
@@ -317,22 +349,32 @@ export default function Register() {
                 control={control}
                 rules={{ required: "Perguruan Tinggi wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Perguruan Tinggi" fullWidth required {...field} />
+                  <TextField
+                    label="Perguruan Tinggi"
+                    fullWidth
+                    required
+                    {...field}
+                  />
                 )}
               />
             </Grid>
 
             {/* Asal Kampus */}
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <Controller
                 name="asal_kampus"
                 control={control}
                 rules={{ required: "Asal Kampus wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Asal Kampus" fullWidth required {...field} />
+                  <TextField
+                    label="Asal Kampus"
+                    fullWidth
+                    required
+                    {...field}
+                  />
                 )}
               />
-            </Grid>
+            </Grid> */}
 
             {/* Fakultas */}
             <Grid item xs={12} md={6}>
@@ -353,7 +395,12 @@ export default function Register() {
                 control={control}
                 rules={{ required: "Program Studi wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Program Studi" fullWidth required {...field} />
+                  <TextField
+                    label="Program Studi"
+                    fullWidth
+                    required
+                    {...field}
+                  />
                 )}
               />
             </Grid>
@@ -408,11 +455,16 @@ export default function Register() {
             {/* Sekolah */}
             <Grid item xs={12} md={6}>
               <Controller
-                name="nama_sekolah"
+                name="sekolah"
                 control={control}
                 rules={{ required: "Nama Sekolah wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Nama Sekolah" fullWidth required {...field} />
+                  <TextField
+                    label="Nama Sekolah"
+                    fullWidth
+                    required
+                    {...field}
+                  />
                 )}
               />
             </Grid>
@@ -462,7 +514,7 @@ export default function Register() {
 
             <Grid item xs={12} md={6}>
               <Controller
-                name="kab_kota"
+                name="kota"
                 control={control}
                 rules={{ required: "Kota / Kabupaten wajib diisi" }}
                 render={({ field }) => (
@@ -515,7 +567,7 @@ export default function Register() {
 
             <Grid item xs={12} md={6}>
               <Controller
-                name="desa_kelurahan"
+                name="kelurahan"
                 control={control}
                 rules={{ required: "Desa / Kelurahan wajib diisi" }}
                 render={({ field }) => (
@@ -539,7 +591,7 @@ export default function Register() {
             </Grid>
 
             {/* Jabatan */}
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <Controller
                 name="jabatan"
                 control={control}
@@ -548,7 +600,7 @@ export default function Register() {
                   <TextField label="Jabatan" fullWidth required {...field} />
                 )}
               />
-            </Grid>
+            </Grid> */}
 
             {/* Status Pegawai */}
             <Grid item xs={12} md={6}>
@@ -557,7 +609,13 @@ export default function Register() {
                 control={control}
                 rules={{ required: "Status Pegawai wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Status Pegawai" select fullWidth required {...field}>
+                  <TextField
+                    label="Status Pegawai"
+                    select
+                    fullWidth
+                    required
+                    {...field}
+                  >
                     {["PNS", "PPPK", "Non PNS"].map((v) => (
                       <MenuItem key={v} value={v}>
                         {v}
@@ -575,7 +633,13 @@ export default function Register() {
                 control={control}
                 rules={{ required: "Sertifikasi wajib diisi" }}
                 render={({ field }) => (
-                  <TextField label="Sertifikasi" select fullWidth required {...field}>
+                  <TextField
+                    label="Sertifikasi"
+                    select
+                    fullWidth
+                    required
+                    {...field}
+                  >
                     <MenuItem value="Sudah">Sudah</MenuItem>
                     <MenuItem value="Belum">Belum</MenuItem>
                   </TextField>
@@ -622,6 +686,28 @@ export default function Register() {
                       setAsesorObj(v);
                       field.onChange(v?.id ?? "");
                     }}
+                  />
+                )}
+              />
+            </Grid>
+            {/* Jadwal */}
+            <Grid item xs={12} md={6}>
+              <Controller
+                name="jadwal"
+                control={control}
+                rules={{ required: "Jadwal wajib diisi" }}
+                render={({ field }) => (
+                  <TextField
+                    label="Jadwal"
+                    type="date"
+                    fullWidth
+                    required
+                    InputLabelProps={{ shrink: true }}
+                    inputProps={{
+                      min: "2025-12-06", // mulai tanggal 6 Desember
+                      max: "2025-12-31", // sampai tanggal 31 Desember
+                    }}
+                    {...field}
                   />
                 )}
               />
