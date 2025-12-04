@@ -16,6 +16,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
+import Logo from "../../assets/logo.png";
 import RecentActorsIcon from "@mui/icons-material/RecentActors";
 import {
   Menu as MenuIcon,
@@ -262,25 +263,21 @@ export default function DashboardLayout({
           py: 2,
         }}
       >
-        {drawerOpen && (
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            fontWeight="bold"
-            sx={{
-              fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
-              color: "primary.main",
-              letterSpacing: 0.5,
-              textOverflow: "ellipsis",
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-            }}
-          >
-            IQRA+
-          </Typography>
-        )}
+        {/* Logo IQRA responsif */}
+        <Box
+          component="img"
+          src={Logo}
+          alt="IQRA Logo"
+          sx={{
+            width: drawerOpen
+              ? { xs: 80, sm: 90, md: 105 } // Expanded drawer → logo besar
+              : 40, // Collapsed drawer → tampil kecil
+            height: "auto",
+            transition: "0.3s",
+          }}
+        />
 
+        {/* Collapse icon */}
         <IconButton
           onClick={handleDrawerCollapse}
           sx={{
@@ -291,6 +288,7 @@ export default function DashboardLayout({
           {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         </IconButton>
       </Toolbar>
+
       <Divider />
       {drawerOpen && (
         <Box sx={{ px: 2, py: 1, bgcolor: "primary.main", color: "white" }}>
@@ -380,8 +378,9 @@ export default function DashboardLayout({
         position="fixed"
         sx={{
           width: {
-            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
-              }px)`,
+            sm: `calc(100% - ${
+              drawerOpen ? drawerWidth : drawerWidthCollapsed
+            }px)`,
           },
           ml: { sm: `${drawerOpen ? drawerWidth : drawerWidthCollapsed}px` },
           transition: "all 0.3s",
@@ -402,8 +401,8 @@ export default function DashboardLayout({
             {userRole === "assessor" || userRole === "guru"
               ? "Assessor"
               : userRole === "admin"
-                ? "Admin"
-                : "Participant"}
+              ? "Admin"
+              : "Participant"}
           </Typography>
           <IconButton
             size="large"
@@ -502,8 +501,9 @@ export default function DashboardLayout({
           flexGrow: 1,
           p: 3,
           width: {
-            sm: `calc(100% - ${drawerOpen ? drawerWidth : drawerWidthCollapsed
-              }px)`,
+            sm: `calc(100% - ${
+              drawerOpen ? drawerWidth : drawerWidthCollapsed
+            }px)`,
           },
           minHeight: "100vh",
           bgcolor: "grey.50",
