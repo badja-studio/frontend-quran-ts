@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   TextField,
   Grid,
@@ -25,12 +25,12 @@ export default function Register() {
   const navigate = useNavigate();
 
   // Redirect if already logged in
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      navigate("/", { replace: true });
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("authToken");
+  //   if (token) {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [navigate]);
 
   const { control, handleSubmit, watch } = useForm<RegisterForm>({
     defaultValues: {
