@@ -7,6 +7,7 @@ import {
   Alert,
   Button,
 } from "@mui/material";
+import Logo from "../../assets/logo.png";
 import { ErrorOutline } from "@mui/icons-material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsesmenResultModal from "../../components/Peserta/AsesmenResultModal";
@@ -359,17 +360,18 @@ const PesertaPage: React.FC = () => {
           boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
         }}
       >
-        <Typography
-          variant="h4"
-          fontWeight="bold"
+        {/* LOGO */}
+        <Box
+          component="img"
+          src={Logo}
+          alt="Logo"
           sx={{
-            mt: 1,
-            letterSpacing: 1,
-            fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
+            width: { xs: 120, sm: 150, md: 180 }, // responsif HP → PC
+            height: "auto",
+            display: "block",
+            margin: "0 auto",
           }}
-        >
-          IQRA+
-        </Typography>
+        />
 
         {/* Tombol Logout */}
         <Button

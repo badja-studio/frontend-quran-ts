@@ -39,7 +39,7 @@ function App() {
           <Route
             path="/dashboard/admin/kelola-data-pengguna"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <AdminForm />
               </ProtectedRoute>
             }
@@ -47,7 +47,7 @@ function App() {
           <Route
             path="/dashboard/admin/input-asesor"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <InputAsesorPage />
               </ProtectedRoute>
             }
@@ -71,7 +71,7 @@ function App() {
           <Route
             path="/dashboard/data-asesor"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <ListPagesDataAsesor />
               </ProtectedRoute>
             }
@@ -79,7 +79,7 @@ function App() {
           <Route
             path="/dashboard/siap-asesmen"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <ListPagesDataPesertaSiapAssement />
               </ProtectedRoute>
             }
@@ -87,7 +87,7 @@ function App() {
           <Route
             path="/dashboard/belum-asesmen"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <ListPagesDataPesertaBelomAsesmen />
               </ProtectedRoute>
             }
@@ -95,7 +95,7 @@ function App() {
           <Route
             path="/dashboard/hasil-asesmen"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <ListPagesDataPesertaHasilAsesmen />
               </ProtectedRoute>
             }
@@ -103,7 +103,7 @@ function App() {
           <Route
             path="/dashboard/admin"
             element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <AdminDashboard />
               </ProtectedRoute>
             }
@@ -129,7 +129,7 @@ function App() {
           <Route
             path="/dashboard/asesor/siap-asesmen"
             element={
-              <ProtectedRoute allowedRoles={['assessor']}>
+              <ProtectedRoute allowedRoles={["assessor"]}>
                 <ListAsesorPagesDataPesertaSiapAssement />
               </ProtectedRoute>
             }
@@ -137,7 +137,7 @@ function App() {
           <Route
             path="/dashboard/asesor/belum-asesmen"
             element={
-              <ProtectedRoute allowedRoles={['assessor']}>
+              <ProtectedRoute allowedRoles={["assessor"]}>
                 <ListAsesorPagesDataPesertaBelomAsesmen />
               </ProtectedRoute>
             }
@@ -145,7 +145,7 @@ function App() {
           <Route
             path="/dashboard/asesor/hasil-asesmen"
             element={
-              <ProtectedRoute allowedRoles={['assessor']}>
+              <ProtectedRoute allowedRoles={["assessor"]}>
                 <ListAsesorPagesDataPesertaHasilAsesmen />
               </ProtectedRoute>
             }
@@ -153,7 +153,7 @@ function App() {
           <Route
             path="/dashboard/asesor/penilaian/:id"
             element={
-              <ProtectedRoute allowedRoles={['assessor']}>
+              <ProtectedRoute allowedRoles={["assessor"]}>
                 <PenilaianPageCompact />
               </ProtectedRoute>
             }
@@ -161,7 +161,7 @@ function App() {
           <Route
             path="/dashboard/asesor/kelola-data-pengguna"
             element={
-              <ProtectedRoute allowedRoles={['assessor']}>
+              <ProtectedRoute allowedRoles={["assessor"]}>
                 <AsesmenForm />
               </ProtectedRoute>
             }
@@ -171,7 +171,7 @@ function App() {
           <Route
             path="/peserta"
             element={
-              <ProtectedRoute allowedRoles={['participant']}>
+              <ProtectedRoute allowedRoles={["participant"]}>
                 <PesertaPage />
               </ProtectedRoute>
             }

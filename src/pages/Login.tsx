@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
+import Logo from "../assets/logo.png";
 import {
   Box,
   Container,
@@ -15,11 +16,7 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
-import {
-  MenuBook as MenuBookIcon,
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import authService from "../services/auth.service";
 
 interface LoginFormInputs {
@@ -97,19 +94,25 @@ function Login() {
         py: 4,
       }}
     >
-      <Container maxWidth="sm">
-        <Box sx={{ textAlign: "center", mb: 5 }}>
-          <MenuBookIcon sx={{ fontSize: 70, color: "primary.main", mb: 1 }} />
-          <Typography
-            variant="h3"
-            fontWeight="bold"
-            gutterBottom
-            color="primary"
-          >
-            IQRA+
-          </Typography>
+      <Container maxWidth="sm" sx={{ px: { xs: 1, sm: 3 } }}>
+        <Box
+          sx={{
+            textAlign: "center",
+            mb: { xs: 3, sm: 5 }, // ruang header responsif
+          }}
+        >
+          <img
+            src={Logo}
+            alt="Logo"
+            style={{
+              width: 210,
+              display: "block",
+              margin: "0 auto 12px", // posisi benar-benarnya center
+            }}
+          />
+
           <Typography variant="body1" color="text.secondary">
-            Instrumen Qur’an & Read Assessment
+            Insan Al-Qur'an Indonesia
           </Typography>
         </Box>
 
