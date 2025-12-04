@@ -266,7 +266,8 @@ apiClient.interceptors.response.use(
       // Request made but no response received
       const apiError: ApiError = {
         success: false,
-        message: "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.",
+        message:
+          "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.",
         statusCode: 0,
         timestamp: new Date().toISOString(),
       };
@@ -288,13 +289,24 @@ export const api = {
   get: <T = unknown>(url: string, config?: AxiosRequestConfig) =>
     apiClient.get<ApiResponse<T>>(url, config).then((res) => res.data),
 
-  post: <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
+  post: <T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ) =>
     apiClient.post<ApiResponse<T>>(url, data, config).then((res) => res.data),
 
-  put: <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
-    apiClient.put<ApiResponse<T>>(url, data, config).then((res) => res.data),
+  put: <T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ) => apiClient.put<ApiResponse<T>>(url, data, config).then((res) => res.data),
 
-  patch: <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
+  patch: <T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ) =>
     apiClient.patch<ApiResponse<T>>(url, data, config).then((res) => res.data),
 
   delete: <T = unknown>(url: string, config?: AxiosRequestConfig) =>
@@ -309,7 +321,10 @@ export const handleApiError = (error: unknown): ApiException => {
 
   return new ApiException({
     success: false,
-    message: error instanceof Error ? error.message : "Terjadi kesalahan yang tidak terduga",
+    message:
+      error instanceof Error
+        ? error.message
+        : "Terjadi kesalahan yang tidak terduga",
     timestamp: new Date().toISOString(),
   });
 };
