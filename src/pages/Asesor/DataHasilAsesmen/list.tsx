@@ -48,19 +48,19 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "غ",
     "ع",
     "ظ",
-    "ــُ",
-    "ــِـ",
-    "ــَـ",
+    "Dlammah",
+    "Kasrah",
+    "Fathah",
     "ي",
     "ء",
     "هـ",
     "و",
     "ن",
-    "ــّـ",
-    "ــٌـ",
-    "ــٍـ",
-    "ــًـ",
-    "ــْـ",
+    "Tasydid",
+    "Dlammatain",
+    "Kasratain",
+    "Fathatain",
+    "Sukun",
   ],
   sifat: [
     "د",
@@ -150,10 +150,27 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAsesmen, setSelectedAsesmen] =
     useState<DataPersetaHasil | null>(null);
+
   const handleDetailClick = (row: DataPersetaHasil) => {
+    console.log("=== DETAIL CLICK ===");
+    console.log("SELECTED ROW RAW:", row);
+
+    console.log("CATEGORY SCORES FROM ROW:", {
+      makhraj: row.makhraj,
+      sifat: row.sifat,
+      ahkam: row.ahkam,
+      mad: row.mad,
+      gharib: row.gharib,
+      kelancaran: row.kelancaran,
+      pengurangan: row.pengurangan,
+      total: row.total,
+    });
+
     setSelectedAsesmen(row);
     setModalVisible(true);
+
     setTimeout(() => {
+      console.log("Fetching assessment detail for ID:", row.id);
       fetchDetail();
     }, 0);
   };

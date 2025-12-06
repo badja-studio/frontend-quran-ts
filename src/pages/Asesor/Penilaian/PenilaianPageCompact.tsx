@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../../services/api.config";
 import { CategoryType } from "./type";
 import { useUserProfile } from "../../../hooks/useUserProfile";
+import ConfirmDialog from "../../../components/Peserta/ModalConfirm";
 
 type ScoreAction = "plus" | "minus";
 type MistakeMap = Record<string, number>;
@@ -76,9 +77,8 @@ const PenilaianPageCompact: React.FC = () => {
   });
 
   const [mistakes, setMistakes] = useState<MistakesState>(() => {
-    const mk = makhraj.map((h) => (typeof h === "string" ? h : h.simbol));
     return {
-      makhraj: mk.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
+      makhraj: makhraj.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
       sifat: shifat.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
       ahkam: ahkamHuruf.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
       mad: madList.reduce((a, b) => ({ ...a, [b]: 0 }), {}),
@@ -90,10 +90,10 @@ const PenilaianPageCompact: React.FC = () => {
   const [kelancaranPenalty, setKelancaranPenalty] = useState<number>(0);
   const [penguranganPenaltyValue, setPenguranganPenaltyValue] =
     useState<number>(0);
-
   const [kelancaranValue, setKelancaranValue] = useState<string | null>(null);
   const [penguranganValue, setPenguranganValue] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
 
   const handleScore = (
     category: CategoryType,
@@ -186,7 +186,6 @@ const PenilaianPageCompact: React.FC = () => {
 
   const totalScore = (category: CategoryType): number => {
     if (penguranganValue === "Tidak Bisa Membaca") {
-      // Semua kategori huruf otomatis 0 (dikurangi 90 poin dari total)
       return 0;
     }
 
@@ -224,28 +223,38 @@ const PenilaianPageCompact: React.FC = () => {
 
     const assessmentsHuruf = [
       ...Object.entries(mistakes).flatMap(([kategori, obj]) =>
-        Object.entries(obj).map(([huruf, count]) => ({
-          peserta_id: pesertaFromTable.id,
-          asesor_id: user.id,
-          huruf,
-          kategori,
-          nilai: count,
-        }))
+        Object.entries(obj)
+          .filter(([, count]) => count > 0)
+          .map(([huruf, count]) => ({
+            peserta_id: pesertaFromTable.id,
+            asesor_id: user.id,
+            huruf,
+            kategori,
+            nilai: count,
+          }))
       ),
-      {
-        peserta_id: pesertaFromTable.id,
-        asesor_id: user.id,
-        huruf: "Kelancaran",
-        kategori: "kelancaran",
-        nilai: kelancaranPenalty,
-      },
-      {
-        peserta_id: pesertaFromTable.id,
-        asesor_id: user.id,
-        huruf: "Pengurangan",
-        kategori: "pengurangan",
-        nilai: penguranganPenaltyValue,
-      },
+      ...(kelancaranPenalty > 0
+        ? [
+            {
+              peserta_id: pesertaFromTable.id,
+              asesor_id: user.id,
+              huruf: kelancaranValue,
+              kategori: "kelancaran",
+              nilai: kelancaranPenalty,
+            },
+          ]
+        : []),
+      ...(penguranganPenaltyValue > 0
+        ? [
+            {
+              peserta_id: pesertaFromTable.id,
+              asesor_id: user.id,
+              huruf: penguranganValue,
+              kategori: "pengurangan",
+              nilai: penguranganPenaltyValue,
+            },
+          ]
+        : []),
     ];
 
     const totals = {
@@ -294,9 +303,7 @@ const PenilaianPageCompact: React.FC = () => {
               <ScoreSection
                 title="Makharij Al-Huruf"
                 category="makhraj"
-                list={makhraj.map((h) =>
-                  typeof h === "string" ? h : h.simbol
-                )}
+                list={makhraj}
                 mistakes={mistakes}
                 handleScore={handleScore}
                 totalScore={totalScore}
@@ -322,8 +329,8 @@ const PenilaianPageCompact: React.FC = () => {
                     value === "Tidak Lancar"
                       ? 3
                       : value === "Kurang Lancar"
-                        ? 2
-                        : 0;
+                      ? 2
+                      : 0;
 
                   setKelancaranPenalty(value === kelancaranValue ? 0 : penalty);
                 }}
@@ -343,13 +350,11 @@ const PenilaianPageCompact: React.FC = () => {
                       setLocked(false);
                     } else {
                       setPenguranganValue("Tidak Bisa Membaca");
-                      setPenguranganPenaltyValue(90); // penalty
+                      setPenguranganPenaltyValue(90);
                       setLocked(true);
                     }
                     return;
                   }
-
-                  // selain "Tidak Bisa Membaca"
                   const selected = value === penguranganValue ? null : value;
                   setPenguranganValue(selected);
 
@@ -412,13 +417,26 @@ const PenilaianPageCompact: React.FC = () => {
           <Button
             variant="contained"
             size="large"
-            onClick={handleSubmit}
+            onClick={() => setOpenConfirm(true)}
             sx={{ px: 4, py: 1.2, fontWeight: 700 }}
           >
             Submit Penilaian
           </Button>
         </Box>
       </Box>
+      <ConfirmDialog
+        open={openConfirm}
+        title="Konfirmasi Penilaian"
+        message="Apakah kamu yakin ingin mengirim penilaian untuk peserta ini? Penilaian yang dikirim tidak bisa diubah lagi."
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={() => {
+          setOpenConfirm(false);
+          handleSubmit();
+        }}
+        confirmText="Ya, Kirim"
+        cancelText="Batal"
+        colorConfirm="error"
+      />
     </Box>
   );
 };

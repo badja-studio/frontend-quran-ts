@@ -34,6 +34,25 @@ interface SectionItem {
   list: (string | SectionListItem)[];
 }
 
+type CategoryScoreKey =
+  | "makhraj"
+  | "sifat"
+  | "ahkam"
+  | "mad"
+  | "gharib"
+  | "kelancaran"
+  | "pengurangan";
+
+interface CategoryScores {
+  makhraj: number;
+  sifat: number;
+  ahkam: number;
+  mad: number;
+  gharib: number;
+  kelancaran: number;
+  pengurangan: number;
+}
+
 interface AsesmenResultModalProps {
   open: boolean;
   onClose: () => void;
@@ -42,15 +61,22 @@ interface AsesmenResultModalProps {
   waktuPelaksanaan: string;
   nilaiAkhir: number;
   sections?: SectionItem[];
-  categoryScores?: {
-    makhraj: number;
-    sifat: number;
-    ahkam: number;
-    mad: number;
-    gharib: number;
-    kelancaran: number;
-    pengurangan: number;
-  };
+  categoryScores?: CategoryScores;
+}
+
+const titleToCategoryMap: Record<string, CategoryScoreKey> = {
+  "makharijul huruf": "makhraj",
+  "shifatul huruf": "sifat",
+  "ahkam al-huruf": "ahkam",
+  "ahkam al-mad wa qashr": "mad",
+  gharib: "gharib",
+  kelancaran: "kelancaran",
+  pengurangan: "pengurangan",
+};
+
+function getCategoryKey(title: string): CategoryScoreKey | null {
+  const lower = title.trim().toLowerCase();
+  return titleToCategoryMap[lower] ?? null;
 }
 
 const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
@@ -85,7 +111,7 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
           </Button>
         </Box>
 
-        {/* INFO PESERTA */}
+        {/* INFO */}
         <Box sx={{ mb: 2 }}>
           <Typography>
             <strong>Asesor:</strong> {asesorName}
@@ -97,7 +123,7 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
 
         <Divider sx={{ mb: 3 }} />
 
-        {/* Nilai Akhir */}
+        {/* NILAI AKHIR */}
         <Box sx={{ mb: 3, display: "flex", justifyContent: "center" }}>
           <Card
             sx={{
@@ -115,140 +141,141 @@ const AsesmenResultModal: React.FC<AsesmenResultModalProps> = ({
           </Card>
         </Box>
 
-        {/* GRID SECTIONS */}
+        {/* GRID */}
         <Grid container spacing={3}>
-          {(sections ?? []).map((sec, idx) => (
-            <Grid item xs={12} key={idx}>
-              <Card
-                sx={{
-                  p: 3,
-                  borderRadius: 3,
-                  boxShadow: 4,
-                  transition: "0.3s",
-                  "&:hover": { boxShadow: 8 },
-                }}
-              >
-                {/* Judul Section + Nilai */}
-                <Box
+          {sections.map((sec, idx) => {
+            const key = getCategoryKey(sec.title);
+
+            // Filter hanya SectionListItem dengan nilai > 0
+            const filtered = sec.list.filter(
+              (item): item is SectionListItem =>
+                typeof item !== "string" && item.nilai > 0
+            );
+
+            // Khusus kelancaran & pengurangan: tampilkan hanya jika ada data, dan jangan tampilkan nilai
+            if (
+              (key === "kelancaran" || key === "pengurangan") &&
+              filtered.length === 0
+            ) {
+              return null;
+            }
+
+            return (
+              <Grid item xs={12} key={idx}>
+                <Card
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 2,
+                    p: 3,
+                    borderRadius: 3,
+                    boxShadow: 4,
+                    transition: "0.3s",
+                    "&:hover": { boxShadow: 8 },
                   }}
                 >
-                  <Typography variant="h6" fontWeight="bold">
-                    {sec.title}
-                  </Typography>
-                  <Typography
+                  {/* TITLE + SCORE */}
+                  <Box
                     sx={{
-                      background: "#e8f5e9",
-                      px: 2.5,
-                      py: 0.5,
-                      borderRadius: 2,
-                      fontWeight: "bold",
-                      color: "green",
-                      minWidth: "60px",
-                      textAlign: "center",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      mb: 2,
                     }}
                   >
-                    {sec.title === "Makharijul Huruf"
-                      ? categoryScores?.makhraj.toFixed(2)
-                      : sec.title === "Shifatul Huruf"
-                      ? categoryScores?.sifat.toFixed(2)
-                      : sec.title === "Ahkam Al-Huruf"
-                      ? categoryScores?.ahkam.toFixed(2)
-                      : sec.title === "Ahkam Al-Mad wa Qashr"
-                      ? categoryScores?.mad.toFixed(2)
-                      : sec.title === "Gharib"
-                      ? categoryScores?.gharib.toFixed(2)
-                      : sec.title === "Kelancaran"
-                      ? categoryScores?.kelancaran.toFixed(2)
-                      : sec.title === "Pengurangan"
-                      ? categoryScores?.pengurangan.toFixed(2)
-                      : "0.00"}
-                  </Typography>
-                </Box>
+                    <Typography variant="h6" fontWeight="bold">
+                      {sec.title}
+                    </Typography>
 
-                {/* List Huruf/Nilai */}
-                <Grid container spacing={2}>
-                  {(sec.list ?? []).map((item, i) => {
-                    const huruf = typeof item === "string" ? item : item.simbol;
-                    const nilai = typeof item === "string" ? 0 : item.nilai;
-
-                    const isSpecialCategory =
-                      sec.title.toLowerCase().includes("kelancaran") ||
-                      sec.title.toLowerCase().includes("pengurangan");
-
-                    return (
-                      <Grid
-                        item
-                        xs={isSpecialCategory ? 6 : 3}
-                        sm={isSpecialCategory ? 4 : 2}
-                        md={isSpecialCategory ? 3 : 1.5}
-                        key={i}
-                      >
-                        <Card
-                          variant="outlined"
+                    {key &&
+                      key !== "kelancaran" &&
+                      key !== "pengurangan" &&
+                      categoryScores && (
+                        <Typography
                           sx={{
-                            p: 2,
-                            borderRadius: 3,
-                            height: "110px",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            background: "#e8f5e9",
+                            px: 2.5,
+                            py: 0.5,
+                            borderRadius: 2,
+                            fontWeight: "bold",
+                            color: "green",
+                            minWidth: "60px",
                             textAlign: "center",
-                            gap: 1,
-                            backgroundColor:
-                              isSpecialCategory && nilai > 0
-                                ? "#ffebee"
-                                : "#fafafa",
-                            boxShadow: 1,
-                            transition: "0.3s",
-                            "&:hover": {
-                              boxShadow: 4,
-                              transform: "scale(1.05)",
-                            },
                           }}
                         >
-                          <Typography
-                            sx={{
-                              fontSize: {
-                                xs: "0.7rem",
-                                sm: "0.85rem",
-                                md: "1rem",
-                              },
-                              fontWeight: 500,
-                            }}
-                          >
-                            {huruf}
-                          </Typography>
+                          {categoryScores[key]?.toFixed(2)}
+                        </Typography>
+                      )}
+                  </Box>
 
-                          <Typography
-                            sx={{
-                              fontSize: {
-                                xs: "0.8rem",
-                                sm: "0.9rem",
-                                md: "1.05rem",
-                              },
-                              fontWeight: "bold",
-                              color:
-                                isSpecialCategory && nilai > 0
-                                  ? "green"
-                                  : "inherit",
-                            }}
-                          >
-                            {isSpecialCategory && nilai === 0 ? "" : nilai}
-                          </Typography>
-                        </Card>
-                      </Grid>
-                    );
-                  })}
-                </Grid>
-              </Card>
-            </Grid>
-          ))}
+                  {/* LIST */}
+                  <Grid container spacing={2}>
+                    {filtered.length === 0 ? (
+                      <Typography sx={{ p: 2, opacity: 0.6 }}>
+                        Tidak ada kesalahan.
+                      </Typography>
+                    ) : (
+                      filtered.map((item, i) => {
+                        const hideValue =
+                          key === "kelancaran" || key === "pengurangan";
+                        return (
+                          <Grid item xs={6} sm={4} md={3} key={i}>
+                            <Card
+                              variant="outlined"
+                              sx={{
+                                p: 2,
+                                borderRadius: 3,
+                                height: "110px",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                textAlign: "center",
+                                gap: 1,
+                                backgroundColor: "#ffebee",
+                                boxShadow: 1,
+                                transition: "0.3s",
+                                "&:hover": {
+                                  boxShadow: 4,
+                                  transform: "scale(1.05)",
+                                },
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  fontSize: {
+                                    xs: "0.8rem",
+                                    sm: "1rem",
+                                    md: "1.2rem",
+                                  },
+                                  fontWeight: 600,
+                                }}
+                              >
+                                {item.simbol}
+                              </Typography>
+
+                              {!hideValue && (
+                                <Typography
+                                  sx={{
+                                    fontSize: {
+                                      xs: "0.9rem",
+                                      sm: "1rem",
+                                      md: "1.1rem",
+                                    },
+                                    fontWeight: "bold",
+                                    color: "green",
+                                  }}
+                                >
+                                  {item.nilai}
+                                </Typography>
+                              )}
+                            </Card>
+                          </Grid>
+                        );
+                      })
+                    )}
+                  </Grid>
+                </Card>
+              </Grid>
+            );
+          })}
         </Grid>
 
         <Button

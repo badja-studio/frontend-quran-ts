@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Logo from "../assets/logo.png";
+import LogoKemenag from "../assets/kemenag.png";
 import {
   Box,
   Container,
@@ -35,32 +36,23 @@ function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormInputs>({
-    defaultValues: {
-      identifier: "",
-      password: "",
-    },
+    defaultValues: { identifier: "", password: "" },
   });
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
 
   const onSubmit = async (data: LoginFormInputs) => {
     setLoginError("");
     setIsLoading(true);
 
     try {
-      // Persiapkan credentials
       const credentials = {
         username: data.identifier,
         password: data.password,
       };
-
-      // Panggil login API
       const response = await authService.login(credentials);
 
       if (response.success && response.data) {
-        // Redirect berdasarkan role (React Query akan fetch profile otomatis di halaman tujuan)
         const role = response.data.user.role.toLowerCase();
         if (role === "admin") navigate("/dashboard/admin");
         else if (role === "assessor" || role === "guru")
@@ -86,38 +78,93 @@ function Login() {
     <Box
       sx={{
         minHeight: "100vh",
-        background: (theme) =>
-          `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.primary.light}15 100%)`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        py: 4,
+        background: (theme) =>
+          `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.primary.light}15 100%)`,
+        px: 2,
       }}
     >
-      <Container maxWidth="sm" sx={{ px: { xs: 1, sm: 3 } }}>
+      <Container maxWidth="xs">
+        {/* HEADER */}
         <Box
           sx={{
-            textAlign: "center",
-            mb: { xs: 3, sm: 5 }, // ruang header responsif
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 3,
           }}
         >
-          <img
-            src={Logo}
-            alt="Logo"
-            style={{
-              width: 210,
-              display: "block",
-              margin: "0 auto 12px", // posisi benar-benarnya center
-            }}
-          />
+          {/* Logo utama */}
+          <img src={Logo} alt="Logo" style={{ height: 60 }} />
 
-          <Typography variant="body1" color="text.secondary">
-            Insan Al-Qur'an Indonesia
-          </Typography>
+          {/* Teks resmi */}
+          <Box sx={{ textAlign: "center", flex: 1, mx: 1 }}>
+            <Typography
+              variant="h6"
+              fontWeight={700}
+              sx={{
+                letterSpacing: 1,
+                lineHeight: 1.2,
+                color: "primary.main",
+              }}
+            >
+              Portal Insan Al-Qur'an
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                display: "block",
+                color: "text.secondary",
+                letterSpacing: 0.5,
+                lineHeight: 1.4,
+                mt: 0.5,
+              }}
+            >
+              Direktorat Pendidikan Agama Islam
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                display: "block",
+                color: "text.secondary",
+                letterSpacing: 0.5,
+                lineHeight: 1.4,
+              }}
+            >
+              Direktorat Jenderal Pendidikan Islam
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                display: "block",
+                color: "text.secondary",
+                letterSpacing: 0.5,
+                lineHeight: 1.4,
+              }}
+            >
+              Kementerian Agama
+            </Typography>
+          </Box>
+
+          {/* Logo Kemenag */}
+          <img src={LogoKemenag} alt="Kemenag" style={{ height: 60 }} />
         </Box>
 
-        <Card sx={{ boxShadow: 3 }}>
-          <CardContent sx={{ p: 4 }}>
+        {/* LOGIN CARD */}
+        <Card
+          sx={{
+            borderRadius: 3,
+            boxShadow: 4,
+            overflow: "hidden",
+          }}
+        >
+          <CardContent sx={{ p: 3 }}>
+            <Typography variant="h6" fontWeight={700} textAlign="center" mb={2}>
+              Login Portal
+            </Typography>
+
             {loginError && (
               <Alert severity="error" sx={{ mb: 2 }}>
                 {loginError}
@@ -130,23 +177,20 @@ function Login() {
                 control={control}
                 rules={{
                   required: "Username wajib diisi",
-                  minLength: {
-                    value: 3,
-                    message: "Minimal 3 karakter",
-                  },
+                  minLength: { value: 3, message: "Minimal 3 karakter" },
                 }}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     fullWidth
                     label="Username"
-                    margin="normal"
+                    margin="dense"
                     variant="outlined"
                     autoComplete="username"
                     autoFocus
                     error={!!errors.identifier}
                     helperText={errors.identifier?.message}
-                    placeholder="username123"
+                    placeholder="Masukkan username"
                   />
                 )}
               />
@@ -167,7 +211,7 @@ function Login() {
                     fullWidth
                     label="Password"
                     type={showPassword ? "text" : "password"}
-                    margin="normal"
+                    margin="dense"
                     variant="outlined"
                     autoComplete="current-password"
                     error={!!errors.password}
@@ -194,18 +238,18 @@ function Login() {
                 fullWidth
                 variant="contained"
                 color="primary"
-                size="large"
+                size="medium"
                 disabled={isLoading}
-                sx={{ mt: 3, mb: 2, py: 1.5 }}
+                sx={{
+                  mt: 3,
+                  py: 1.5,
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  "&:hover": { boxShadow: 3 },
+                }}
               >
                 {isLoading ? (
-                  <>
-                    <CircularProgress
-                      size={24}
-                      sx={{ mr: 1, color: "white" }}
-                    />
-                    Loading...
-                  </>
+                  <CircularProgress size={22} sx={{ color: "white" }} />
                 ) : (
                   "Login"
                 )}
@@ -216,16 +260,13 @@ function Login() {
                   Belum punya akun?{" "}
                   <Link
                     component="button"
-                    type="button"
                     variant="body2"
                     onClick={() => navigate("/register")}
                     sx={{
                       color: "primary.main",
                       textDecoration: "none",
                       fontWeight: 600,
-                      "&:hover": {
-                        textDecoration: "underline",
-                      },
+                      "&:hover": { textDecoration: "underline" },
                     }}
                   >
                     Daftar Sekarang
