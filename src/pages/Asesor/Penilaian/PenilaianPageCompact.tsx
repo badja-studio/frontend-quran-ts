@@ -119,8 +119,10 @@ const PenilaianPageCompact: React.FC = () => {
     if (category === "ahkam") {
       switch (item) {
         case "Tanaffus":
-          return index === 0 ? 2 : 0.5;
+          return index === 0 ? 1 : 0.5;
         case "Izhhar":
+          return index === 0 ? 1 : 0.5;
+        case "Ghunnah Musyaddadah":
           return index === 0 ? 1 : 0.5;
         case "Idzgham Bighunnah":
         case "Idzgham Bilaghunnah":
@@ -131,7 +133,6 @@ const PenilaianPageCompact: React.FC = () => {
         case "Idgham Mutamtsilain":
         case "Idzgham Mutajannisain":
         case "Idgham Mutaqaribain":
-        case "Ghunnah Musyaddadah":
           return index === 0 ? 0.5 : 0.25;
         default:
           return 0;
@@ -154,10 +155,10 @@ const PenilaianPageCompact: React.FC = () => {
         case "Mad Shilah Qashirah":
         case "Mad Shilah Thawilah":
           return index === 0 ? 0.5 : 0.25;
-        case "Mad Lazim Kilmi Mutsaqqal":
-        case "Mad Lazim Kilmi Mukhaffaf":
-        case "Mad Lazim Harfi Mutsaqqal":
-        case "Mad Lazim Harfi Mukhaffaf":
+        case "Mad LK Mutsaqqal":
+        case "Mad LK Mukhaffaf":
+        case "Mad LH Mutsaqqal":
+        case "Mad LH Mukhaffaf":
           return index === 0 ? 1 : 0.5;
         case "Qashr":
           return index === 0 ? 2 : 0.5;
@@ -168,18 +169,18 @@ const PenilaianPageCompact: React.FC = () => {
 
     switch (category) {
       case "makhraj":
-        return index === 0 ? 2 : 0.5;
+        return index === 0 ? 1.5 : 0.5;
       case "sifat":
         return index === 0 ? 0.5 : 0.25;
       case "gharib":
-        return index === 0 ? 0.5 : 0.25;
+        return index === 0 ? 1 : 0.5;
       default:
         return 0;
     }
   };
 
   const getKelancaranPenalty = () => {
-    if (kelancaranValue === "Tidak Lancar") return 3;
+    if (kelancaranValue === "Tidak Lancar") return 2.5;
     if (kelancaranValue === "Kurang Lancar") return 2;
     return 0;
   };
