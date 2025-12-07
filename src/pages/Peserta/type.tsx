@@ -1,6 +1,5 @@
 import { CategoryType } from "../Asesor/Penilaian/type";
 
-// Tipe asesor
 export interface Asesor {
   id: string;
   name: string;
@@ -13,7 +12,6 @@ export interface Akun {
   username: string;
 }
 
-// Tipe peserta
 export interface DataPeserta {
   id: string;
   no_akun?: string;
