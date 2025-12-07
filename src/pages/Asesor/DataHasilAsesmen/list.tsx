@@ -116,10 +116,10 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "Mad Aridlissukun",
     "Mad Tamkin",
     "Mad Farq",
-    "Mad Lazim Kilmi Mutsaqqal",
-    "Mad Lazim Kilmi Mukhaffaf",
-    "Mad Lazim Harfi Mutsaqqal",
-    "Mad Lazim Harfi Mukhaffaf",
+    "Mad LK Mutsaqqal",
+    "Mad LK Mukhaffaf",
+    "Mad LH Mutsaqqal",
+    "Mad LH Mukhaffaf",
     "Mad Badal",
     "Mad Shilah Qashirah",
     "Mad Shilah Thawilah",
@@ -152,27 +152,9 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
     useState<DataPersetaHasil | null>(null);
 
   const handleDetailClick = (row: DataPersetaHasil) => {
-    console.log("=== DETAIL CLICK ===");
-    console.log("SELECTED ROW RAW:", row);
-
-    console.log("CATEGORY SCORES FROM ROW:", {
-      makhraj: row.makhraj,
-      sifat: row.sifat,
-      ahkam: row.ahkam,
-      mad: row.mad,
-      gharib: row.gharib,
-      kelancaran: row.kelancaran,
-      pengurangan: row.pengurangan,
-      total: row.total,
-    });
-
     setSelectedAsesmen(row);
     setModalVisible(true);
-
-    setTimeout(() => {
-      console.log("Fetching assessment detail for ID:", row.id);
-      fetchDetail();
-    }, 0);
+    fetchDetail();
   };
 
   // Fetch data with React Query
