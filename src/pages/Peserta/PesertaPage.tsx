@@ -23,6 +23,7 @@ import {
 } from "./type";
 import authService from "../../services/auth.service";
 import { useNavigate } from "react-router-dom";
+import PesertaDetailModal from "../../components/Peserta/PesertaDetailModal";
 
 // Data quiz default
 const dataQuiz: Record<string, QuizSection["list"]> = {
@@ -149,6 +150,8 @@ const PesertaPage: React.FC = () => {
   const [selectedAsesmen, setSelectedAsesmen] = useState<DataPeserta | null>(
     null
   );
+  const [detailVisible, setDetailVisible] = useState(false);
+  const [detailPeserta, setDetailPeserta] = useState<DataPeserta | null>(null);
 
   const endpoint =
     user?.role === "admin"
@@ -180,6 +183,7 @@ const PesertaPage: React.FC = () => {
     id: user.id,
     no_akun: user.no_akun || "-",
     nik: user.nik || "-",
+    email: user.email || "-",
     no_handphone: user.no_handphone || "-",
     nama: user.nama || "-",
     jenis_kelamin: user.jenis_kelamin || "L",
@@ -366,7 +370,7 @@ const PesertaPage: React.FC = () => {
           src={Logo}
           alt="Logo"
           sx={{
-            width: { xs: 120, sm: 150, md: 180 }, // responsif HP → PC
+            width: { xs: 70, sm: 90, md: 100 },
             height: "auto",
             display: "block",
             margin: "0 auto",
@@ -444,7 +448,10 @@ const PesertaPage: React.FC = () => {
             {asesmenList.length > 0 ? (
               <PesertaInfoCard
                 peserta={asesmenList[0]}
-                // onEdit={handleEditSave}
+                onOpenDetail={(data) => {
+                  setDetailPeserta(data);
+                  setDetailVisible(true);
+                }}
               />
             ) : (
               <Box
@@ -467,7 +474,11 @@ const PesertaPage: React.FC = () => {
           </Grid>
         </Grid>
       )}
-
+      <PesertaDetailModal
+        open={detailVisible}
+        onClose={() => setDetailVisible(false)}
+        data={detailPeserta}
+      />
       {/* Modal */}
       {selectedAsesmen && (
         <AsesmenResultModal
