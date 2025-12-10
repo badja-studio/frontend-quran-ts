@@ -154,7 +154,9 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   const handleDetailClick = (row: DataPersetaHasil) => {
     setSelectedAsesmen(row);
     setModalVisible(true);
-    fetchDetail();
+    setTimeout(() => {
+      fetchDetail();
+    }, 0);
   };
 
   // Fetch data with React Query
