@@ -76,6 +76,11 @@ export default function ListPagesDataPesertaSiapAssement() {
             op: "eq",
             value: currentDate,
           },
+          {
+            field: "status",
+            op: "eq",
+            value: "BELUM",
+          },
         ];
 
       // Gabungkan dengan user filters

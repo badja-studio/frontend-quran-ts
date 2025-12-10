@@ -71,17 +71,22 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-        {
-          field: "status",
-          op: "eq",
-          value: "BELUM",
-        },
-        {
-          field: "asesor_id",
-          op: "eq",
-          value: user?.id || "",
-        },
-      ];
+          {
+            field: "status",
+            op: "eq",
+            value: "BELUM",
+          },
+          {
+            field: "asesor_id",
+            op: "eq",
+            value: user?.id || "",
+          },
+          {
+            field: "status",
+            op: "eq",
+            value: "BELUM",
+          },
+        ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {

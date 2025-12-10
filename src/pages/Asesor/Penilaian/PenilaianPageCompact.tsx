@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Box, Grid, Paper, Typography, Button } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  Button,
+  Snackbar,
+  Alert,
+  IconButton,
+} from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 import {
@@ -13,7 +23,7 @@ import {
 } from "./dummy";
 import ScoreSection from "./ScoreSection";
 import HeaderPeserta from "./HeaderPeserta";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import apiClient from "../../../services/api.config";
 import { CategoryType } from "./type";
 import { useUserProfile } from "../../../hooks/useUserProfile";
@@ -46,6 +56,30 @@ interface PesertaFromApi {
   jenjang: string;
   status: string;
   sekolah: string;
+}
+
+interface AssessmentHuruf {
+  peserta_id: string;
+  asesor_id: string;
+  huruf: string | null;
+  kategori: string;
+  nilai: number;
+}
+
+interface AssessmentTotals {
+  makhraj: number;
+  sifat: number;
+  ahkam: number;
+  mad: number;
+  gharib: number;
+  kelancaran: number;
+  pengurangan: number;
+}
+
+interface SubmitAssessmentData {
+  assessments: AssessmentHuruf[];
+  totals: AssessmentTotals;
+  avg: number;
 }
 
 const categoryWeights: Record<CategoryType, number> = {
@@ -94,6 +128,15 @@ const PenilaianPageCompact: React.FC = () => {
   const [penguranganValue, setPenguranganValue] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const handleScore = (
     category: CategoryType,
@@ -219,7 +262,33 @@ const PenilaianPageCompact: React.FC = () => {
 
     return Math.min(100, Number(total.toFixed(2)));
   };
-  const handleSubmit = async () => {
+
+  const submitAssessmentMutation = useMutation({
+    mutationFn: async (data: SubmitAssessmentData) => {
+      const response = await apiClient.post("/api/assessments/bulk", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      setSnackbar({
+        open: true,
+        message: "Penilaian berhasil dikirim!",
+        severity: "success",
+      });
+      setTimeout(() => {
+        navigate("/dashboard/asesor/siap-asesmen");
+      }, 1500);
+    },
+    onError: (err) => {
+      console.error("Error saat submit:", err);
+      setSnackbar({
+        open: true,
+        message: "Gagal mengirim penilaian! Silakan coba lagi.",
+        severity: "error",
+      });
+    },
+  });
+
+  const handleSubmit = () => {
     if (!pesertaFromTable || !user) return;
 
     const assessmentsHuruf = [
@@ -236,25 +305,25 @@ const PenilaianPageCompact: React.FC = () => {
       ),
       ...(kelancaranPenalty > 0
         ? [
-            {
-              peserta_id: pesertaFromTable.id,
-              asesor_id: user.id,
-              huruf: kelancaranValue,
-              kategori: "kelancaran",
-              nilai: kelancaranPenalty,
-            },
-          ]
+          {
+            peserta_id: pesertaFromTable.id,
+            asesor_id: user.id,
+            huruf: kelancaranValue,
+            kategori: "kelancaran",
+            nilai: kelancaranPenalty,
+          },
+        ]
         : []),
       ...(penguranganPenaltyValue > 0
         ? [
-            {
-              peserta_id: pesertaFromTable.id,
-              asesor_id: user.id,
-              huruf: penguranganValue,
-              kategori: "pengurangan",
-              nilai: penguranganPenaltyValue,
-            },
-          ]
+          {
+            peserta_id: pesertaFromTable.id,
+            asesor_id: user.id,
+            huruf: penguranganValue,
+            kategori: "pengurangan",
+            nilai: penguranganPenaltyValue,
+          },
+        ]
         : []),
     ];
 
@@ -270,18 +339,11 @@ const PenilaianPageCompact: React.FC = () => {
 
     const avg = totalOverall();
 
-    try {
-      await apiClient.post("/api/assessments/bulk", {
-        assessments: assessmentsHuruf,
-        totals,
-        avg,
-      });
-
-      navigate("/dashboard/asesor/siap-asesmen");
-    } catch (err) {
-      console.error("Error saat submit:", err);
-      alert("Gagal mengirim penilaian!");
-    }
+    submitAssessmentMutation.mutate({
+      assessments: assessmentsHuruf,
+      totals,
+      avg,
+    });
   };
 
   if (isLoading) return <Typography>Loading peserta...</Typography>;
@@ -292,6 +354,22 @@ const PenilaianPageCompact: React.FC = () => {
   return (
     <Box sx={{ width: "100%", minHeight: "100vh", bgcolor: "grey.50", py: 2 }}>
       <Box sx={{ width: "100%", px: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+          <IconButton
+            onClick={() => navigate("/dashboard/asesor/siap-asesmen")}
+            sx={{
+              bgcolor: "white",
+              "&:hover": { bgcolor: "grey.100" },
+              boxShadow: 1,
+            }}
+          >
+            <ArrowBack />
+          </IconButton>
+          <Typography variant="h6" fontWeight={600}>
+            Penilaian Peserta
+          </Typography>
+        </Box>
+
         <HeaderPeserta
           peserta={{ ...pesertaFromTable, akun: pesertaFromTable.no_akun }}
           totalAverage={totalOverall().toLocaleString()}
@@ -329,8 +407,8 @@ const PenilaianPageCompact: React.FC = () => {
                     value === "Tidak Lancar"
                       ? 3
                       : value === "Kurang Lancar"
-                      ? 2
-                      : 0;
+                        ? 2
+                        : 0;
 
                   setKelancaranPenalty(value === kelancaranValue ? 0 : penalty);
                 }}
@@ -418,9 +496,12 @@ const PenilaianPageCompact: React.FC = () => {
             variant="contained"
             size="large"
             onClick={() => setOpenConfirm(true)}
+            disabled={submitAssessmentMutation.isPending}
             sx={{ px: 4, py: 1.2, fontWeight: 700 }}
           >
-            Submit Penilaian
+            {submitAssessmentMutation.isPending
+              ? "Mengirim..."
+              : "Submit Penilaian"}
           </Button>
         </Box>
       </Box>
@@ -437,6 +518,22 @@ const PenilaianPageCompact: React.FC = () => {
         cancelText="Batal"
         colorConfirm="error"
       />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
