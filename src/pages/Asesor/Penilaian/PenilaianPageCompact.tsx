@@ -277,8 +277,7 @@ const PenilaianPageCompact: React.FC = () => {
         avg,
       });
 
-      alert("Penilaian berhasil dikirim!");
-      navigate("/dashboard/asesor/hasil-asesmen");
+      navigate("/dashboard/asesor/siap-asesmen");
     } catch (err) {
       console.error("Error saat submit:", err);
       alert("Gagal mengirim penilaian!");
