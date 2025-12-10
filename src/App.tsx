@@ -22,6 +22,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
 import ListPagesDataPeserta from "./pages/Admin/DataPeserta/list";
+import EditAssessorSchedulePage from "./pages/Admin/DataPeserta/edit-assessor-schedule";
 
 function App() {
   return (
@@ -65,6 +66,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ListPagesDataPeserta />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/data-peserta/:id/edit-assessor"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <EditAssessorSchedulePage />
               </ProtectedRoute>
             }
           />

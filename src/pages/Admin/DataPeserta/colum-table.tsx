@@ -1,8 +1,9 @@
 import { DataPerseta } from "./type";
 import { Column } from "../../../components/Table/DataTable";
-import { Box, Typography, Chip, Avatar } from "@mui/material";
+import { Box, Typography, Chip, Avatar, IconButton, Tooltip } from "@mui/material";
+import { Edit as EditIcon } from "@mui/icons-material";
 
-export const columnsPeserta: Column<DataPerseta>[] = [
+export const createColumnsPeserta = (onEdit?: (id: string) => void): Column<DataPerseta>[] => [
   {
     id: "nik",
     label: "NIK",
@@ -176,4 +177,26 @@ export const columnsPeserta: Column<DataPerseta>[] = [
     minWidth: 130,
     align: "center",
   },
+  {
+    id: "actions",
+    label: "Aksi",
+    minWidth: 100,
+    align: "center",
+    format: (_value, row) => {
+      return (
+        <Tooltip title="Update Asesor & Jadwal">
+          <IconButton
+            color="primary"
+            size="small"
+            onClick={() => onEdit && onEdit(row.id)}
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      );
+    },
+  },
 ];
+
+// Default export for backward compatibility
+export const columnsPeserta: Column<DataPerseta>[] = createColumnsPeserta();

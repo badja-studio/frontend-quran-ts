@@ -7,16 +7,18 @@ import {
   LinearProgress,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../../components/Dashboard/DashboardLayout";
 import DataTable, { FilterItem } from "../../../components/Table/DataTable";
 import ExportButton from "../../../components/Export/ExportButton";
 import { filterConfigs } from "./config-filter";
-import { columnsPeserta } from "./colum-table";
+import { createColumnsPeserta } from "./colum-table";
 import { DataPerseta, GetUsersResponse } from "./type";
 import apiClient, { handleApiError } from "../../../services/api.config";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 
 export default function ListPagesDataPeserta() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterItem[]>([]);
   const [page, setPage] = useState(1);
@@ -25,6 +27,13 @@ export default function ListPagesDataPeserta() {
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
   const { data: user } = useUserProfile();
+
+  // Create columns with edit handler
+  const handleEdit = (id: string) => {
+    navigate(`/dashboard/data-peserta/${id}/edit-assessor`);
+  };
+
+  const columnsPeserta = createColumnsPeserta(handleEdit);
 
   // Fetch data with React Query
   const {
