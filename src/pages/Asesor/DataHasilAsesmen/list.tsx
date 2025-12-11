@@ -203,17 +203,17 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-        {
-          field: "status",
-          op: "eq",
-          value: "SUDAH",
-        },
-        {
-          field: "asesor_id",
-          op: "eq",
-          value: user?.id || "",
-        },
-      ];
+          {
+            field: "status",
+            op: "eq",
+            value: "SUDAH",
+          },
+          {
+            field: "asesor_id",
+            op: "eq",
+            value: user?.id || "",
+          },
+        ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -238,6 +238,7 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
       console.log(result.data);
       return result.data;
     },
+    enabled: !!user?.id,
     retry: 1,
     staleTime: 30000, // 30 seconds
   });
@@ -363,18 +364,18 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
       const key = sec.title.toLowerCase().includes("makharij")
         ? "makhraj"
         : sec.title.toLowerCase().includes("shifat")
-        ? "sifat"
-        : sec.title.toLowerCase().includes("ahkam al-huruf")
-        ? "ahkam"
-        : sec.title.toLowerCase().includes("mad")
-        ? "mad"
-        : sec.title.toLowerCase().includes("gharib")
-        ? "gharib"
-        : sec.title.toLowerCase().includes("kelancaran")
-        ? "kelancaran"
-        : sec.title.toLowerCase().includes("pengurangan")
-        ? "pengurangan"
-        : "";
+          ? "sifat"
+          : sec.title.toLowerCase().includes("ahkam al-huruf")
+            ? "ahkam"
+            : sec.title.toLowerCase().includes("mad")
+              ? "mad"
+              : sec.title.toLowerCase().includes("gharib")
+                ? "gharib"
+                : sec.title.toLowerCase().includes("kelancaran")
+                  ? "kelancaran"
+                  : sec.title.toLowerCase().includes("pengurangan")
+                    ? "pengurangan"
+                    : "";
 
       if (!key || !grouped[key]) return sec;
 

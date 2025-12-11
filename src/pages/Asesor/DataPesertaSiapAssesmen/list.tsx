@@ -41,6 +41,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
       sortBy,
       sortOrder,
       filters,
+      user?.id,
     ],
     queryFn: async () => {
       const params = new URLSearchParams();
@@ -64,27 +65,27 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
         in: "in",
       };
 
-      // Inject default filter untuk jadwal (tanggal hari ini)
-      // const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+      // Inject default filter untuk status, asesor_id, dan jadwal hari ini
+      const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
       const formattedFilters: Array<{
         field: string;
         op: string;
         value: string | number | Date | string[];
       }> = [
           {
-            field: "status",
-            op: "eq",
-            value: "BELUM",
-          },
-          {
             field: "asesor_id",
             op: "eq",
-            value: user?.id || "",
+            value: user!.id, // Non-null assertion karena sudah di-check di enabled
           },
           {
             field: "status",
             op: "eq",
             value: "BELUM",
+          },
+          {
+            field: "jadwal",
+            op: "eq",
+            value: currentDate,
           },
         ];
 
@@ -114,6 +115,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
 
       return result.data;
     },
+    enabled: !!user?.id, // Hanya jalankan query jika user.id sudah tersedia
     retry: 1,
     staleTime: 30000, // 30 seconds
   });
@@ -218,7 +220,17 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
               Data Peserta Siap Asesmen
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Peserta yang telah siap untuk mengikuti asesmen kompetensi
+              Peserta yang telah siap untuk mengikuti asesmen kompetensi hari
+              ini
+            </Typography>
+            <Typography variant="caption" color="primary">
+              Filter aktif: Jadwal{" "}
+              {new Date().toLocaleDateString("id-ID", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </Typography>
           </Box>
           <ExportButton

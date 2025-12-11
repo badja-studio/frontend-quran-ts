@@ -84,31 +84,6 @@ export const createColumnsPeserta = (onEdit?: (id: string) => void): Column<Data
     minWidth: 180,
   },
   {
-    id: "fakultas",
-    label: "Fakultas",
-    minWidth: 150,
-  },
-  {
-    id: "prodi",
-    label: "Program Studi",
-    minWidth: 180,
-  },
-  {
-    id: "tahun_lulus",
-    label: "Tahun Lulus",
-    minWidth: 120,
-    align: "center",
-  },
-  {
-    id: "jenjang",
-    label: "Jenjang",
-    minWidth: 120,
-    align: "center",
-    format: (value) => (
-      <Chip size="small" label={String(value)} color="primary" />
-    ),
-  },
-  {
     id: "sekolah",
     label: "Nama Sekolah",
     minWidth: 180,

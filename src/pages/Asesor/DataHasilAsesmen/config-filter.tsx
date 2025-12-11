@@ -44,16 +44,6 @@ export const filterConfigs: FilterConfig<DataPersetaHasil>[] = [
   },
   { key: "tanggal_lahir", label: "Tanggal Lahir", type: "date" },
   {
-    key: "jenjang",
-    label: "Jenjang",
-    type: "select",
-    options: [
-      { label: "MI", value: "MI" },
-      { label: "MTs", value: "MTs" },
-      { label: "MA", value: "MA" },
-    ],
-  },
-  {
     key: "sekolah",
     label: "Nama Sekolah",
     type: "text",
@@ -102,30 +92,6 @@ export const filterConfigs: FilterConfig<DataPersetaHasil>[] = [
     ],
   },
   {
-    key: "perguruan_tinggi",
-    label: "Perguruan Tinggi",
-    type: "text",
-    operators: ["contains", "startsWith"],
-  },
-  {
-    key: "fakultas",
-    label: "Fakultas",
-    type: "text",
-    operators: ["contains", "startsWith"],
-  },
-  {
-    key: "prodi",
-    label: "Program Studi",
-    type: "text",
-    operators: ["contains", "startsWith"],
-  },
-  {
-    key: "tahun_lulus",
-    label: "Tahun Lulus",
-    type: "text",
-    operators: ["equals", "contains"],
-  },
-  {
     key: "status_pegawai",
     label: "Status Pegawai",
     type: "select",
@@ -139,7 +105,10 @@ export const filterConfigs: FilterConfig<DataPersetaHasil>[] = [
     key: "sertifikat_profesi",
     label: "Sertifikasi",
     type: "select",
-    operators: ["equals", "contains"],
+    options: [
+      { label: "Sudah", value: "SUDAH" },
+      { label: "Belum", value: "BELUM" },
+    ],
   },
 
   {
@@ -168,7 +137,7 @@ export const filterConfigs: FilterConfig<DataPersetaHasil>[] = [
   { key: "makhraj", label: "Skor Makhraj", type: "number" },
   { key: "sifat", label: "Skor Sifat", type: "number" },
   { key: "ahkam", label: "Skor Ahkam", type: "number" },
-  { key: "mad", label: "Skor Mad A", type: "number" },
+  { key: "mad", label: "Skor Mad", type: "number" },
   { key: "gharib", label: "Skor Gharib", type: "number" },
   {
     key: "total",

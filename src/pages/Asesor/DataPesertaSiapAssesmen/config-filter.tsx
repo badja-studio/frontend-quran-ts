@@ -44,13 +44,15 @@ export const filterConfigs: FilterConfig<DataPersetaSiap>[] = [
   },
   { key: "tanggal_lahir", label: "Tanggal Lahir", type: "date" },
   {
-    key: "jenjang",
-    label: "Jenjang",
+    key: "pendidikan",
+    label: "Pendidikan",
     type: "select",
     options: [
-      { label: "MI", value: "MI" },
-      { label: "MTs", value: "MTs" },
-      { label: "MA", value: "MA" },
+      { label: "D3", value: "D3" },
+      { label: "D4", value: "D4" },
+      { label: "S1", value: "S1" },
+      { label: "S2", value: "S2" },
+      { label: "S3", value: "S3" },
     ],
   },
   {
@@ -90,42 +92,6 @@ export const filterConfigs: FilterConfig<DataPersetaSiap>[] = [
     operators: ["contains", "startsWith"],
   },
   {
-    key: "pendidikan",
-    label: "Pendidikan",
-    type: "select",
-    options: [
-      { label: "D3", value: "D3" },
-      { label: "D4", value: "D4" },
-      { label: "S1", value: "S1" },
-      { label: "S2", value: "S2" },
-      { label: "S3", value: "S3" },
-    ],
-  },
-  {
-    key: "perguruan_tinggi",
-    label: "Perguruan Tinggi",
-    type: "text",
-    operators: ["contains", "startsWith"],
-  },
-  {
-    key: "fakultas",
-    label: "Fakultas",
-    type: "text",
-    operators: ["contains", "startsWith"],
-  },
-  {
-    key: "prodi",
-    label: "Program Studi",
-    type: "text",
-    operators: ["contains", "startsWith"],
-  },
-  {
-    key: "tahun_lulus",
-    label: "Tahun Lulus",
-    type: "text",
-    operators: ["equals", "contains"],
-  },
-  {
     key: "status_pegawai",
     label: "Status Pegawai",
     type: "select",
@@ -140,8 +106,8 @@ export const filterConfigs: FilterConfig<DataPersetaSiap>[] = [
     label: "Sertifikasi",
     type: "select",
     options: [
-      { label: "Sudah", value: "Sudah" },
-      { label: "Belum", value: "Belum" },
+      { label: "Sudah", value: "SUDAH" },
+      { label: "Belum", value: "BELUM" },
     ],
   },
 

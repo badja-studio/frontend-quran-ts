@@ -105,6 +105,7 @@ export default function ListAsesorPagesDataPesertaBelomAsesmen() {
 
       return result.data;
     },
+    enabled: !!user?.id,
     retry: 1,
     staleTime: 30000, // 30 seconds
   });
