@@ -203,17 +203,17 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-          {
-            field: "status",
-            op: "eq",
-            value: "SUDAH",
-          },
-          {
-            field: "asesor_id",
-            op: "eq",
-            value: user?.id || "",
-          },
-        ];
+        {
+          field: "status",
+          op: "eq",
+          value: "SUDAH",
+        },
+        {
+          field: "asesor_id",
+          op: "eq",
+          value: user?.id || "",
+        },
+      ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -364,18 +364,18 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
       const key = sec.title.toLowerCase().includes("makharij")
         ? "makhraj"
         : sec.title.toLowerCase().includes("shifat")
-          ? "sifat"
-          : sec.title.toLowerCase().includes("ahkam al-huruf")
-            ? "ahkam"
-            : sec.title.toLowerCase().includes("mad")
-              ? "mad"
-              : sec.title.toLowerCase().includes("gharib")
-                ? "gharib"
-                : sec.title.toLowerCase().includes("kelancaran")
-                  ? "kelancaran"
-                  : sec.title.toLowerCase().includes("pengurangan")
-                    ? "pengurangan"
-                    : "";
+        ? "sifat"
+        : sec.title.toLowerCase().includes("ahkam al-huruf")
+        ? "ahkam"
+        : sec.title.toLowerCase().includes("mad")
+        ? "mad"
+        : sec.title.toLowerCase().includes("gharib")
+        ? "gharib"
+        : sec.title.toLowerCase().includes("kelancaran")
+        ? "kelancaran"
+        : sec.title.toLowerCase().includes("pengurangan")
+        ? "pengurangan"
+        : "";
 
       if (!key || !grouped[key]) return sec;
 
@@ -390,6 +390,7 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
   };
 
   const safeSections = mapDetailToSections(asesmenDetail) || [];
+  const totalSelesai = pagination.total || 0;
 
   // Full screen loading hanya di awal
   if (isInitialLoad && isLoading) {
@@ -427,13 +428,36 @@ export default function ListAsesorPagesDataPesertaHasilAsesmen() {
           }}
         >
           <Box>
-            <Typography variant="h4" gutterBottom fontWeight="bold">
+            <Typography variant="h4" fontWeight="bold">
               Data Peserta Selesai Asesmen
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
               Lihat hasil dan status peserta yang telah menyelesaikan asesmen
             </Typography>
+
+            <Box
+              sx={{
+                mt: 1,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 1.5,
+                px: 2,
+                py: 0.75,
+                borderRadius: 2,
+                bgcolor: "grey.100",
+              }}
+            >
+              <Typography variant="body2" color="text.secondary">
+                Total peserta selesai diuji
+              </Typography>
+
+              <Typography variant="h6" fontWeight="bold" color="primary.main">
+                {totalSelesai}
+              </Typography>
+            </Box>
           </Box>
+
           <ExportButton
             exportType="assessments"
             filters={filters}

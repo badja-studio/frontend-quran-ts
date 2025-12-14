@@ -5,6 +5,25 @@ import { Box, Typography, Chip, Avatar, Button } from "@mui/material";
 
 export const columnsPeserta: Column<DataPersetaSiap>[] = [
   {
+    id: "action",
+    label: "Action",
+    minWidth: 120,
+    align: "center",
+    format: (_, row) => {
+      return (
+        <Button
+          variant="contained"
+          size="small"
+          component={Link}
+          to={`/dashboard/asesor/penilaian/${row.id}`}
+          state={{ peserta: row }}
+        >
+          Mulai Asesmen
+        </Button>
+      );
+    },
+  },
+  {
     id: "nik",
     label: "NIK",
     minWidth: 150,
@@ -141,25 +160,7 @@ export const columnsPeserta: Column<DataPersetaSiap>[] = [
     align: "center",
     format: (value) => new Date(String(value)).toLocaleDateString("id-ID"),
   },
-  {
-    id: "action",
-    label: "Action",
-    minWidth: 120,
-    align: "center",
-    format: (_, row) => {
-      return (
-        <Button
-          variant="contained"
-          size="small"
-          component={Link}
-          to={`/dashboard/asesor/penilaian/${row.id}`}
-          state={{ peserta: row }}
-        >
-          Mulai Asesmen
-        </Button>
-      );
-    },
-  },
+
   {
     id: "asesor",
     label: "Asesor",
