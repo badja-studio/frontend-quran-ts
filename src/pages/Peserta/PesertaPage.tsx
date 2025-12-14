@@ -6,9 +6,14 @@ import {
   CircularProgress,
   Alert,
   Button,
+  Container,
+  Paper,
+  Stack,
+  Chip,
 } from "@mui/material";
 import Logo from "../../assets/logo.png";
-import { ErrorOutline } from "@mui/icons-material";
+import Kemenag from "../../assets/kemenag.png";
+import { ErrorOutline, LogoutOutlined } from "@mui/icons-material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import AsesmenResultModal from "../../components/Peserta/AsesmenResultModal";
 import PesertaInfoCard from "../../components/Peserta/PesertaInfoCard";
@@ -102,17 +107,17 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "Izhhar",
     "Idzgham Bighunnah",
     "Idzgham Bilaghunnah",
-    "Ikhfa’",
+    "Ikhfa'",
     "Iqlab",
     "Izhhar Syafawi",
-    "Ikhfa’ Syafawi",
+    "Ikhfa' Syafawi",
     "Idgham Mutamtsilain ",
     "Idzgham Mutajannisain",
     "Idgham Mutaqaribain",
     "Ghunnah Musyaddadah",
   ],
   mad: [
-    "Mad Thabi’i",
+    "Mad Thabi'i",
     "Mad Wajib Muttashil",
     "Mad Jaiz Munfashil",
     "Mad Iwadz",
@@ -320,26 +325,15 @@ const PesertaPage: React.FC = () => {
 
   const handleOpen = (item: DataPeserta) => {
     setSelectedAsesmen(item);
-
     setModalVisible(true);
-
     setTimeout(() => {
       fetchDetail();
     }, 0);
   };
 
-  // const handleEditSave = async (updated: DataPeserta) => {
-  //   await apiClient.put(`/api/participants/${updated.id}`, updated);
-  //   alert("Data berhasil diperbarui!");
-  // };
-
   const handleLogout = () => {
-    // Clear all data from localStorage
     authService.logout();
-
-    // Clear React Query cache
     queryClient.clear();
-
     navigate("/");
   };
 
@@ -347,138 +341,229 @@ const PesertaPage: React.FC = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        background: "#f0f4f8",
-        p: { xs: 2, sm: 3, md: 4 },
+        background: "#f5f7fa",
       }}
     >
-      {/* HEADER */}
-      <Box
+      {/* COMPACT HEADER */}
+      <Paper
+        elevation={0}
         sx={{
-          position: "relative",
-          textAlign: "center",
-          py: 4,
-          mb: 4,
-          borderRadius: 3,
-          background: "linear-gradient(135deg, #2E7D32, #4CAF50)",
-          color: "white",
-          boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
+          background: "#2E7D32",
+          borderBottom: "1px solid rgba(255,255,255,0.1)",
         }}
       >
-        {/* LOGO */}
-        <Box
-          component="img"
-          src={Logo}
-          alt="Logo"
-          sx={{
-            width: { xs: 70, sm: 90, md: 100 },
-            height: "auto",
-            display: "block",
-            margin: "0 auto",
-          }}
-        />
+        <Container maxWidth="xl">
+          <Box
+            sx={{
+              py: 2.5,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 2,
+            }}
+          >
+            {/* Left: Logos + Title */}
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Stack direction="row" spacing={1.5}>
+                <Box
+                  sx={{
+                    width: 45,
+                    height: 45,
+                    borderRadius: 1.5,
+                    background: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    p: 0.75,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <img
+                    src={Logo}
+                    alt="Logo"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    width: 45,
+                    height: 45,
+                    borderRadius: 1.5,
+                    background: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    p: 0.75,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <img
+                    src={Kemenag}
+                    alt="Kemenag"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                </Box>
+              </Stack>
 
-        {/* Tombol Logout */}
-        <Button
-          onClick={handleLogout}
-          variant="contained"
-          color="error"
-          sx={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            textTransform: "none",
-            fontWeight: "bold",
-          }}
-        >
-          Logout
-        </Button>
-      </Box>
-
-      {/* Loading */}
-      {(loading || queryLoading) && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "400px",
-            gap: 2,
-          }}
-        >
-          <CircularProgress size={60} sx={{ color: "#2E7D32" }} />
-          <Typography variant="h6" color="text.secondary">
-            Memuat data peserta...
-          </Typography>
-        </Box>
-      )}
-
-      {/* Error */}
-      {error && !loading && (
-        <Alert
-          severity="error"
-          icon={<ErrorOutline />}
-          sx={{
-            mb: 3,
-            borderRadius: 2,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          }}
-        >
-          Gagal memuat profil pengguna
-        </Alert>
-      )}
-      {queryError && !queryLoading && (
-        <Alert
-          severity="error"
-          icon={<ErrorOutline />}
-          sx={{
-            mb: 3,
-            borderRadius: 2,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          }}
-        >
-          Gagal memuat data peserta
-        </Alert>
-      )}
-
-      {/* Content */}
-      {!loading && !queryLoading && !error && !queryError && (
-        <Grid container spacing={4}>
-          <Grid item xs={12} lg={8}>
-            {asesmenList.length > 0 ? (
-              <PesertaInfoCard
-                peserta={asesmenList[0]}
-                onOpenDetail={(data) => {
-                  setDetailPeserta(data);
-                  setDetailVisible(true);
-                }}
-              />
-            ) : (
-              <Box
-                sx={{
-                  p: 4,
-                  textAlign: "center",
-                  backgroundColor: "white",
-                  borderRadius: 2,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                }}
-              >
-                <Typography variant="h6" color="text.secondary">
-                  Data peserta tidak ditemukan
+              <Box sx={{ display: { xs: "none", md: "block" } }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: "white",
+                    fontWeight: 700,
+                    fontSize: "1.1rem",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Portal Insan Al-Qur'an
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "rgba(255,255,255,0.85)",
+                    fontSize: "0.75rem",
+                  }}
+                >
+                  Direktorat GTK-Madrasah • Kementerian Agama
                 </Typography>
               </Box>
-            )}
+            </Stack>
+
+            {/* Right: Status + Logout */}
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <Chip
+                label="Peserta"
+                size="small"
+                sx={{
+                  background: "rgba(255,255,255,0.2)",
+                  color: "white",
+                  fontWeight: 600,
+                  fontSize: "0.75rem",
+                  height: 28,
+                  display: { xs: "none", sm: "flex" },
+                }}
+              />
+              <Button
+                onClick={handleLogout}
+                variant="contained"
+                size="small"
+                startIcon={<LogoutOutlined sx={{ fontSize: 18 }} />}
+                sx={{
+                  background: "rgba(239, 68, 68, 0.9)",
+                  color: "white",
+                  px: 2,
+                  py: 0.75,
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  borderRadius: 1.5,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                  "&:hover": {
+                    background: "rgba(220, 38, 38, 0.95)",
+                  },
+                }}
+              >
+                <Box
+                  component="span"
+                  sx={{ display: { xs: "none", sm: "inline" } }}
+                >
+                  Logout
+                </Box>
+              </Button>
+            </Stack>
+          </Box>
+        </Container>
+      </Paper>
+
+      {/* CONTENT */}
+      <Container maxWidth="xl" sx={{ py: 3 }}>
+        {/* Loading */}
+        {(loading || queryLoading) && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: "400px",
+              gap: 2,
+            }}
+          >
+            <CircularProgress size={50} sx={{ color: "#16a34a" }} />
+            <Typography variant="body1" color="text.secondary">
+              Memuat data peserta...
+            </Typography>
+          </Box>
+        )}
+
+        {/* Error */}
+        {error && !loading && (
+          <Alert
+            severity="error"
+            icon={<ErrorOutline />}
+            sx={{ mb: 3, borderRadius: 2 }}
+          >
+            Gagal memuat profil pengguna
+          </Alert>
+        )}
+        {queryError && !queryLoading && (
+          <Alert
+            severity="error"
+            icon={<ErrorOutline />}
+            sx={{ mb: 3, borderRadius: 2 }}
+          >
+            Gagal memuat data peserta
+          </Alert>
+        )}
+
+        {/* Content */}
+        {!loading && !queryLoading && !error && !queryError && (
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={8}>
+              {asesmenList.length > 0 ? (
+                <PesertaInfoCard
+                  peserta={asesmenList[0]}
+                  onOpenDetail={(data) => {
+                    setDetailPeserta(data);
+                    setDetailVisible(true);
+                  }}
+                />
+              ) : (
+                <Paper
+                  sx={{
+                    p: 4,
+                    textAlign: "center",
+                    borderRadius: 2,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <Typography variant="h6" color="text.secondary">
+                    Data peserta tidak ditemukan
+                  </Typography>
+                </Paper>
+              )}
+            </Grid>
+            <Grid item xs={12} lg={4}>
+              <AsesmenListCard asesmen={asesmenList} onOpen={handleOpen} />
+            </Grid>
           </Grid>
-          <Grid item xs={12} lg={4}>
-            <AsesmenListCard asesmen={asesmenList} onOpen={handleOpen} />
-          </Grid>
-        </Grid>
-      )}
+        )}
+      </Container>
+
       <PesertaDetailModal
         open={detailVisible}
         onClose={() => setDetailVisible(false)}
         data={detailPeserta}
       />
+
       {/* Modal */}
       {selectedAsesmen && (
         <AsesmenResultModal

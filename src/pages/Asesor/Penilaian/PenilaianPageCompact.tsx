@@ -28,6 +28,7 @@ import apiClient from "../../../services/api.config";
 import { CategoryType } from "./type";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 import ConfirmDialog from "../../../components/Peserta/ModalConfirm";
+import VideoView from "./VideoView";
 
 type ScoreAction = "plus" | "minus";
 type MistakeMap = Record<string, number>;
@@ -305,25 +306,25 @@ const PenilaianPageCompact: React.FC = () => {
       ),
       ...(kelancaranPenalty > 0
         ? [
-          {
-            peserta_id: pesertaFromTable.id,
-            asesor_id: user.id,
-            huruf: kelancaranValue,
-            kategori: "kelancaran",
-            nilai: kelancaranPenalty,
-          },
-        ]
+            {
+              peserta_id: pesertaFromTable.id,
+              asesor_id: user.id,
+              huruf: kelancaranValue,
+              kategori: "kelancaran",
+              nilai: kelancaranPenalty,
+            },
+          ]
         : []),
       ...(penguranganPenaltyValue > 0
         ? [
-          {
-            peserta_id: pesertaFromTable.id,
-            asesor_id: user.id,
-            huruf: penguranganValue,
-            kategori: "pengurangan",
-            nilai: penguranganPenaltyValue,
-          },
-        ]
+            {
+              peserta_id: pesertaFromTable.id,
+              asesor_id: user.id,
+              huruf: penguranganValue,
+              kategori: "pengurangan",
+              nilai: penguranganPenaltyValue,
+            },
+          ]
         : []),
     ];
 
@@ -374,6 +375,9 @@ const PenilaianPageCompact: React.FC = () => {
           peserta={{ ...pesertaFromTable, akun: pesertaFromTable.no_akun }}
           totalAverage={totalOverall().toLocaleString()}
         />
+        <Grid>
+          <VideoView />
+        </Grid>
 
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
@@ -407,8 +411,8 @@ const PenilaianPageCompact: React.FC = () => {
                     value === "Tidak Lancar"
                       ? 3
                       : value === "Kurang Lancar"
-                        ? 2
-                        : 0;
+                      ? 2
+                      : 0;
 
                   setKelancaranPenalty(value === kelancaranValue ? 0 : penalty);
                 }}
