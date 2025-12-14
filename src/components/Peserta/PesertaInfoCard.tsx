@@ -1,6 +1,21 @@
 import React from "react";
-import { Card, CardContent, Box, Typography, Button } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Box,
+  Typography,
+  Button,
+  Divider,
+  Stack,
+  Chip,
+} from "@mui/material";
 import { DataPeserta } from "../../pages/Peserta/type";
+import {
+  PersonOutline,
+  LocationOnOutlined,
+  SchoolOutlined,
+  InfoOutlined,
+} from "@mui/icons-material";
 
 interface Props {
   peserta: DataPeserta;
@@ -12,107 +27,256 @@ const DEFAULT_PHOTO = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 const PesertaInfoCard: React.FC<Props> = ({ peserta, onOpenDetail }) => {
   const foto = DEFAULT_PHOTO;
 
-  return (
-    <Card elevation={3} sx={{ borderRadius: 3, backgroundColor: "#fff" }}>
-      {/* Header */}
-      <Box
+  const InfoRow = ({ label, value }: { label: string; value: string }) => (
+    <Box sx={{ mb: 2 }}>
+      <Typography
+        variant="caption"
         sx={{
-          bgcolor: "primary.main",
-          color: "#fff",
-          p: 2,
-          borderTopLeftRadius: 12,
-          borderTopRightRadius: 12,
+          color: "text.secondary",
+          fontWeight: 600,
+          textTransform: "uppercase",
+          fontSize: "0.7rem",
+          letterSpacing: 0.5,
         }}
       >
-        <Typography variant="subtitle1" fontWeight={600}>
-          Profil Peserta
-        </Typography>
+        {label}
+      </Typography>
+      <Typography
+        variant="body2"
+        sx={{
+          color: "text.primary",
+          fontWeight: 500,
+          mt: 0.5,
+        }}
+      >
+        {value}
+      </Typography>
+    </Box>
+  );
+
+  return (
+    <Card
+      elevation={0}
+      sx={{
+        borderRadius: 3,
+        border: "1px solid",
+        borderColor: "divider",
+        overflow: "hidden",
+        background: "white",
+      }}
+    >
+      {/* Header with Gradient */}
+      <Box
+        sx={{
+          background: "#2E7D32",
+          color: "white",
+          px: 3,
+          py: 2.5,
+          display: "flex",
+          alignItems: "center",
+          gap: 1.5,
+        }}
+      >
+        <Box
+          sx={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.2)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <PersonOutline sx={{ fontSize: 22 }} />
+        </Box>
+        <Box>
+          <Typography variant="h6" fontWeight={700} sx={{ fontSize: "1.1rem" }}>
+            Profil Peserta
+          </Typography>
+          <Typography variant="caption" sx={{ opacity: 0.9 }}>
+            Informasi data peserta asesmen
+          </Typography>
+        </Box>
       </Box>
 
       <CardContent sx={{ p: 3 }}>
-        <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
-          {/* FOTO DI KIRI */}
-          <Box
-            component="img"
-            src={foto}
-            alt="foto peserta"
-            sx={{
-              width: 100,
-              height: 120,
-              borderRadius: 2,
-              objectFit: "cover",
-              backgroundColor: "#eee",
-            }}
-          />
-
-          {/* TEKS DIBAGI 2 KOLom */}
-          <Box sx={{ flex: 1, display: "flex", gap: 2 }}>
-            {/* Kolom Kiri */}
-            <Box sx={{ flex: 1 }}>
-              <Typography fontWeight={600}>NIK</Typography>
-              <Typography mb={1} color="text.secondary">
-                {peserta.nik}
-              </Typography>
-
-              <Typography fontWeight={600}>Nama</Typography>
-              <Typography mb={1} color="text.secondary">
-                {peserta.nama}
-              </Typography>
-
-              <Typography fontWeight={600}>Jenis Kelamin</Typography>
-              <Typography mb={1} color="text.secondary">
-                {peserta.jenis_kelamin}
-              </Typography>
-
-              <Typography fontWeight={600}>Provinsi</Typography>
-              <Typography mb={1} color="text.secondary">
-                {peserta.provinsi}
-              </Typography>
-
-              <Typography fontWeight={600}>Kota/Kab</Typography>
-              <Typography mb={1} color="text.secondary">
-                {peserta.kota}
-              </Typography>
+        <Stack spacing={3}>
+          {/* Photo & Primary Info Section */}
+          <Box sx={{ display: "flex", gap: 3, alignItems: "flex-start" }}>
+            {/* Photo */}
+            <Box
+              sx={{
+                position: "relative",
+                flexShrink: 0,
+              }}
+            >
+              <Box
+                component="img"
+                src={foto}
+                alt="foto peserta"
+                sx={{
+                  width: 110,
+                  height: 130,
+                  borderRadius: 2,
+                  objectFit: "cover",
+                  border: "3px solid",
+                  borderColor: "divider",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                }}
+              />
+              <Chip
+                label={peserta.status}
+                size="small"
+                sx={{
+                  position: "absolute",
+                  bottom: -8,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  fontWeight: 700,
+                  fontSize: "0.7rem",
+                  height: 24,
+                  background:
+                    peserta.status === "Aktif" ? "#22c55e" : "#94a3b8",
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                }}
+              />
             </Box>
 
-            {/* Kolom Kanan */}
+            {/* Primary Info */}
             <Box sx={{ flex: 1 }}>
-              <Typography fontWeight={600}>Kecamatan</Typography>
-              <Typography mb={1} color="text.secondary">
-                {peserta.kecamatan}
-              </Typography>
-
-              <Typography fontWeight={600}>Kelurahan/Desa</Typography>
-              <Typography mb={1} color="text.secondary">
-                {peserta.kelurahan}
-              </Typography>
-
-              <Typography fontWeight={600}>Status</Typography>
-              <Typography mb={1} color="text.secondary">
-                {peserta.status}
-              </Typography>
-
-              <Typography fontWeight={600}>Sekolah</Typography>
-              <Typography mb={1} color="text.secondary">
-                {peserta.sekolah}
-              </Typography>
-
-              <Typography fontWeight={600}>Alamat Sekolah</Typography>
-              <Typography mb={1} color="text.secondary">
-                {peserta.alamat_sekolah}
-              </Typography>
+              <Stack spacing={2}>
+                <Box>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 700,
+                      color: "text.primary",
+                      mb: 0.5,
+                      fontSize: "1.4rem",
+                    }}
+                  >
+                    {peserta.nama}
+                  </Typography>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    flexWrap="wrap"
+                    sx={{ mb: 1 }}
+                  >
+                    <Chip
+                      label={peserta.nik}
+                      size="small"
+                      variant="outlined"
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: "0.7rem",
+                        height: 26,
+                      }}
+                    />
+                    <Chip
+                      label={
+                        peserta.jenis_kelamin === "L"
+                          ? "Laki-laki"
+                          : "Perempuan"
+                      }
+                      size="small"
+                      variant="outlined"
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: "0.7rem",
+                        height: 26,
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              </Stack>
             </Box>
           </Box>
-        </Box>
 
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{ textTransform: "none" }}
-          onClick={() => onOpenDetail(peserta)}
-        >
-          Lihat Detail Lengkap
-        </Button>
+          <Divider />
+
+          {/* Location Section */}
+          <Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+              <LocationOnOutlined
+                sx={{ fontSize: 20, color: "primary.main" }}
+              />
+              <Typography
+                variant="subtitle2"
+                fontWeight={700}
+                color="text.primary"
+              >
+                Informasi Lokasi
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", gap: 3 }}>
+              <Box sx={{ flex: 1 }}>
+                <InfoRow label="Provinsi" value={peserta.provinsi ?? "-"} />
+                <InfoRow label="Kota/Kabupaten" value={peserta.kota ?? "-"} />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <InfoRow label="Kecamatan" value={peserta.kecamatan} />
+                <InfoRow label="Kelurahan/Desa" value={peserta.kelurahan} />
+              </Box>
+            </Box>
+          </Box>
+
+          <Divider />
+
+          {/* School Section */}
+          <Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+              <SchoolOutlined sx={{ fontSize: 20, color: "primary.main" }} />
+              <Typography
+                variant="subtitle2"
+                fontWeight={700}
+                color="text.primary"
+              >
+                Informasi Sekolah
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", gap: 3 }}>
+              <Box sx={{ flex: 1 }}>
+                <InfoRow label="Nama Sekolah" value={peserta.sekolah ?? "-"} />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <InfoRow
+                  label="Alamat Sekolah"
+                  value={peserta.alamat_sekolah}
+                />
+              </Box>
+            </Box>
+          </Box>
+
+          <Divider />
+
+          {/* Action Button */}
+          <Button
+            variant="contained"
+            fullWidth
+            size="large"
+            startIcon={<InfoOutlined />}
+            onClick={() => onOpenDetail(peserta)}
+            sx={{
+              textTransform: "none",
+              fontWeight: 700,
+              fontSize: "0.95rem",
+              py: 1,
+              borderRadius: 2,
+              background: "#2E7D32",
+              boxShadow: "0 4px 12px rgba(22, 163, 74, 0.3)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                boxShadow: "0 6px 16px rgba(22, 163, 74, 0.4)",
+                transform: "translateY(-2px)",
+              },
+            }}
+          >
+            Lihat Detail Lengkap
+          </Button>
+        </Stack>
       </CardContent>
     </Card>
   );
