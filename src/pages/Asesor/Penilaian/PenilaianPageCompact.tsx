@@ -204,7 +204,7 @@ const PenilaianPageCompact: React.FC = () => {
         case "Mad LH Mutsaqqal":
         case "Mad LH Mukhaffaf":
           return index === 0 ? 1 : 0.5;
-        case "Qashr":
+        case "Ziyadatul Mad":
           return index === 0 ? 2 : 0.5;
         default:
           return 0;

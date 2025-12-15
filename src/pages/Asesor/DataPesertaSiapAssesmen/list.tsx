@@ -66,28 +66,28 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
       };
 
       // Inject default filter untuk status, asesor_id, dan jadwal hari ini
-      const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+      // const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
       const formattedFilters: Array<{
         field: string;
         op: string;
         value: string | number | Date | string[];
       }> = [
-          {
-            field: "asesor_id",
-            op: "eq",
-            value: user!.id, // Non-null assertion karena sudah di-check di enabled
-          },
-          {
-            field: "status",
-            op: "eq",
-            value: "BELUM",
-          },
-          {
-            field: "jadwal",
-            op: "eq",
-            value: currentDate,
-          },
-        ];
+        {
+          field: "asesor_id",
+          op: "eq",
+          value: user!.id, // Non-null assertion karena sudah di-check di enabled
+        },
+        {
+          field: "status",
+          op: "eq",
+          value: "BELUM",
+        },
+        // {
+        //   field: "jadwal",
+        //   op: "eq",
+        //   value: currentDate,
+        // },
+      ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
