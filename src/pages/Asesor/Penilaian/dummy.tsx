@@ -101,7 +101,7 @@ export const madList = [
   "Mad Badal",
   "Mad Shilah Qashirah",
   "Mad Shilah Thawilah",
-  "Qashr",
+  "Ziyadatul Mad",
 ];
 
 export const gharibList = [

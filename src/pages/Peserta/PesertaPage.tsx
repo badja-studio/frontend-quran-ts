@@ -132,7 +132,7 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "Mad Badal",
     "Mad Shilah Qashirah",
     "Mad Shilah Thawilah",
-    "Qashr",
+    "Ziyadatul Mad",
   ],
   gharib: [
     "Iysmam",
