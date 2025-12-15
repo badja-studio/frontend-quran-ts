@@ -97,12 +97,10 @@ export default function ListPagesDataAsesor() {
     ) || [];
 
   const pagination = response?.pagination || {
-    currentPage: 1,
-    totalPages: 0,
-    totalItems: 0,
-    limit: 10,
-    hasNextPage: false,
-    hasPrevPage: false,
+    current_page: 1,
+    total_pages: 0,
+    total: 0,
+    per_page: 10,
   };
 
   const handleSearchChange = (value: string) => {
@@ -201,7 +199,7 @@ export default function ListPagesDataAsesor() {
           enableExport={true}
           // Server-side pagination
           serverSide={true}
-          totalCount={pagination.totalItems}
+          totalCount={pagination.total}
           page={page - 1} // DataTable uses 0-indexed, API uses 1-indexed
           rowsPerPage={limit}
           onPageChange={(newPage) => setPage(newPage + 1)} // Convert back to 1-indexed

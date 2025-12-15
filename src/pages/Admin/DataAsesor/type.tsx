@@ -54,11 +54,9 @@ export interface Participant {
 }
 
 export interface Pagination {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-  limit: number;
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
+  current_page: number;
+  per_page: number;
+  total: number;
+  total_pages: number;
 }
 
