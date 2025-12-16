@@ -10,17 +10,19 @@ interface Participant {
   video_url?: string;
 }
 
-interface ApiResponse {
+interface GtkApiResponse {
   success: boolean;
   results: Participant[];
 }
 
+const GTK_API_BASE_URL = import.meta.env.VITE_GTK_API_BASE_URL;
+
 export default function VideoView({ no_akun }: Props) {
-  const { data, isLoading, error } = useQuery<ApiResponse>({
+  const { data, isLoading, isError } = useQuery<GtkApiResponse>({
     queryKey: ["video-peserta", no_akun],
     queryFn: async () => {
-      const res = await axios.get<ApiResponse>(
-        "https://gtkmadrasah.kemenag.go.id/tbq/api/participants",
+      const res = await axios.get<GtkApiResponse>(
+        `${GTK_API_BASE_URL}/api/participants`,
         {
           params: {
             teacher_id: no_akun,
@@ -29,56 +31,32 @@ export default function VideoView({ no_akun }: Props) {
       );
       return res.data;
     },
-    enabled: Boolean(no_akun),
-    retry: 1,
+    enabled: !!no_akun,
+    retry: false,
     staleTime: 60_000,
   });
 
   if (isLoading) {
     return (
-      <Box
-        sx={{
-          position: "fixed",
-          right: 16,
-          top: 100,
-          bgcolor: "black",
-          borderRadius: 2,
-          p: 2,
-        }}
-      >
+      <Box sx={{ position: "fixed", right: 16, top: 100, p: 2 }}>
         <CircularProgress size={24} />
       </Box>
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
-      <Box
-        sx={{
-          position: "fixed",
-          right: 16,
-          top: 100,
-          width: 240,
-        }}
-      >
+      <Box sx={{ position: "fixed", right: 16, top: 100, width: 240 }}>
         <Alert severity="error">Gagal mengambil video peserta</Alert>
       </Box>
     );
   }
 
   const videoUrl = data?.results?.[0]?.video_url;
-  console.log(videoUrl);
 
   if (!videoUrl) {
     return (
-      <Box
-        sx={{
-          position: "fixed",
-          right: 16,
-          top: 100,
-          width: 240,
-        }}
-      >
+      <Box sx={{ position: "fixed", right: 16, top: 100, width: 240 }}>
         <Alert severity="info">Video belum tersedia</Alert>
       </Box>
     );
@@ -91,7 +69,7 @@ export default function VideoView({ no_akun }: Props) {
         right: 16,
         top: 100,
         width: 320,
-        aspectRatio: "14 / 7", // paksa landscape
+        aspectRatio: "14 / 7",
         bgcolor: "black",
         borderRadius: 2,
         overflow: "hidden",
@@ -101,12 +79,7 @@ export default function VideoView({ no_akun }: Props) {
       <video
         src={videoUrl}
         controls
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-          backgroundColor: "black",
-        }}
+        style={{ width: "100%", height: "100%", objectFit: "contain" }}
       />
     </Box>
   );
