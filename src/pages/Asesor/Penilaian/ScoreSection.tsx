@@ -18,7 +18,6 @@ interface Props {
     type: "plus" | "minus"
   ) => void;
 
-  // MODE SELECT
   isSelect?: boolean;
   selectedValue?: string | null;
   onSelect?: (value: string) => void;
