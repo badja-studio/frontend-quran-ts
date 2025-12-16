@@ -1,7 +1,7 @@
 import { DataPersetaSiap } from "./type";
 import { Column } from "../../../components/Table/DataTable";
-import { Link } from "react-router-dom";
-import { Box, Typography, Chip, Avatar, Button } from "@mui/material";
+import { Box, Typography, Chip, Avatar } from "@mui/material";
+import ActionMulaiAsesmen from "./ActionMulaiAsesmen";
 
 export const columnsPeserta: Column<DataPersetaSiap>[] = [
   {
@@ -9,19 +9,7 @@ export const columnsPeserta: Column<DataPersetaSiap>[] = [
     label: "Action",
     minWidth: 120,
     align: "center",
-    format: (_, row) => {
-      return (
-        <Button
-          variant="contained"
-          size="small"
-          component={Link}
-          to={`/dashboard/asesor/penilaian/${row.id}`}
-          state={{ peserta: row }}
-        >
-          Mulai Asesmen
-        </Button>
-      );
-    },
+    format: (_, row) => <ActionMulaiAsesmen row={row} />,
   },
   {
     id: "nik",
