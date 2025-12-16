@@ -376,7 +376,7 @@ const PenilaianPageCompact: React.FC = () => {
           totalAverage={totalOverall().toLocaleString()}
         />
         <Grid>
-          <VideoView />
+          <VideoView no_akun={pesertaFromTable.no_akun} />
         </Grid>
 
         <Grid container spacing={2}>

@@ -1,6 +1,7 @@
 export interface DataPersetaSiap extends Record<string, unknown> {
   id: string;
   nik: string;
+  no_akun: string;
   username: string;
   email: string;
   no_handphone: string;
@@ -32,6 +33,7 @@ export interface User {
   id: string;
   username?: string;
   nip?: string;
+  no_akun: string;
   nik?: string;
   nama?: string;
   tempat_lahir?: string;
