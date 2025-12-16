@@ -124,6 +124,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
     response?.data?.map((user) => ({
       id: user.id,
       nik: user.nik || "",
+      no_akun: user.no_akun || "",
       username: user.username || "",
       email: user.email || "",
       no_handphone: user.no_handphone || "",
