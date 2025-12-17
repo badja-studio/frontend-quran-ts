@@ -257,7 +257,7 @@ export default function ListAsesorPagesDataPesertaSiapAssement() {
         <DataTable
           columns={columnsPeserta}
           data={transformedData}
-          rowsPerPageOptions={[5, 10, 25, 50, 100, 150, 200]}
+          rowsPerPageOptions={[5, 10, 25, 50, 100, 150, 200, 205]}
           emptyMessage={
             isFetching ? "Memuat data..." : "Belum ada data peserta"
           }
