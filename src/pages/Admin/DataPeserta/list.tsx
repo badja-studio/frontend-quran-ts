@@ -226,7 +226,7 @@ export default function ListPagesDataPeserta() {
         <DataTable
           columns={columnsPeserta}
           data={transformedData}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 25, 50, 100, 150, 200]}
           emptyMessage={
             isFetching ? "Memuat data..." : "Belum ada data peserta"
           }

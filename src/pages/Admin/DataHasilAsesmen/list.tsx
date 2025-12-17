@@ -70,12 +70,12 @@ export default function ListPagesDataPesertaHasilAsesmen() {
         op: string;
         value: string | number | Date | string[];
       }> = [
-          {
-            field: "status",
-            op: "eq",
-            value: "SUDAH",
-          },
-        ];
+        {
+          field: "status",
+          op: "eq",
+          value: "SUDAH",
+        },
+      ];
 
       // Gabungkan dengan user filters
       if (filters.length > 0) {
@@ -240,7 +240,7 @@ export default function ListPagesDataPesertaHasilAsesmen() {
         <DataTable
           columns={columnsPeserta}
           data={transformedData}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 25, 50, 100, 150, 200]}
           emptyMessage={
             isFetching
               ? "Memuat data..."
