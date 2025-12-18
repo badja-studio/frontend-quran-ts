@@ -144,7 +144,14 @@ const dataQuiz: Record<string, QuizSection["list"]> = {
     "Nun Washal",
   ],
   kelancaran: ["Tidak Lancar", "Kurang Lancar"],
-  pengurangan: ["Tidak Bisa Baca"],
+  pengurangan: [
+    "Tidak Bisa Membaca",
+    "Suara Tidak Ada",
+    "Video Rusak",
+    "Terindikasi Dubbing",
+    "Video Tidak Ada Gambar",
+    "Ayat yg Dibaca Tidak Sesuai",
+  ],
 };
 
 const PesertaPage: React.FC = () => {
