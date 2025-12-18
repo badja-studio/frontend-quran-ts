@@ -358,6 +358,12 @@ const PenilaianPageCompact: React.FC = () => {
     };
 
     const avg = totalOverall();
+    console.log("=== PAYLOAD PENILAIAN ===");
+    console.log("Pengurangan Value:", penguranganValue);
+    console.log("Pengurangan Penalty:", penguranganPenaltyValue);
+    console.log("Assessments:", assessmentsHuruf);
+    console.log("Totals:", totals);
+    console.log("AVG:", avg);
 
     submitAssessmentMutation.mutate({
       assessments: assessmentsHuruf,
@@ -459,7 +465,9 @@ const PenilaianPageCompact: React.FC = () => {
                   const selected = value === penguranganValue ? null : value;
                   setPenguranganValue(selected);
 
-                  const numericPenalty = selected ? Number(selected) : 0;
+                  const numericPenalty = selected
+                    ? getPenguranganPenalty(selected)
+                    : 0;
                   setPenguranganPenaltyValue(numericPenalty);
                 }}
               />
