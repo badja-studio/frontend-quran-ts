@@ -223,45 +223,61 @@ const PenilaianPageCompact: React.FC = () => {
     }
   };
 
-  const getKelancaranPenalty = () => {
-    if (kelancaranValue === "Tidak Lancar") return 2.5;
-    if (kelancaranValue === "Kurang Lancar") return 2;
+  const getKelancaranPenalty = (value: string | null): number => {
+    if (value === "Tidak Lancar") return 2.5;
+    if (value === "Kurang Lancar") return 2;
+    return 0;
+  };
+
+  const getPenguranganPenalty = (value: string | null): number => {
+    if (value === "Tidak Bisa Membaca") return 90;
+    if (
+      value === "Suara Tidak Ada" ||
+      value === "Video Rusak" ||
+      value === "Terindikasi Dubbing"
+    )
+      return 100;
+
     return 0;
   };
 
   const totalScore = (category: CategoryType): number => {
-    if (penguranganValue === "Tidak Bisa Membaca") {
-      return 0;
-    }
+    if (category === "pengurangan") return 0;
+    if (penguranganValue === "Tidak Bisa Membaca") return 0;
 
-    const maxScore = categoryWeights[category] || 0;
+    const maxScore = categoryWeights[category];
     const fields = mistakes[category] || {};
+
     let deduction = 0;
-    Object.keys(fields).forEach((item) => {
-      const count = fields[item];
+
+    Object.entries(fields).forEach(([item, count]) => {
       for (let i = 0; i < count; i++) {
         deduction += getPenalty(category, i, item);
       }
     });
-    return Math.max(0, Math.min(maxScore, maxScore - deduction));
+
+    return Math.max(0, maxScore - deduction);
   };
 
   const totalOverall = (): number => {
+    // aturan khusus
     if (penguranganValue === "Tidak Bisa Membaca") return 10;
 
-    let total =
+    const baseTotal =
       totalScore("makhraj") +
       totalScore("sifat") +
       totalScore("ahkam") +
       totalScore("mad") +
       totalScore("gharib");
 
-    const kelScore = kelancaranValue
-      ? categoryWeights.kelancaran - getKelancaranPenalty()
-      : categoryWeights.kelancaran;
-    total += kelScore;
+    const kelancaranScore =
+      categoryWeights.kelancaran - getKelancaranPenalty(kelancaranValue);
 
-    return Math.min(100, Number(total.toFixed(2)));
+    const penguranganPenalty = getPenguranganPenalty(penguranganValue);
+
+    const finalScore = baseTotal + kelancaranScore - penguranganPenalty;
+
+    return Math.max(0, Math.min(100, Number(finalScore.toFixed(2))));
   };
 
   const submitAssessmentMutation = useMutation({
@@ -334,8 +350,9 @@ const PenilaianPageCompact: React.FC = () => {
       ahkam: totalScore("ahkam"),
       mad: totalScore("mad"),
       gharib: totalScore("gharib"),
-      kelancaran: categoryWeights.kelancaran - kelancaranPenalty,
-      pengurangan: penguranganPenaltyValue,
+      kelancaran:
+        categoryWeights.kelancaran - getKelancaranPenalty(kelancaranValue),
+      pengurangan: getPenguranganPenalty(penguranganValue),
     };
 
     const avg = totalOverall();
@@ -418,7 +435,7 @@ const PenilaianPageCompact: React.FC = () => {
                 }}
               />
               <ScoreSection
-                title="Pengurangan Nilai Peserta"
+                title="Kelayakan Untuk Dinilai"
                 category="pengurangan"
                 list={pengurangan}
                 isSelect
