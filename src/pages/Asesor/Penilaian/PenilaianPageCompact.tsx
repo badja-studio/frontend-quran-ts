@@ -230,11 +230,13 @@ const PenilaianPageCompact: React.FC = () => {
   };
 
   const getPenguranganPenalty = (value: string | null): number => {
+    if (value == "Maqro yg dibaca cuma sebagian") return 50;
     if (value === "Tidak Bisa Membaca") return 90;
     if (
       value === "Suara Tidak Ada" ||
       value === "Video Rusak" ||
-      value === "Terindikasi Dubbing"
+      value === "Terindikasi Dubbing" ||
+      value === "Maqro yang dibaca tidak sesuai"
     )
       return 100;
 
