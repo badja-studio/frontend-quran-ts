@@ -4,7 +4,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./theme";
 import Login from "./pages/Login";
 // import GuruDashboard from "./pages/Dashboard/GuruDashboard";
-import AdminDashboard from "./pages/Dashboard/AdminDashboard";
+// import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 // import GuruSiswa from "./pages/Dashboard/GuruSiswa";
 import PesertaPage from "./pages/Peserta/PesertaPage";
 import ListPagesDataPesertaSiapAssement from "./pages/Admin/DataPesertaSiapAssesmen/list";
@@ -109,14 +109,14 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/dashboard/admin"
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
                 <AdminDashboard />
               </ProtectedRoute>
             }
-          />
+          /> */}
           {/* <Route
             path="/dashboard/siswa"
             element={

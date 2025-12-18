@@ -20,7 +20,7 @@ import Logo from "../../assets/logo.png";
 import RecentActorsIcon from "@mui/icons-material/RecentActors";
 import {
   Menu as MenuIcon,
-  Dashboard as DashboardIcon,
+  // Dashboard as DashboardIcon,
   People as PeopleIcon,
   Book as BookIcon,
   Assignment as AssignmentIcon,
@@ -128,7 +128,7 @@ const menuConfig: MenuConfig = {
   ],
   participant: [],
   admin: [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard/admin" },
+    // { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard/admin" },
     {
       text: "Data Peserta",
       icon: <PeopleIcon />,
