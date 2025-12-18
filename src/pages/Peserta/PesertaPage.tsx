@@ -184,6 +184,7 @@ const PesertaPage: React.FC = () => {
     queryFn: async () => {
       if (!endpoint) return { data: [] };
       const res = await apiClient.get(endpoint);
+      console.log(res.data);
       return res.data;
     },
     staleTime: 30000,
