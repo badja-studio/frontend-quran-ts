@@ -262,7 +262,6 @@ const PenilaianPageCompact: React.FC = () => {
   };
 
   const totalOverall = (): number => {
-    // aturan khusus
     if (penguranganValue === "Tidak Bisa Membaca") return 10;
 
     const baseTotal =
@@ -358,13 +357,6 @@ const PenilaianPageCompact: React.FC = () => {
     };
 
     const avg = totalOverall();
-    console.log("=== PAYLOAD PENILAIAN ===");
-    console.log("Pengurangan Value:", penguranganValue);
-    console.log("Pengurangan Penalty:", penguranganPenaltyValue);
-    console.log("Assessments:", assessmentsHuruf);
-    console.log("Totals:", totals);
-    console.log("AVG:", avg);
-
     submitAssessmentMutation.mutate({
       assessments: assessmentsHuruf,
       totals,
