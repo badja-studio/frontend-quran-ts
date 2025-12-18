@@ -123,4 +123,6 @@ export const pengurangan = [
   "Terindikasi Dubbing",
   "Video Tidak Ada Gambar",
   "Ayat yg Dibaca Tidak Sesuai",
+  "Maqro yang dibaca tidak sesuai",
+  "Maqro yg dibaca cuma sebagian",
 ];
