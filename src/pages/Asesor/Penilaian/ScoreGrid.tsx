@@ -20,6 +20,7 @@ const ScoreGrid: React.FC<Props> = ({
   mistakes,
   handleScore,
 }) => {
+  const sortedList = [...list];
   return (
     <Box
       sx={{
@@ -27,9 +28,11 @@ const ScoreGrid: React.FC<Props> = ({
         gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))",
         gap: 0.5,
         width: "100%",
+        direction: "rtl", // grid mulai dari kanan
+        gridAutoFlow: "row",
       }}
     >
-      {list.map((item) => {
+      {sortedList.map((item) => {
         const value = mistakes?.[category]?.[item] ?? 0;
 
         return (
