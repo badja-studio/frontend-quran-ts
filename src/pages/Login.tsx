@@ -56,7 +56,7 @@ function Login() {
 
       if (response.success && response.data) {
         const role = response.data.user.role.toLowerCase();
-        if (role === "admin") navigate("/dashboard/data-peserta");
+        if (role === "admin") navigate("/dashboard/admin");
         else if (role === "assessor" || role === "guru")
           navigate("/dashboard/asesor/siap-asesmen");
         else if (role === "participant" || role === "siswa")
