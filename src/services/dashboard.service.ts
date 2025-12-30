@@ -83,10 +83,12 @@ export interface PerformanceAnalytics {
 }
 
 export interface ErrorAnalysis {
-  makharij: ErrorStatistic[];
+  makhraj: ErrorStatistic[];
   sifat: ErrorStatistic[];
   ahkam: ErrorStatistic[];
   mad: ErrorStatistic[];
+  gharib: ErrorStatistic[];
+  kelancaran: ErrorStatistic[];
   penalties: ErrorStatistic[];
 }
 

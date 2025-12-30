@@ -538,18 +538,18 @@ export default function AdminDashboard() {
         </Grid>
         {/* Performance Charts */}
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {/* Makharij Errors */}
+          {/* Makhraj Errors */}
           <Grid item xs={12} md={6}>
             <MetrixGridTable
-              title="Makharij Al-Huruf"
-              data={errors.makharij}
+              title="Makhraj Al-Huruf"
+              data={errors.makhraj}
               headerColor="#00838F"
             />
           </Grid>
 
           <Grid item xs={12} md={6}>
             <ReusableKesalahanBarChart
-              data={errors.makharij}
+              data={errors.makhraj}
               colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
               height={350}
             />
@@ -606,29 +606,49 @@ export default function AdminDashboard() {
             />
           </Grid>
 
-          {/* kesalahan */}
+          {/* Gharib Errors */}
           <Grid item xs={12} md={6}>
             <MetrixGridTable
-              title="Kelancaran Membaca Al-Quran"
-              data={errors.penalties}
+              title="Kalimat Gharib"
+              data={errors.gharib}
               headerColor="#00838F"
             />
           </Grid>
+
           <Grid item xs={12} md={6}>
             <ReusableKesalahanBarChart
-              data={errors.penalties}
+              data={errors.gharib}
               colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
               height={350}
             />
           </Grid>
+
+          {/* Kelancaran Errors */}
+          <Grid item xs={12} md={6}>
+            <MetrixGridTable
+              title="Kelancaran Membaca Al-Quran"
+              data={errors.kelancaran}
+              headerColor="#00838F"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <ReusableKesalahanBarChart
+              data={errors.kelancaran}
+              colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
+              height={350}
+            />
+          </Grid>
+
           {/* Penalties */}
           <Grid item xs={12} md={6}>
             <MetrixGridTable
-              title="Kelayakan Untuk Dinilai"
+              title="Pengurangan / Kelayakan Untuk Dinilai"
               data={errors.penalties}
               headerColor="#00838F"
             />
           </Grid>
+
           <Grid item xs={12} md={6}>
             <ReusableKesalahanBarChart
               data={errors.penalties}
