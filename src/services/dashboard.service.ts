@@ -96,15 +96,42 @@ export interface ProvinceData {
   fluency: FluencyLevel[];
 }
 
+export interface ScoreDistributionByLevel {
+  tingkat: 'RA' | 'MI' | 'MTS' | 'MA';
+  jml_0_59: number;
+  jml_60_89: number;
+  jml_90_100: number;
+  total: number;
+}
+
+export interface ScoreDistributionBySubject {
+  mata_pelajaran: string;
+  jml_0_59: number;
+  jml_60_89: number;
+  jml_90_100: number;
+  total_peserta: number;
+}
+
 class DashboardService {
   private readonly baseUrl = "/api/dashboard";
 
   /**
+   * Get list of distinct provinces that exist in database
+   */
+  async getProvincesList(): Promise<string[]> {
+    const response: ApiResponse<string[]> = await api.get(
+      `${this.baseUrl}/provinces-list`
+    );
+    return response.data!;
+  }
+
+  /**
    * Get comprehensive dashboard overview data
    */
-  async getDashboardOverview(): Promise<DashboardOverview> {
+  async getDashboardOverview(provinsi?: string): Promise<DashboardOverview> {
+    const params = provinsi ? `?provinsi=${encodeURIComponent(provinsi)}` : '';
     const response: ApiResponse<DashboardOverview> = await api.get(
-      `${this.baseUrl}/overview`
+      `${this.baseUrl}/overview${params}`
     );
     return response.data!;
   }
@@ -112,9 +139,10 @@ class DashboardService {
   /**
    * Get basic statistics
    */
-  async getBasicStatistics(): Promise<BasicStatistics> {
+  async getBasicStatistics(provinsi?: string): Promise<BasicStatistics> {
+    const params = provinsi ? `?provinsi=${encodeURIComponent(provinsi)}` : '';
     const response: ApiResponse<BasicStatistics> = await api.get(
-      `${this.baseUrl}/statistics`
+      `${this.baseUrl}/statistics${params}`
     );
     return response.data!;
   }
@@ -122,9 +150,10 @@ class DashboardService {
   /**
    * Get participation statistics
    */
-  async getParticipationStats(): Promise<ParticipationStats> {
+  async getParticipationStats(provinsi?: string): Promise<ParticipationStats> {
+    const params = provinsi ? `?provinsi=${encodeURIComponent(provinsi)}` : '';
     const response: ApiResponse<ParticipationStats> = await api.get(
-      `${this.baseUrl}/participation`
+      `${this.baseUrl}/participation${params}`
     );
     return response.data!;
   }
@@ -132,9 +161,10 @@ class DashboardService {
   /**
    * Get demographic data
    */
-  async getDemographicData(): Promise<DemographicsData> {
+  async getDemographicData(provinsi?: string): Promise<DemographicsData> {
+    const params = provinsi ? `?provinsi=${encodeURIComponent(provinsi)}` : '';
     const response: ApiResponse<DemographicsData> = await api.get(
-      `${this.baseUrl}/demographics`
+      `${this.baseUrl}/demographics${params}`
     );
     return response.data!;
   }
@@ -142,9 +172,10 @@ class DashboardService {
   /**
    * Get performance analytics
    */
-  async getPerformanceAnalytics(): Promise<PerformanceAnalytics> {
+  async getPerformanceAnalytics(provinsi?: string): Promise<PerformanceAnalytics> {
+    const params = provinsi ? `?provinsi=${encodeURIComponent(provinsi)}` : '';
     const response: ApiResponse<PerformanceAnalytics> = await api.get(
-      `${this.baseUrl}/performance`
+      `${this.baseUrl}/performance${params}`
     );
     return response.data!;
   }
@@ -152,9 +183,10 @@ class DashboardService {
   /**
    * Get error analysis data
    */
-  async getErrorAnalysis(): Promise<ErrorAnalysis> {
+  async getErrorAnalysis(provinsi?: string): Promise<ErrorAnalysis> {
+    const params = provinsi ? `?provinsi=${encodeURIComponent(provinsi)}` : '';
     const response: ApiResponse<ErrorAnalysis> = await api.get(
-      `${this.baseUrl}/errors`
+      `${this.baseUrl}/errors${params}`
     );
     return response.data!;
   }
@@ -162,9 +194,32 @@ class DashboardService {
   /**
    * Get province data
    */
-  async getProvinceData(): Promise<ProvinceData> {
+  async getProvinceData(provinsi?: string): Promise<ProvinceData> {
+    const params = provinsi ? `?provinsi=${encodeURIComponent(provinsi)}` : '';
     const response: ApiResponse<ProvinceData> = await api.get(
-      `${this.baseUrl}/provinces`
+      `${this.baseUrl}/provinces${params}`
+    );
+    return response.data!;
+  }
+
+  /**
+   * Get score distribution by education level
+   */
+  async getScoreDistributionByLevel(provinsi?: string): Promise<ScoreDistributionByLevel[]> {
+    const params = provinsi ? `?provinsi=${encodeURIComponent(provinsi)}` : '';
+    const response: ApiResponse<ScoreDistributionByLevel[]> = await api.get(
+      `${this.baseUrl}/score-distribution-by-level${params}`
+    );
+    return response.data!;
+  }
+
+  /**
+   * Get score distribution by subject
+   */
+  async getScoreDistributionBySubject(provinsi?: string): Promise<ScoreDistributionBySubject[]> {
+    const params = provinsi ? `?provinsi=${encodeURIComponent(provinsi)}` : '';
+    const response: ApiResponse<ScoreDistributionBySubject[]> = await api.get(
+      `${this.baseUrl}/score-distribution-by-subject${params}`
     );
     return response.data!;
   }
@@ -172,7 +227,7 @@ class DashboardService {
   /**
    * Helper method to get all dashboard data in parallel
    */
-  async getAllDashboardData(): Promise<{
+  async getAllDashboardData(provinsi?: string): Promise<{
     overview: DashboardOverview;
     performance: PerformanceAnalytics;
     errors: ErrorAnalysis;
@@ -180,10 +235,10 @@ class DashboardService {
   }> {
     try {
       const [overview, performance, errors, provinces] = await Promise.all([
-        this.getDashboardOverview(),
-        this.getPerformanceAnalytics(),
-        this.getErrorAnalysis(),
-        this.getProvinceData(),
+        this.getDashboardOverview(provinsi),
+        this.getPerformanceAnalytics(provinsi),
+        this.getErrorAnalysis(provinsi),
+        this.getProvinceData(provinsi),
       ]);
 
       return {

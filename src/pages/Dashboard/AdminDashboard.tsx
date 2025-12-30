@@ -32,53 +32,34 @@ import { useDashboard } from "../../hooks/useDashboard";
 import {
   AverageScoreData,
   ParticipationByLevel,
+  ScoreDistributionByLevel,
+  ScoreDistributionBySubject,
+  dashboardService,
 } from "../../services/dashboard.service";
 import ScoreDistributionPieChart from "../../components/Chart/ScoreDistributionPieChart";
 import ScoreDistributionBarChart from "../../components/Chart/ScoreDistributionBarChart";
 
 export default function AdminDashboard() {
-  const { data, loading, error, refetch } = useDashboard();
-
   // State untuk filter provinsi
   const [selectedProvince, setSelectedProvince] = React.useState<string>("");
 
-  // Data dummy provinsi - nanti akan diambil dari API
-  const provinceOptions = [
-    "ACEH",
-    "SUMATERA UTARA",
-    "SUMATERA BARAT",
-    "RIAU",
-    "JAMBI",
-    "SUMATERA SELATAN",
-    "BENGKULU",
-    "LAMPUNG",
-    "KEPULAUAN BANGKA BELITUNG",
-    "KEPULAUAN RIAU",
-    "DKI JAKARTA",
-    "JAWA BARAT",
-    "JAWA TENGAH",
-    "DI YOGYAKARTA",
-    "JAWA TIMUR",
-    "BANTEN",
-    "BALI",
-    "NUSA TENGGARA BARAT",
-    "NUSA TENGGARA TIMUR",
-    "KALIMANTAN BARAT",
-    "KALIMANTAN TENGAH",
-    "KALIMANTAN SELATAN",
-    "KALIMANTAN TIMUR",
-    "KALIMANTAN UTARA",
-    "SULAWESI UTARA",
-    "SULAWESI TENGAH",
-    "SULAWESI SELATAN",
-    "SULAWESI TENGGARA",
-    "GORONTALO",
-    "SULAWESI BARAT",
-    "MALUKU",
-    "MALUKU UTARA",
-    "PAPUA BARAT",
-    "PAPUA",
-  ];
+  // Load dashboard data with province filter
+  const { data, loading, error, refetch } = useDashboard(selectedProvince || undefined);
+
+  // Load provinces list from API
+  const [provinceOptions, setProvinceOptions] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    async function fetchProvinces() {
+      try {
+        const provinces = await dashboardService.getProvincesList();
+        setProvinceOptions(provinces);
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      }
+    }
+    fetchProvinces();
+  }, []);
 
   const handleProvinceChange = (event: SelectChangeEvent<string>) => {
     const province = event.target.value;
@@ -183,82 +164,25 @@ export default function AdminDashboard() {
 
   const { overview, performance, errors, provinces } = data;
 
-  // Data contoh untuk UI - nanti akan diganti dengan data dari DB
-  const levelScoreData = [
-    {
-      tingkat: "RA",
-      jml_0_59: 150,
-      jml_60_89: 300,
-      jml_90_100: 200,
-      total: 650,
-    },
-    {
-      tingkat: "MI",
-      jml_0_59: 500,
-      jml_60_89: 1200,
-      jml_90_100: 800,
-      total: 2500,
-    },
-    {
-      tingkat: "MTS",
-      jml_0_59: 400,
-      jml_60_89: 900,
-      jml_90_100: 600,
-      total: 1900,
-    },
-    {
-      tingkat: "MA",
-      jml_0_59: 300,
-      jml_60_89: 700,
-      jml_90_100: 500,
-      total: 1500,
-    },
-  ];
+  // Load score distribution data from API
+  const [levelScoreData, setLevelScoreData] = React.useState<ScoreDistributionByLevel[]>([]);
+  const [mapelScoreData, setMapelScoreData] = React.useState<ScoreDistributionBySubject[]>([]);
 
-  const mapelScoreData = [
-    {
-      mata_pelajaran: "Guru Kelas MI",
-      jml_0_59: 26875,
-      jml_60_89: 56713,
-      jml_90_100: 27720,
-      total_peserta: 111308,
-    },
-    {
-      mata_pelajaran: "Akidah Akhlak",
-      jml_0_59: 4491,
-      jml_60_89: 9487,
-      jml_90_100: 5951,
-      total_peserta: 19929,
-    },
-    {
-      mata_pelajaran: "Al-Quran Hadis",
-      jml_0_59: 3642,
-      jml_60_89: 7797,
-      jml_90_100: 8073,
-      total_peserta: 19512,
-    },
-    {
-      mata_pelajaran: "Bahasa Arab",
-      jml_0_59: 2914,
-      jml_60_89: 7005,
-      jml_90_100: 8287,
-      total_peserta: 18206,
-    },
-    {
-      mata_pelajaran: "Fikih",
-      jml_0_59: 3807,
-      jml_60_89: 8190,
-      jml_90_100: 6100,
-      total_peserta: 18097,
-    },
-    {
-      mata_pelajaran: "Sejarah Kebudayaan Islam",
-      jml_0_59: 2939,
-      jml_60_89: 6022,
-      jml_90_100: 4036,
-      total_peserta: 12997,
-    },
-  ];
+  React.useEffect(() => {
+    async function fetchScoreDistributions() {
+      try {
+        const [levelData, subjectData] = await Promise.all([
+          dashboardService.getScoreDistributionByLevel(selectedProvince || undefined),
+          dashboardService.getScoreDistributionBySubject(selectedProvince || undefined),
+        ]);
+        setLevelScoreData(levelData);
+        setMapelScoreData(subjectData);
+      } catch (error) {
+        console.error("Error fetching score distributions:", error);
+      }
+    }
+    fetchScoreDistributions();
+  }, [selectedProvince]);
 
   if (!overview || !performance || !errors || !provinces) {
     return (
