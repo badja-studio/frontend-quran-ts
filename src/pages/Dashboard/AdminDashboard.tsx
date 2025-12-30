@@ -61,6 +61,26 @@ export default function AdminDashboard() {
     fetchProvinces();
   }, []);
 
+  // Load score distribution data from API
+  const [levelScoreData, setLevelScoreData] = React.useState<ScoreDistributionByLevel[]>([]);
+  const [mapelScoreData, setMapelScoreData] = React.useState<ScoreDistributionBySubject[]>([]);
+
+  React.useEffect(() => {
+    async function fetchScoreDistributions() {
+      try {
+        const [levelData, subjectData] = await Promise.all([
+          dashboardService.getScoreDistributionByLevel(selectedProvince || undefined),
+          dashboardService.getScoreDistributionBySubject(selectedProvince || undefined),
+        ]);
+        setLevelScoreData(levelData);
+        setMapelScoreData(subjectData);
+      } catch (error) {
+        console.error("Error fetching score distributions:", error);
+      }
+    }
+    fetchScoreDistributions();
+  }, [selectedProvince]);
+
   const handleProvinceChange = (event: SelectChangeEvent<string>) => {
     const province = event.target.value;
     setSelectedProvince(province);
@@ -163,26 +183,6 @@ export default function AdminDashboard() {
   }
 
   const { overview, performance, errors, provinces } = data;
-
-  // Load score distribution data from API
-  const [levelScoreData, setLevelScoreData] = React.useState<ScoreDistributionByLevel[]>([]);
-  const [mapelScoreData, setMapelScoreData] = React.useState<ScoreDistributionBySubject[]>([]);
-
-  React.useEffect(() => {
-    async function fetchScoreDistributions() {
-      try {
-        const [levelData, subjectData] = await Promise.all([
-          dashboardService.getScoreDistributionByLevel(selectedProvince || undefined),
-          dashboardService.getScoreDistributionBySubject(selectedProvince || undefined),
-        ]);
-        setLevelScoreData(levelData);
-        setMapelScoreData(subjectData);
-      } catch (error) {
-        console.error("Error fetching score distributions:", error);
-      }
-    }
-    fetchScoreDistributions();
-  }, [selectedProvince]);
 
   if (!overview || !performance || !errors || !provinces) {
     return (
