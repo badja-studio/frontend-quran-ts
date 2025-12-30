@@ -184,77 +184,30 @@ export default function AdminDashboard() {
   const { overview, performance, errors, provinces } = data;
 
   // Data contoh untuk UI - nanti akan diganti dengan data dari DB
-  // Data lengkap 38 provinsi di Indonesia
-  const provinceScoreData = [
-    {
-      nama_provinsi: "JAWA TIMUR",
-      jml_0_59: 11114,
-      jml_60_89: 24967,
-      jml_90_100: 19779,
-      total_peserta: 55860,
-    },
-    {
-      nama_provinsi: "JAWA TENGAH",
-      jml_0_59: 6518,
-      jml_60_89: 20966,
-      jml_90_100: 12456,
-      total_peserta: 39940,
-    },
-    {
-      nama_provinsi: "JAWA BARAT",
-      jml_0_59: 4547,
-      jml_60_89: 9617,
-      jml_90_100: 5521,
-      total_peserta: 19685,
-    },
-    {
-      nama_provinsi: "DKI JAKARTA",
-      jml_0_59: 821,
-      jml_60_89: 1927,
-      jml_90_100: 1241,
-      total_peserta: 3989,
-    },
-    {
-      nama_provinsi: "JAMBI",
-      jml_0_59: 981,
-      jml_60_89: 1495,
-      jml_90_100: 879,
-      total_peserta: 3355,
-    },
-
-    {
-      nama_provinsi: "GORONTALO",
-      jml_0_59: 243,
-      jml_60_89: 485,
-      jml_90_100: 155,
-      total_peserta: 883,
-    },
-  ];
-
   const levelScoreData = [
     {
-      tingkat: "PAUD/TK",
+      tingkat: "RA",
       jml_0_59: 150,
       jml_60_89: 300,
       jml_90_100: 200,
       total: 650,
     },
     {
-      tingkat: "SD/Sederajat",
+      tingkat: "MI",
       jml_0_59: 500,
       jml_60_89: 1200,
       jml_90_100: 800,
       total: 2500,
     },
     {
-      tingkat: "SMP/Sederajat",
+      tingkat: "MTS",
       jml_0_59: 400,
       jml_60_89: 900,
       jml_90_100: 600,
       total: 1900,
     },
     {
-      tingkat: "SMA/Umum",
+      tingkat: "MA",
       jml_0_59: 300,
       jml_60_89: 700,
       jml_90_100: 500,
@@ -518,7 +471,7 @@ export default function AdminDashboard() {
 
         {/* Fluency Levels */}
         <Grid item xs={12} md={6}>
-          <DynamicBarChart
+          {/* <DynamicBarChart
             title="Persentase Tingkat Kelancaran Al-Quran per Provinsi"
             data={performance.fluencyLevels.map((item) => ({
               ...item,
@@ -527,19 +480,19 @@ export default function AdminDashboard() {
               mahir: item.lancar,
             }))}
             keys={["pratama", "madya", "mahir"]}
-          />
+          /> */}
         </Grid>
         <Grid container spacing={3}>
           {/* BAR CHART - FULL WIDTH */}
           <Grid item xs={12}>
             <ScoreDistributionBarChart
-              title="Distribusi Nilai Peserta per Provinsi"
-              data={provinceScoreData.map((item) => ({
-                label: item.nama_provinsi,
-                score_0_59: item.jml_0_59,
-                score_60_89: item.jml_60_89,
-                score_90_100: item.jml_90_100,
-                total: item.total_peserta,
+              title="Distribusi Tingkat Kelancaran Al-Quran per Provinsi"
+              data={performance.fluencyLevels.map((item) => ({
+                label: item.name,
+                score_0_59: item.kurang_lancar,
+                score_60_89: item.mahir,
+                score_90_100: item.lancar,
+                total: item.kurang_lancar + item.mahir + item.lancar,
               }))}
               height={420}
             />
@@ -548,13 +501,13 @@ export default function AdminDashboard() {
           {/* PIE + INFO */}
           <Grid item xs={12} md={4}>
             <ScoreDistributionPieChart
-              title="Proporsi Kategori Nilai (Nasional)"
-              data={provinceScoreData.map((item) => ({
-                label: item.nama_provinsi,
-                score_0_59: item.jml_0_59,
-                score_60_89: item.jml_60_89,
-                score_90_100: item.jml_90_100,
-                total: item.total_peserta,
+              title="Proporsi Tingkat Kelancaran (Nasional)"
+              data={performance.fluencyLevels.map((item) => ({
+                label: item.name,
+                score_0_59: item.kurang_lancar,
+                score_60_89: item.mahir,
+                score_90_100: item.lancar,
+                total: item.kurang_lancar + item.mahir + item.lancar,
               }))}
               size={260}
             />
@@ -567,9 +520,10 @@ export default function AdminDashboard() {
                 Ringkasan
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Grafik ini menampilkan distribusi nilai peserta secara
-                keseluruhan berdasarkan kategori nilai. Visualisasi ini
-                digunakan untuk memberikan gambaran umum komposisi data.
+                Grafik ini menampilkan distribusi tingkat kelancaran membaca
+                Al-Quran peserta per provinsi berdasarkan tiga kategori:
+                Pratama, Madya, dan Mahir. Visualisasi ini memberikan gambaran
+                komposisi kelancaran peserta di setiap provinsi.
               </Typography>
             </Paper>
           </Grid>
@@ -586,7 +540,7 @@ export default function AdminDashboard() {
               align="center"
               sx={{ mb: 2 }}
             >
-              DISTRIBUSI NILAI PESERTA PER TINGKAT
+              DISTRIBUSI NILAI PESERTA PER TINGKAT Pendidikan
             </Typography>
           </Grid>
           <Grid item xs={12} md={6}>
