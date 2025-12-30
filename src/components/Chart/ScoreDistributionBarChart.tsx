@@ -64,37 +64,24 @@ const ScoreDistributionBarChart: React.FC<ScoreDistributionBarChartProps> = ({
               textAnchor="end"
               height={120}
               interval={0}
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 8 }}
             />
             <YAxis
               label={{
                 value: "Jumlah Peserta",
                 angle: -90,
                 position: "insideLeft",
+                fontSize: 12, // kecilin di sini
               }}
             />
+
             <Tooltip
               formatter={(value: number) => value.toLocaleString("id-ID")}
             />
             <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: 10 }} />
-            <Bar
-              dataKey="Pratama"
-              stackId="a"
-              fill="#D32F2F"
-              name="Pratama (0-59)"
-            />
-            <Bar
-              dataKey="Madya"
-              stackId="a"
-              fill="#FFA726"
-              name="Madya (60-89)"
-            />
-            <Bar
-              dataKey="Mahir"
-              stackId="a"
-              fill="#66BB6A"
-              name="Mahir (90-100)"
-            />
+            <Bar dataKey="Pratama" fill="#D32F2F" name="Pratama (0-59)" />
+            <Bar dataKey="Madya" fill="#FFA726" name="Madya (60-89)" />
+            <Bar dataKey="Mahir" fill="#66BB6A" name="Mahir (90-100)" />
           </BarChart>
         </ResponsiveContainer>
       </Box>

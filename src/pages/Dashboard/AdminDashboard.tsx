@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Grid,
   Typography,
@@ -5,10 +6,18 @@ import {
   CircularProgress,
   Alert,
   Button,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
+  SelectChangeEvent,
+  Paper,
 } from "@mui/material";
 import {
   People as PeopleIcon,
   Refresh as RefreshIcon,
+  FilterList as FilterListIcon,
+  Clear as ClearIcon,
 } from "@mui/icons-material";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
@@ -29,6 +38,56 @@ import ScoreDistributionBarChart from "../../components/Chart/ScoreDistributionB
 
 export default function AdminDashboard() {
   const { data, loading, error, refetch } = useDashboard();
+
+  // State untuk filter provinsi
+  const [selectedProvince, setSelectedProvince] = React.useState<string>("");
+
+  // Data dummy provinsi - nanti akan diambil dari API
+  const provinceOptions = [
+    "ACEH",
+    "SUMATERA UTARA",
+    "SUMATERA BARAT",
+    "RIAU",
+    "JAMBI",
+    "SUMATERA SELATAN",
+    "BENGKULU",
+    "LAMPUNG",
+    "KEPULAUAN BANGKA BELITUNG",
+    "KEPULAUAN RIAU",
+    "DKI JAKARTA",
+    "JAWA BARAT",
+    "JAWA TENGAH",
+    "DI YOGYAKARTA",
+    "JAWA TIMUR",
+    "BANTEN",
+    "BALI",
+    "NUSA TENGGARA BARAT",
+    "NUSA TENGGARA TIMUR",
+    "KALIMANTAN BARAT",
+    "KALIMANTAN TENGAH",
+    "KALIMANTAN SELATAN",
+    "KALIMANTAN TIMUR",
+    "KALIMANTAN UTARA",
+    "SULAWESI UTARA",
+    "SULAWESI TENGAH",
+    "SULAWESI SELATAN",
+    "SULAWESI TENGGARA",
+    "GORONTALO",
+    "SULAWESI BARAT",
+    "MALUKU",
+    "MALUKU UTARA",
+    "PAPUA BARAT",
+    "PAPUA",
+  ];
+
+  const handleProvinceChange = (event: SelectChangeEvent<string>) => {
+    const province = event.target.value;
+    setSelectedProvince(province);
+  };
+
+  const handleResetFilter = () => {
+    setSelectedProvince("");
+  };
 
   // Transform average scores data to match the expected format
   const transformAverageScores = (
@@ -149,55 +208,6 @@ export default function AdminDashboard() {
       total_peserta: 19685,
     },
     {
-      nama_provinsi: "SULAWESI SELATAN",
-      jml_0_59: 2444,
-      jml_60_89: 4984,
-      jml_90_100: 2245,
-      total_peserta: 9673,
-    },
-    {
-      nama_provinsi: "NUSA TENGGARA BARAT",
-      jml_0_59: 2260,
-      jml_60_89: 3552,
-      jml_90_100: 2456,
-      total_peserta: 8268,
-    },
-    {
-      nama_provinsi: "KALIMANTAN SELATAN",
-      jml_0_59: 1221,
-      jml_60_89: 4234,
-      jml_90_100: 2501,
-      total_peserta: 7956,
-    },
-    {
-      nama_provinsi: "BANTEN",
-      jml_0_59: 1445,
-      jml_60_89: 2715,
-      jml_90_100: 1983,
-      total_peserta: 6143,
-    },
-    {
-      nama_provinsi: "SUMATERA UTARA",
-      jml_0_59: 2043,
-      jml_60_89: 2637,
-      jml_90_100: 1282,
-      total_peserta: 5962,
-    },
-    {
-      nama_provinsi: "RIAU",
-      jml_0_59: 1554,
-      jml_60_89: 2137,
-      jml_90_100: 1315,
-      total_peserta: 5006,
-    },
-    {
-      nama_provinsi: "LAMPUNG",
-      jml_0_59: 1525,
-      jml_60_89: 2006,
-      jml_90_100: 986,
-      total_peserta: 4517,
-    },
-    {
       nama_provinsi: "DKI JAKARTA",
       jml_0_59: 821,
       jml_60_89: 1927,
@@ -211,187 +221,13 @@ export default function AdminDashboard() {
       jml_90_100: 879,
       total_peserta: 3355,
     },
-    {
-      nama_provinsi: "KALIMANTAN TENGAH",
-      jml_0_59: 791,
-      jml_60_89: 1595,
-      jml_90_100: 809,
-      total_peserta: 3195,
-    },
-    {
-      nama_provinsi: "KALIMANTAN BARAT",
-      jml_0_59: 846,
-      jml_60_89: 1389,
-      jml_90_100: 902,
-      total_peserta: 3137,
-    },
-    {
-      nama_provinsi: "SUMATERA BARAT",
-      jml_0_59: 1282,
-      jml_60_89: 1067,
-      jml_90_100: 714,
-      total_peserta: 3063,
-    },
-    {
-      nama_provinsi: "SULAWESI TENGAH",
-      jml_0_59: 628,
-      jml_60_89: 1214,
-      jml_90_100: 559,
-      total_peserta: 2401,
-    },
-    {
-      nama_provinsi: "ACEH",
-      jml_0_59: 477,
-      jml_60_89: 1154,
-      jml_90_100: 515,
-      total_peserta: 2146,
-    },
-    {
-      nama_provinsi: "KALIMANTAN TIMUR",
-      jml_0_59: 404,
-      jml_60_89: 912,
-      jml_90_100: 759,
-      total_peserta: 2075,
-    },
-    {
-      nama_provinsi: "NUSA TENGGARA TIMUR",
-      jml_0_59: 570,
-      jml_60_89: 921,
-      jml_90_100: 393,
-      total_peserta: 1884,
-    },
-    {
-      nama_provinsi: "SULAWESI BARAT",
-      jml_0_59: 606,
-      jml_60_89: 902,
-      jml_90_100: 359,
-      total_peserta: 1867,
-    },
-    {
-      nama_provinsi: "BENGKULU",
-      jml_0_59: 569,
-      jml_60_89: 744,
-      jml_90_100: 256,
-      total_peserta: 1569,
-    },
-    {
-      nama_provinsi: "SUMATERA SELATAN",
-      jml_0_59: 416,
-      jml_60_89: 640,
-      jml_90_100: 367,
-      total_peserta: 1423,
-    },
-    {
-      nama_provinsi: "BALI",
-      jml_0_59: 129,
-      jml_60_89: 528,
-      jml_90_100: 452,
-      total_peserta: 1109,
-    },
+
     {
       nama_provinsi: "GORONTALO",
       jml_0_59: 243,
       jml_60_89: 485,
       jml_90_100: 155,
       total_peserta: 883,
-    },
-    {
-      nama_provinsi: "SULAWESI UTARA",
-      jml_0_59: 372,
-      jml_60_89: 359,
-      jml_90_100: 118,
-      total_peserta: 849,
-    },
-    {
-      nama_provinsi: "KEPULAUAN RIAU",
-      jml_0_59: 108,
-      jml_60_89: 403,
-      jml_90_100: 274,
-      total_peserta: 785,
-    },
-    {
-      nama_provinsi: "SULAWESI TENGGARA",
-      jml_0_59: 156,
-      jml_60_89: 281,
-      jml_90_100: 180,
-      total_peserta: 617,
-    },
-    {
-      nama_provinsi: "KEPULAUAN BANGKA BELITUNG",
-      jml_0_59: 119,
-      jml_60_89: 320,
-      jml_90_100: 168,
-      total_peserta: 607,
-    },
-    {
-      nama_provinsi: "PAPUA BARAT",
-      jml_0_59: 89,
-      jml_60_89: 264,
-      jml_90_100: 130,
-      total_peserta: 483,
-    },
-    {
-      nama_provinsi: "PAPUA",
-      jml_0_59: 92,
-      jml_60_89: 245,
-      jml_90_100: 104,
-      total_peserta: 441,
-    },
-    {
-      nama_provinsi: "KALIMANTAN UTARA",
-      jml_0_59: 91,
-      jml_60_89: 179,
-      jml_90_100: 105,
-      total_peserta: 375,
-    },
-    {
-      nama_provinsi: "MALUKU",
-      jml_0_59: 86,
-      jml_60_89: 169,
-      jml_90_100: 62,
-      total_peserta: 317,
-    },
-    {
-      nama_provinsi: "DI YOGYAKARTA",
-      jml_0_59: 52,
-      jml_60_89: 119,
-      jml_90_100: 105,
-      total_peserta: 276,
-    },
-    {
-      nama_provinsi: "MALUKU UTARA",
-      jml_0_59: 69,
-      jml_60_89: 87,
-      jml_90_100: 38,
-      total_peserta: 194,
-    },
-    {
-      nama_provinsi: "PAPUA SELATAN",
-      jml_0_59: 45,
-      jml_60_89: 78,
-      jml_90_100: 32,
-      total_peserta: 155,
-    },
-    {
-      nama_provinsi: "PAPUA TENGAH",
-      jml_0_59: 38,
-      jml_60_89: 65,
-      jml_90_100: 27,
-      total_peserta: 130,
-    },
-    {
-      nama_provinsi: "PAPUA PEGUNUNGAN",
-      jml_0_59: 41,
-      jml_60_89: 71,
-      jml_90_100: 28,
-      total_peserta: 140,
-    },
-    {
-      nama_provinsi: "PAPUA BARAT DAYA",
-      jml_0_59: 35,
-      jml_60_89: 58,
-      jml_90_100: 24,
-      total_peserta: 117,
     },
   ];
 
@@ -521,6 +357,75 @@ export default function AdminDashboard() {
           </Button>
         </Box>
 
+        {/* Filter Section */}
+        <Box
+          sx={{
+            mb: 3,
+            p: 2,
+            backgroundColor: "#f8f9fa",
+            borderRadius: 1,
+            border: "1px solid #e0e0e0",
+          }}
+        >
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={6} md={4}>
+              <Box display="flex" alignItems="center" gap={1}>
+                <FilterListIcon fontSize="small" color="action" />
+                <FormControl fullWidth size="small">
+                  <InputLabel id="province-select-label">
+                    Filter Provinsi
+                  </InputLabel>
+                  <Select
+                    labelId="province-select-label"
+                    id="province-select"
+                    value={selectedProvince}
+                    label="Filter Provinsi"
+                    onChange={handleProvinceChange}
+                  >
+                    <MenuItem value="">
+                      <em>Semua Provinsi</em>
+                    </MenuItem>
+                    {provinceOptions.map((province) => (
+                      <MenuItem key={province} value={province}>
+                        {province}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Grid>
+
+            {selectedProvince && (
+              <Grid item xs={12} sm={6} md={8}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  gap={2}
+                >
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ flex: 1 }}
+                  >
+                    Menampilkan data per Kota/Kabupaten di{" "}
+                    <strong>{selectedProvince}</strong>
+                  </Typography>
+                  <Button
+                    size="small"
+                    variant="text"
+                    color="error"
+                    startIcon={<ClearIcon fontSize="small" />}
+                    onClick={handleResetFilter}
+                  >
+                    Reset
+                  </Button>
+                </Box>
+              </Grid>
+            )}
+          </Grid>
+        </Box>
+
         {/* Participation Statistics */}
         <Box sx={{ mb: 4, px: 2 }}>
           <ParticipationGroup
@@ -624,30 +529,11 @@ export default function AdminDashboard() {
             keys={["pratama", "madya", "mahir"]}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <ScoreDistributionBarChart
-            title="Distribusi Nilai Peserta per Provinsi"
-            data={provinceScoreData.map((item) => ({
-              label: item.nama_provinsi,
-              score_0_59: item.jml_0_59,
-              score_60_89: item.jml_60_89,
-              score_90_100: item.jml_90_100,
-              total: item.total_peserta,
-            }))}
-            height={400}
-          />
-        </Grid>
-
-        {/* Distribusi Nilai per Provinsi - Full Width */}
-        <Grid container spacing={3} sx={{ mt: 4 }}>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{ justifyContent: "center", alignItems: "center" }}
-          >
-            <ScoreDistributionPieChart
-              title="Proporsi Kategori Nilai"
+        <Grid container spacing={3}>
+          {/* BAR CHART - FULL WIDTH */}
+          <Grid item xs={12}>
+            <ScoreDistributionBarChart
+              title="Distribusi Nilai Peserta per Provinsi"
               data={provinceScoreData.map((item) => ({
                 label: item.nama_provinsi,
                 score_0_59: item.jml_0_59,
@@ -655,8 +541,37 @@ export default function AdminDashboard() {
                 score_90_100: item.jml_90_100,
                 total: item.total_peserta,
               }))}
-              size={400}
+              height={420}
             />
+          </Grid>
+
+          {/* PIE + INFO */}
+          <Grid item xs={12} md={4}>
+            <ScoreDistributionPieChart
+              title="Proporsi Kategori Nilai (Nasional)"
+              data={provinceScoreData.map((item) => ({
+                label: item.nama_provinsi,
+                score_0_59: item.jml_0_59,
+                score_60_89: item.jml_60_89,
+                score_90_100: item.jml_90_100,
+                total: item.total_peserta,
+              }))}
+              size={260}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={8}>
+            {/* Bisa diisi summary / insight */}
+            <Paper sx={{ p: 3, height: "100%" }}>
+              <Typography variant="h6" gutterBottom>
+                Ringkasan
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Grafik ini menampilkan distribusi nilai peserta secara
+                keseluruhan berdasarkan kategori nilai. Visualisasi ini
+                digunakan untuk memberikan gambaran umum komposisi data.
+              </Typography>
+            </Paper>
           </Grid>
         </Grid>
 
