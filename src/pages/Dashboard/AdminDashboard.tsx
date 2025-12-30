@@ -250,33 +250,34 @@ export default function AdminDashboard() {
             items={transformAverageScores(overview.averageScores)}
           />
         </Grid>
+        {/* Province Achievement */}
+        <Grid item xs={12} md={6}>
+          <DynamicBarChart
+            title="Capaian Nilai Ujian Peserta per Provinsi"
+            data={performance.provinceAchievement.map((item) => ({
+              ...item,
+              [item.name]: item.name, // Add index signature requirement
+            }))}
+            keys={["terendah", "tertinggi", "rata"]}
+          />
+        </Grid>
+
+        {/* Fluency Levels */}
+        <Grid item xs={12} md={6}>
+          <DynamicBarChart
+            title="Persentase Tingkat Kelancaran Al-Quran per Provinsi"
+            data={performance.fluencyLevels.map((item) => ({
+              ...item,
+              pratama: item.kurang_lancar,
+              madya: item.mahir,
+              mahir: item.lancar,
+            }))}
+            keys={["pratama", "madya", "mahir"]}
+          />
+        </Grid>
 
         {/* Performance Charts */}
         <Grid container spacing={4} sx={{ mt: 4 }}>
-          {/* Province Achievement */}
-          <Grid item xs={12} md={6}>
-            <DynamicBarChart
-              title="Capaian Nilai Ujian Peserta per Provinsi"
-              data={performance.provinceAchievement.map((item) => ({
-                ...item,
-                [item.name]: item.name, // Add index signature requirement
-              }))}
-              keys={["terendah", "tertinggi", "rata"]}
-            />
-          </Grid>
-
-          {/* Fluency Levels */}
-          <Grid item xs={12} md={6}>
-            <DynamicBarChart
-              title="Persentase Tingkat Kelancaran Al-Quran per Provinsi"
-              data={performance.fluencyLevels.map((item) => ({
-                ...item,
-                [item.name]: item.name, // Add index signature requirement
-              }))}
-              keys={["kurang_lancar", "lancar", "mahir"]}
-            />
-          </Grid>
-
           {/* Makharij Errors */}
           <Grid item xs={12} md={6}>
             <MetrixGridTable
@@ -348,9 +349,16 @@ export default function AdminDashboard() {
           {/* Penalties */}
           <Grid item xs={12} md={6}>
             <MetrixGridTable
-              title="Pengurangan Nilai Peserta"
+              title="Kelayakan Untuk Dinilai"
               data={errors.penalties}
               headerColor="#00838F"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <ReusableKesalahanBarChart
+              data={errors.penalties}
+              colors={["#B74B63", "#456D93", "#C59647", "#5E8E8E", "#7D6493"]}
+              height={350}
             />
           </Grid>
         </Grid>

@@ -1,7 +1,6 @@
 import React from "react";
 import { Card, Box, Typography, Paper, Divider, Button } from "@mui/material";
 import ScoreGrid from "./ScoreGrid";
-
 import { CategoryType } from "./type";
 
 interface Props {
@@ -30,7 +29,6 @@ const ScoreSection: React.FC<Props> = ({
   mistakes,
   totalScore,
   handleScore,
-
   isSelect = false,
   selectedValue,
   onSelect,
@@ -39,27 +37,64 @@ const ScoreSection: React.FC<Props> = ({
     return (
       <Card
         sx={{
-          mb: 2,
-          p: 1.5,
-          borderRadius: 2,
+          mb: 2.5,
+          p: 2.5,
+          borderRadius: 3,
+          bgcolor: "white",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
           border: "1px solid",
-          borderColor: "grey.300",
+          borderColor: "grey.200",
+          transition: "box-shadow 0.3s ease",
+          "&:hover": {
+            boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+          },
         }}
       >
-        <Typography fontWeight={700} fontSize="clamp(1rem, 1.8vw, 1.2rem)">
+        <Typography
+          fontWeight={600}
+          fontSize="clamp(1rem, 1.8vw, 1.2rem)"
+          sx={{
+            color: "grey.900",
+            mb: 2,
+            letterSpacing: "-0.01em",
+          }}
+        >
           {title}
         </Typography>
 
-        <Divider sx={{ my: 1 }} />
+        <Divider sx={{ mb: 2, borderColor: "grey.200" }} />
 
-        <Box display="flex" flexWrap="wrap" gap={1}>
+        <Box display="flex" flexWrap="wrap" gap={1.5}>
           {list.map((item) => (
             <Button
               key={item}
               variant={selectedValue === item ? "contained" : "outlined"}
-              color="primary"
-              size="small"
-              onClick={() => onSelect && onSelect(item)}
+              size="medium"
+              onClick={() => onSelect?.(item)}
+              sx={{
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: 500,
+                px: 2.5,
+                py: 0.75,
+                fontSize: "0.938rem",
+                ...(selectedValue === item
+                  ? {
+                      bgcolor: "grey.900",
+                      color: "white",
+                      "&:hover": {
+                        bgcolor: "grey.800",
+                      },
+                    }
+                  : {
+                      borderColor: "grey.300",
+                      color: "grey.700",
+                      "&:hover": {
+                        borderColor: "grey.400",
+                        bgcolor: "grey.50",
+                      },
+                    }),
+              }}
             >
               {item}
             </Button>
@@ -72,11 +107,17 @@ const ScoreSection: React.FC<Props> = ({
   return (
     <Card
       sx={{
-        mb: 2,
-        p: 1.5,
-        borderRadius: 2,
+        mb: 2.5,
+        p: 2.5,
+        borderRadius: 3,
+        bgcolor: "white",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
         border: "1px solid",
-        borderColor: "grey.300",
+        borderColor: "grey.200",
+        transition: "box-shadow 0.3s ease",
+        "&:hover": {
+          boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+        },
       }}
     >
       <Box
@@ -84,36 +125,57 @@ const ScoreSection: React.FC<Props> = ({
         justifyContent="space-between"
         alignItems="center"
         flexDirection={{ xs: "column", sm: "row" }}
-        mb={1}
-        gap={1}
+        mb={2}
+        gap={2}
       >
-        <Typography fontWeight={700} fontSize="clamp(1rem, 1.8vw, 1.2rem)">
+        <Typography
+          fontWeight={600}
+          fontSize="clamp(1rem, 1.8vw, 1.2rem)"
+          sx={{
+            color: "grey.900",
+            letterSpacing: "-0.01em",
+          }}
+        >
           {title}
         </Typography>
 
         <Paper
+          elevation={0}
           sx={{
-            px: 1.5,
-            py: 0.5,
+            px: 2.5,
+            py: 1,
             borderRadius: 2,
-            bgcolor: "grey.100",
-            border: "1px solid",
-            borderColor: "grey.300",
+            bgcolor: "grey.50",
+            border: "1.5px solid",
+            borderColor: "grey.200",
             textAlign: "center",
+            minWidth: 80,
+            transition: "all 0.3s ease",
+            "&:hover": {
+              bgcolor: "grey.100",
+              borderColor: "grey.300",
+            },
           }}
         >
-          <Typography fontSize="clamp(0.8rem, 1.3vw, 1rem)" fontWeight={600}>
-            {totalScore ? totalScore(category)?.toFixed(2) : "0"}
+          <Typography
+            fontSize="clamp(0.875rem, 1.3vw, 1.063rem)"
+            fontWeight={700}
+            sx={{
+              color: "grey.900",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {totalScore ? totalScore(category).toFixed(2) : "0.00"}
           </Typography>
         </Paper>
       </Box>
 
-      <Divider sx={{ mb: 1 }} />
+      <Divider sx={{ mb: 2, borderColor: "grey.200" }} />
 
       <ScoreGrid
         category={category}
         list={list}
-        mistakes={mistakes!}
+        mistakes={mistakes ?? {}}
         handleScore={handleScore!}
       />
     </Card>

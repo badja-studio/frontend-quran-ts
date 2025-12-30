@@ -40,9 +40,7 @@ export default function ActionMulaiAsesmen({ row }: Props) {
     severity: "info",
   });
 
-  /* =========================
-     QUERY: CHECK VIDEO
-     ========================= */
+
   const fetchVideoStatus = useCallback(async (): Promise<boolean> => {
     const res = await axios.get<ParticipantResponse>(
       `${GTK_API_BASE_URL}/api/participants`,
@@ -63,9 +61,7 @@ export default function ActionMulaiAsesmen({ row }: Props) {
     retry: 1,
   });
 
-  /* =========================
-     HANDLER
-     ========================= */
+
   const handleCloseSnackbar = useCallback(() => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   }, []);
@@ -85,9 +81,7 @@ export default function ActionMulaiAsesmen({ row }: Props) {
     });
   }, [hasVideo, navigate, row]);
 
-  /* =========================
-     UI STATE
-     ========================= */
+
   const disabled = isLoading || isError || !hasVideo;
 
   const label = isLoading
@@ -110,9 +104,6 @@ export default function ActionMulaiAsesmen({ row }: Props) {
     ? "Mulai asesmen peserta"
     : "Peserta belum mengirim video";
 
-  /* =========================
-     RENDER
-     ========================= */
   return (
     <>
       <Tooltip title={tooltipText} arrow>

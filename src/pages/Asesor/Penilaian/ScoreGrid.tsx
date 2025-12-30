@@ -28,7 +28,7 @@ const ScoreGrid: React.FC<Props> = ({
         gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))",
         gap: 0.5,
         width: "100%",
-        direction: "rtl", // grid mulai dari kanan
+        direction: "rtl",
         gridAutoFlow: "row",
       }}
     >
@@ -83,7 +83,9 @@ const ScoreGrid: React.FC<Props> = ({
                 textOverflow: "ellipsis",
                 color: value > 0 ? "white" : "primary.main",
                 fontSize:
-                  item.length > 14
+                  item.length > 16
+                    ? "0.75rem"
+                    : item.length > 14
                     ? "0.85rem"
                     : item.length > 7
                     ? "0.9rem"
