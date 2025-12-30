@@ -1,4 +1,4 @@
-import { api, ApiResponse } from './api.config';
+import { api, ApiResponse } from "./api.config";
 
 // Dashboard Data Types
 export interface BasicStatistics {
@@ -97,13 +97,15 @@ export interface ProvinceData {
 }
 
 class DashboardService {
-  private readonly baseUrl = '/api/dashboard';
+  private readonly baseUrl = "/api/dashboard";
 
   /**
    * Get comprehensive dashboard overview data
    */
   async getDashboardOverview(): Promise<DashboardOverview> {
-    const response: ApiResponse<DashboardOverview> = await api.get(`${this.baseUrl}/overview`);
+    const response: ApiResponse<DashboardOverview> = await api.get(
+      `${this.baseUrl}/overview`
+    );
     return response.data!;
   }
 
@@ -111,7 +113,9 @@ class DashboardService {
    * Get basic statistics
    */
   async getBasicStatistics(): Promise<BasicStatistics> {
-    const response: ApiResponse<BasicStatistics> = await api.get(`${this.baseUrl}/statistics`);
+    const response: ApiResponse<BasicStatistics> = await api.get(
+      `${this.baseUrl}/statistics`
+    );
     return response.data!;
   }
 
@@ -119,7 +123,9 @@ class DashboardService {
    * Get participation statistics
    */
   async getParticipationStats(): Promise<ParticipationStats> {
-    const response: ApiResponse<ParticipationStats> = await api.get(`${this.baseUrl}/participation`);
+    const response: ApiResponse<ParticipationStats> = await api.get(
+      `${this.baseUrl}/participation`
+    );
     return response.data!;
   }
 
@@ -127,7 +133,9 @@ class DashboardService {
    * Get demographic data
    */
   async getDemographicData(): Promise<DemographicsData> {
-    const response: ApiResponse<DemographicsData> = await api.get(`${this.baseUrl}/demographics`);
+    const response: ApiResponse<DemographicsData> = await api.get(
+      `${this.baseUrl}/demographics`
+    );
     return response.data!;
   }
 
@@ -135,7 +143,9 @@ class DashboardService {
    * Get performance analytics
    */
   async getPerformanceAnalytics(): Promise<PerformanceAnalytics> {
-    const response: ApiResponse<PerformanceAnalytics> = await api.get(`${this.baseUrl}/performance`);
+    const response: ApiResponse<PerformanceAnalytics> = await api.get(
+      `${this.baseUrl}/performance`
+    );
     return response.data!;
   }
 
@@ -143,7 +153,9 @@ class DashboardService {
    * Get error analysis data
    */
   async getErrorAnalysis(): Promise<ErrorAnalysis> {
-    const response: ApiResponse<ErrorAnalysis> = await api.get(`${this.baseUrl}/errors`);
+    const response: ApiResponse<ErrorAnalysis> = await api.get(
+      `${this.baseUrl}/errors`
+    );
     return response.data!;
   }
 
@@ -151,7 +163,9 @@ class DashboardService {
    * Get province data
    */
   async getProvinceData(): Promise<ProvinceData> {
-    const response: ApiResponse<ProvinceData> = await api.get(`${this.baseUrl}/provinces`);
+    const response: ApiResponse<ProvinceData> = await api.get(
+      `${this.baseUrl}/provinces`
+    );
     return response.data!;
   }
 
@@ -179,7 +193,7 @@ class DashboardService {
         provinces,
       };
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error("Error fetching dashboard data:", error);
       throw error;
     }
   }

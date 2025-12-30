@@ -497,17 +497,33 @@ const PenilaianPageCompact: React.FC = () => {
         </Grid>
 
         <Paper
+          elevation={0}
           sx={{
             mt: 3,
-            p: 1.5,
-            borderRadius: 2,
-            bgcolor: "grey.100",
+            p: 2.5,
+            borderRadius: 3,
+            bgcolor: "blue.50",
             border: "1px solid",
-            borderColor: "grey.300",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
           }}
         >
-          <Typography fontWeight={700}>Petunjuk:</Typography>
-          <Typography>
+          <Typography
+            fontWeight={600}
+            sx={{
+              color: "blue.900",
+              mb: 0.5,
+              fontSize: "0.938rem",
+            }}
+          >
+            Petunjuk:
+          </Typography>
+          <Typography
+            sx={{
+              color: "blue.800",
+              fontSize: "0.875rem",
+              lineHeight: 1.6,
+            }}
+          >
             Klik tombol – untuk menambah kesalahan, + untuk mengurangi. Pilih
             "Tidak Bisa Membaca" untuk langsung mengurangi 90 poin. Klik lagi
             untuk membatalkan.
