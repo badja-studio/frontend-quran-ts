@@ -567,9 +567,9 @@ export default function AdminDashboard() {
                 Ringkasan
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Distribusi nilai menunjukkan mayoritas peserta berada pada
-                rentang 60–89, dengan konsentrasi tertinggi berasal dari
-                beberapa provinsi besar.
+                Grafik ini menampilkan distribusi nilai peserta secara
+                keseluruhan berdasarkan kategori nilai. Visualisasi ini
+                digunakan untuk memberikan gambaran umum komposisi data.
               </Typography>
             </Paper>
           </Grid>
