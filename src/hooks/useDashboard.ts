@@ -15,7 +15,7 @@ export interface DashboardData {
   provinces: ProvinceData | null;
 }
 
-export const useDashboard = () => {
+export const useDashboard = (provinsi?: string) => {
   const [data, setData] = useState<DashboardData>({
     overview: null,
     performance: null,
@@ -29,9 +29,9 @@ export const useDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const dashboardData = await dashboardService.getAllDashboardData();
-      
+
+      const dashboardData = await dashboardService.getAllDashboardData(provinsi);
+
       setData({
         overview: dashboardData.overview,
         performance: dashboardData.performance,
@@ -53,7 +53,7 @@ export const useDashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [provinsi]); // Re-fetch when provinsi changes
 
   return {
     data,
